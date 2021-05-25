@@ -96,11 +96,11 @@ class WorkerHome extends StatelessWidget {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               primary: Colors.redAccent,
-                              minimumSize: Size(50,50),
+                              minimumSize: Size(200,50),
                               shape: shape,
                             ),
                             child: new Text(
-                              "     Change Patient      ",
+                              "Change Patient",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14.0,
