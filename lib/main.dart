@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/register.dart';
 
 import 'login.dart';
 
@@ -126,7 +127,12 @@ class LandingPage extends StatelessWidget {
                           ),
 
                         ),
-                        onPressed: () => print('register account'),
+                        onPressed: () {
+                          print('pressed log in');
+                          Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) => RegisterPage()
+                          ));
+                        },
                       )
                   ))
 
