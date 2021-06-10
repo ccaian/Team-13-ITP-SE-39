@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
@@ -19,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final firebaseDB = FirebaseDatabase.instance.reference();
 
   // text field state
-  String username ='';
+  String email ='';
   String password = '';
   String cfmPassword = '';
 
@@ -53,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       validator: (val) => val!.isEmpty ? 'Enter a username' : null,
                       onChanged: (val) {
-                        setState(() => username = val);
+                        setState(() => email = val);
                       },
                     ),
                 ),
@@ -131,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 print(cfmPassword);
                                 if(password == cfmPassword) {
                                   print('swee');
-                                  writeData(username, password);
+                                  writeData(email, password);
                                   readData();
                                   Navigator.push(context, new MaterialPageRoute(
                                       builder: (context) => LoginPage()
@@ -150,9 +151,11 @@ class _RegisterPageState extends State<RegisterPage> {
     ));
   }
 
-  void writeData(username, password){
-    firebaseDB.child("user").set({
-      'username': username,
+  void writeData(username, password) async{
+    UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+
+    firebaseDB.child(result.user!.uid).push().set({
+      'email': email,
       'password': password
     });
     print('success');
