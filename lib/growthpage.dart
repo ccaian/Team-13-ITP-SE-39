@@ -68,6 +68,64 @@ class _GrowthPageState extends State<GrowthPage> {
                       },
                       child: const Text('+ Add Measurements'),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0,50.0,0.0,0.0),
+                      child: DataTable (
+                        columnSpacing: 40.0,
+                        columns: const <DataColumn>[
+                          DataColumn(
+                            label: Text(
+                              'Date',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Weight',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Height',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Head',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ],
+                        rows: const <DataRow>[
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text('2021-06-10')),
+                              DataCell(Text('4.4 kg')),
+                              DataCell(Text('54.6 cm')),
+                              DataCell(Text('34.2 cm')),
+                            ],
+                          ),
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text('2021-06-11')),
+                              DataCell(Text('4.6 kg')),
+                              DataCell(Text('54.7 cm')),
+                              DataCell(Text('34.3 cm')),
+                            ],
+                          ),
+                          DataRow(
+                            cells: <DataCell>[
+                              DataCell(Text('2021-06-12')),
+                              DataCell(Text('4.7 kg')),
+                              DataCell(Text('54.8 cm')),
+                              DataCell(Text('34.4 cm')),
+                            ],
+                          ),
+                        ],
+                      )
+                    )
                   ],
                 ),
             ),
