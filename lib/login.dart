@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/workerhome.dart';
@@ -13,7 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // text field state
-  String username = '';
+  String email = '';
   String password = '';
 
   final _formKey = GlobalKey<FormState>();
@@ -50,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             validator: (val) => val!.isEmpty ? 'Enter your username' : null,
             onChanged: (val) {
-              setState(() => username = val);
+              setState(() => email = val);
             },
           ),
           SizedBox(height: 20.0),
@@ -88,14 +90,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             onPressed: () async {
               if(_formKey.currentState!.validate()) {
-                DatabaseReference registerAcc = FirebaseDatabase.instance
-                    .reference().child("user");
-                print(username);
-                print(password);
+                authenticate(email, password);
                 print('pressed log in');
-                Navigator.push(
-                    context,
-                    new MaterialPageRoute(builder: (context) => Nav()));
               }
             },
           ),
@@ -116,5 +112,40 @@ class _LoginPageState extends State<LoginPage> {
         ]),
       ),
     ));
+  }
+
+  void authenticate(email, password) async {
+    try {
+      UserCredential userAuth = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+
+      Navigator.push(
+          context,
+          new MaterialPageRoute(builder: (context) => Nav()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        Fluttertoast.showToast(
+            msg: "No user found for that email",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      } else if (e.code == 'wrong-password') {
+        Fluttertoast.showToast(
+            msg: "Wrong password provided for that user",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    }
   }
 }

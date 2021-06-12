@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
 
@@ -15,9 +16,6 @@ class RegisterPage extends StatefulWidget{
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
-  // Firebase initialisation
-  final firebaseDB = FirebaseDatabase.instance.reference();
 
   // text field state
   String email ='';
@@ -133,10 +131,17 @@ class _RegisterPageState extends State<RegisterPage> {
                                 if(password == cfmPassword) {
                                   print('swee');
                                   writeData(email, password);
-                                  readData();
-                                  Navigator.push(context, new MaterialPageRoute(
-                                      builder: (context) => LoginPage()
-                                  ));
+                                }
+                                else {
+                                  Fluttertoast.showToast(
+                                      msg: "Passwords does not match",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
                                 }
                               }
                             },
@@ -151,19 +156,40 @@ class _RegisterPageState extends State<RegisterPage> {
     ));
   }
 
-  void writeData(username, password) async{
-    UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+  void writeData(email, password) async{
+    try {
+      UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password
+      );
 
-    firebaseDB.child(result.user!.uid).push().set({
-      'email': email,
-      'password': password
-    });
-    print('success');
-  }
-
-  void readData() {
-    firebaseDB.once().then((DataSnapshot dataSnapShot) {
-      print(dataSnapShot.value);
-    });
+      Navigator.push(context, new MaterialPageRoute(
+          builder: (context) => LoginPage()
+      ));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        Fluttertoast.showToast(
+            msg: "The password provided is too weak",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      } else if (e.code == 'email-already-in-use') {
+        Fluttertoast.showToast(
+            msg: "The account already exists for that email",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
