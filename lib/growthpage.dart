@@ -1,11 +1,21 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/addmeasurements.dart';
 import 'package:growth_app/nav.dart';
 
 
 
-class GrowthPage extends StatelessWidget {
+class GrowthPage extends StatefulWidget{
+  @override
+  _GrowthPageState createState() => _GrowthPageState();
+}
+
+class _GrowthPageState extends State<GrowthPage> {
+
+  // Firebase initialisation
+  final firebaseDB = FirebaseDatabase.instance.reference();
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +55,21 @@ class GrowthPage extends StatelessWidget {
                       topLeft: Radius.circular(25.0)),
                 ),
                 child: Stack(
-
-                )
+                  children: <Widget>[
+                    const SizedBox(height: 30),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                      onPressed: () async {
+                        Navigator.push(context, new MaterialPageRoute(
+                            builder: (context) => AddMeasurements()
+                        ));
+                      },
+                      child: const Text('+ Add Measurements'),
+                    ),
+                  ],
+                ),
             ),
           )
         ],
