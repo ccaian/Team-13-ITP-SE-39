@@ -32,8 +32,8 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
         borderRadius:  BorderRadius.circular(25)
     );
     return new Scaffold(
-        body: Container(
-            padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
+        body: new SingleChildScrollView(
+            //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
             child: Form(
               key: _formKey,
               child: Column(children: <Widget>[
