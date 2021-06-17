@@ -1,12 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:growth_app/profilesetup.dart';
+import 'package:growth_app/resetpassword.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/nav.dart';
-import 'package:growth_app/register.dart';
-import 'package:growth_app/workerhome.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -15,10 +16,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // text field state
+  bool checkboxValue = false;
   String email = '';
   String password = '';
 
   final _formKey = GlobalKey<FormState>();
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
-            obscureText: true,
             decoration: InputDecoration(
               fillColor: Colors.grey,
               border: new OutlineInputBorder(
@@ -73,6 +75,16 @@ class _LoginPageState extends State<LoginPage> {
             },
           ),
           SizedBox(height: 20.0),
+          CheckboxListTile(
+            title: Text("Keep me signed in?"),
+            value: this.checkboxValue,
+            onChanged: (value) {
+              setState(() {
+                this.checkboxValue = value as bool;
+              });
+            },
+          ),
+          SizedBox(height: 20.0),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               primary: Colors.redAccent,
@@ -90,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             onPressed: () async {
               if(_formKey.currentState!.validate()) {
-                authenticate(email, password);
+                authenticate(email, password, checkboxValue);
                 print('pressed log in');
               }
             },
@@ -107,6 +119,9 @@ class _LoginPageState extends State<LoginPage> {
             ),
             onPressed: () {
               print('Forgot Password');
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (context) => ResetPasswordPage()
+              ));
             },
           )
         ]),
@@ -114,16 +129,47 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  void authenticate(email, password) async {
+  void authenticate(email, password, checkboxValue) async {
     try {
       UserCredential userAuth = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password
       );
 
-      Navigator.push(
-          context,
-          new MaterialPageRoute(builder: (context) => Nav()));
+      print(email);
+      if (checkboxValue == true) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('email', email);
+        prefs.setString('password', password);
+
+        print(email);
+         if(email == "darrellerjr@gmail.com") {
+           Navigator.pushReplacement(
+               context,
+               new MaterialPageRoute(builder: (context) => Nav()));
+         }
+         else {
+           Navigator.push(context, new MaterialPageRoute(
+               builder: (context) => ProfileSetUpPage()
+           ));
+           /*Query _userQuery = _database
+               .reference()
+               .child("todo")
+               .orderByChild("email")
+               .equalTo(email);
+
+           _database.reference().child("growth").once().then((DataSnapshot snapShot) {
+             print(snapShot.value);
+              if(snapShot.value != null) {
+                //redirect to parent home. Waiting for Linus update
+              } else {
+                Navigator.pushReplacement(context, new MaterialPageRoute(
+                    builder: (context) => ProfileSetUpPage()
+                ));
+              }
+           });*/
+         }
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(

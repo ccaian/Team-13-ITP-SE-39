@@ -2,12 +2,30 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/register.dart';
+import 'package:growth_app/workerhome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var email = prefs.getString('email');
+  if (email != null) {
+    if(email == 'darrellerjr@gmail.com') {
+      MaterialApp(
+        title: 'Growth App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily:  'Roboto'),
+        home: WorkerHome(),
+      );
+    }
+    else {
+      // redirect to parent page
+    }
+  }
+
   runApp(GrowthApp());
 }
 
@@ -15,13 +33,13 @@ class GrowthApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Growth App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily:  'Roboto'),
-      home: LandingPage(),
-    );
-  }
+      return MaterialApp(
+        title: 'Growth App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily:  'Roboto'),
+        home: LandingPage(), // change to parent home when done
+      );
+    }
 }
 
 class LandingPage extends StatelessWidget {
@@ -128,7 +146,7 @@ class LandingPage extends StatelessWidget {
 
                         ),
                         onPressed: () {
-                          print('pressed log in');
+                          print('pressed register');
                           Navigator.push(context, new MaterialPageRoute(
                               builder: (context) => RegisterPage()
                           ));
