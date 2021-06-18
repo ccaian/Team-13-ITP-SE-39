@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -18,12 +20,11 @@ class ProfileSetUpPage extends StatefulWidget{
 class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
   // text field state
-  String firstName ='';
-  String lastName = '';
-  String email = '';
-  int mobileNumber = 0;
+  var firstName;
+  var lastName;
+  var mobileNumber;
 
-  FirebaseDatabase database = new FirebaseDatabase();
+  final _userRef = FirebaseDatabase.instance.reference().child('user');
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -89,6 +90,10 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
                       ),
                       labelText: 'Mobile Number',
                     ),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ], //
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'Enter Mobile Number';
@@ -140,14 +145,21 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
         ));
   }
 
-  void writeData() async{
-    DatabaseReference _userRef = database.reference().child('growth');
+  void writeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     _userRef.push().set({
-      "name": "" + firstName,
-      "age": "" + lastName,
-      "email": email,
-      "mobile": mobileNumber
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': prefs.getString('email'),
+      'mobile': mobileNumber
     });
+
+    print(firstName);
+    print(lastName);
+    print(int.parse(mobileNumber).runtimeType);
+    print(prefs.getString('email'));
+    print('enter');
 
     //redirect to parent home
   }

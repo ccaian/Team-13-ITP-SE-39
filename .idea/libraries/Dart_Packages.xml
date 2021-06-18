@@ -313,7 +313,7 @@
         <entry key="pedantic">
           <value>
             <list>
-              <option value="$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.0/lib" />
+              <option value="$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.1/lib" />
             </list>
           </value>
         </entry>
@@ -515,7 +515,7 @@
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-2.0.0/lib" />
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-2.0.1/lib" />
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-2.0.1/lib" />
-      <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.0/lib" />
+      <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.1/lib" />
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-8.1.1/lib" />
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_platform_interface-3.6.0/lib" />
       <root url="file://$PROJECT_DIR$/../../../../../flutter/.pub-cache/hosted/pub.dartlang.org/platform-3.0.0/lib" />

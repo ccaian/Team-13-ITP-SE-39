@@ -1,8 +1,6 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
@@ -22,6 +20,10 @@ class _RegisterPageState extends State<RegisterPage> {
   String password = '';
   String cfmPassword = '';
 
+  // Email and Password regex
+  RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,8 @@ class _RegisterPageState extends State<RegisterPage> {
         //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
         child: Form(
           key: _formKey,
-          child: Column(children: <Widget>[
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,children: <Widget>[
                 FittedBox(
                   child: new Image.asset('assets/loginsplash.png', width: 400, height: 380,),
                   fit: BoxFit.fill,
@@ -48,9 +51,20 @@ class _RegisterPageState extends State<RegisterPage> {
                             const Radius.circular(25),
                           ),
                         ),
-                        labelText: 'Username',
+                        labelText: 'Email Address',
                       ),
-                      validator: (val) => val!.isEmpty ? 'Enter a username' : null,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Enter an email address';
+                        }
+                        else if (!emailRegExp.hasMatch(val)){
+                          return 'Enter a valid email address';
+                        }
+                        else {
+                          return null;
+                        }
+                      },
                       onChanged: (val) {
                         setState(() => email = val);
                       },
@@ -73,8 +87,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (val!.isEmpty) {
                           return 'Enter password';
                         }
-                        else if (val.length < 8){
-                          return 'Enter a password with at least 8 characters';
+                        else if (!passwordRegExp.hasMatch(val)){
+                          return 'Enter a password with at least 8 characters, Lower case, Upper case, alphanumeric and special case letter';
                         }
                         else {
                           return null;
@@ -86,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(40.0,0.0,40.0,20.0),
+                  padding: const EdgeInsets.fromLTRB(40.0,0.0,40.0,5.0),
                     child: TextFormField(
                       obscureText: true,
                       decoration: InputDecoration(
@@ -98,16 +112,33 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         labelText: 'Confirm Password',
                       ),
+                      validator: (val) =>
+                        val != password ? 'Password does not match' : null,
                       onChanged: (val) {
                         setState(() => cfmPassword = val);
                       },
                     ),
                   ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(52.0,0.0,40.0,5.0),
+                      child: Text(
+                          "Password Requirement:"
+                              "\n* At least 8 characters, "
+                              "\n* At least 1 Lower case, "
+                              "\n* At least 1 Upper case, "
+                              "\n* At least 1 Alphanumeric number "
+                              "\n* At least 1 Special case letter",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12.0
+                          ),
+                      ),
+                ),
                 new Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Expanded(child: Padding(
-                          padding: const EdgeInsets.fromLTRB(80.0,20.0,80.0,0.0),
+                          padding: const EdgeInsets.fromLTRB(80.0,10.0,80.0,0.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               primary: Colors.redAccent,
@@ -147,7 +178,6 @@ class _RegisterPageState extends State<RegisterPage> {
                             },
                           )
                       ))
-
                     ]
                 ),
               ]

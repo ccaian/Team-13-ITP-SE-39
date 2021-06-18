@@ -53,10 +53,20 @@ class _LoginPageState extends State<LoginPage> {
                           const Radius.circular(25),
                         ),
                       ),
-                      labelText: 'Username',
+                      labelText: 'Email Address',
                     ),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Enter your username' : null,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'Enter an email address';
+                      }
+                      else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)){
+                        return 'Enter a valid email address';
+                      }
+                      else {
+                        return null;
+                      }
+                    },
                     onChanged: (val) {
                       setState(() => email = val);
                     },
@@ -151,13 +161,12 @@ class _LoginPageState extends State<LoginPage> {
     try {
       UserCredential userAuth = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('email', email);
 
       print(email);
       if (checkboxValue == true) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString('email', email);
         prefs.setString('password', password);
-
         print(email);
         if (email == "darrellerjr@gmail.com") {
           Navigator.pushReplacement(
