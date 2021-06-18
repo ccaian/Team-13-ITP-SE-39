@@ -20,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String password = '';
   String cfmPassword = '';
 
-  // Email and Password regex
+  // Email and Password Regex Expression
   RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
 

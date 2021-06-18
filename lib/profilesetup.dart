@@ -1,11 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -152,15 +149,9 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       'firstName': firstName,
       'lastName': lastName,
       'email': prefs.getString('email'),
-      'mobile': mobileNumber
+      'mobile': int.parse(mobileNumber)
     });
-
-    print(firstName);
-    print(lastName);
-    print(int.parse(mobileNumber).runtimeType);
-    print(prefs.getString('email'));
-    print('enter');
-
+    
     //redirect to parent home
   }
 }

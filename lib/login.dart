@@ -20,6 +20,9 @@ class _LoginPageState extends State<LoginPage> {
   String email = '';
   String password = '';
 
+  // Email Regex Expression
+  RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
   final _formKey = GlobalKey<FormState>();
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
@@ -60,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                       if (val!.isEmpty) {
                         return 'Enter an email address';
                       }
-                      else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val)){
+                      else if (!emailRegExp.hasMatch(val)){
                         return 'Enter a valid email address';
                       }
                       else {
@@ -176,11 +179,11 @@ class _LoginPageState extends State<LoginPage> {
               new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
           /*Query _userQuery = _database
                .reference()
-               .child("todo")
+               .child("user")
                .orderByChild("email")
                .equalTo(email);
 
-           _database.reference().child("growth").once().then((DataSnapshot snapShot) {
+           _database.reference().child("user").once().then((DataSnapshot snapShot) {
              print(snapShot.value);
               if(snapShot.value != null) {
                 //redirect to parent home. Waiting for Linus update
