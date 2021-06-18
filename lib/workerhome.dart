@@ -7,8 +7,8 @@ import 'package:growth_app/workerselfamily.dart';
 
 
 class WorkerHome extends StatelessWidget {
-
   @override
+  String famName = "Miranda Familys";
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
@@ -69,14 +69,7 @@ class WorkerHome extends StatelessWidget {
                           top: MediaQuery.of(context).size.width * 0.13,
                           left: MediaQuery.of(context).size.width * 0.11,
 
-                          child: Text(
-                              "Currently Managing\nMiranda Family",
-                              style: TextStyle(
-                                fontSize: 22.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              )
-                          )
+                          child: buildText(context),
                       ),
                       Positioned(
                           top: MediaQuery.of(context).size.width * 0.28,
@@ -124,13 +117,24 @@ class WorkerHome extends StatelessWidget {
       ),
     );
   }
-}
-void _navigateAndDisplaySelection(BuildContext context) async {
-  // Navigator.push returns a Future that completes after calling
-  // Navigator.pop on the Selection Screen.
-  final result = await Navigator.push(context, new MaterialPageRoute(
-      builder: (context) => WorkerSelFamily()
-  ));
-  print('$result');
+  Widget buildText(BuildContext context) => Text(
+      "Currently Managing\n" + famName,
+      style: TextStyle(
+        fontSize: 22.0,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      )
+  );
 
+  void _navigateAndDisplaySelection(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(context, new MaterialPageRoute(
+        builder: (context) => WorkerSelFamily()
+    ));
+    famName = result;
+    (context as Element).reassemble();
+    print(result);
+  }
 }
+

@@ -45,6 +45,7 @@ class WorkerSelFamily extends StatelessWidget {
                       topRight: Radius.circular(25.0),
                       topLeft: Radius.circular(25.0)),
                 ),
+
               child:Scaffold(
                 body: new ListView.builder
                   (padding: const EdgeInsets.all(8),
@@ -52,22 +53,19 @@ class WorkerSelFamily extends StatelessWidget {
                     itemBuilder: (BuildContext ctxt, int index) {
                       return new GestureDetector( //You need to make my child interactive
                         onTap: () {
+
                           Navigator.pop(context, litems[index]);
                         },
-                        child: new Card( //I am the clickable child
-                          color: Colors.grey,
+
                           child: new Column(
                             children: <Widget>[
                               //new Image.network(video[index]),
                               new Padding(padding: new EdgeInsets.all(16.0)),
-                              new Text(litems[index],
-                                style: new TextStyle(fontWeight: FontWeight.bold,
-                                    color: Colors.black, fontSize: 20),
-                              ),
+                              buildText(index),
 
 
                             ],
-                          ),),
+                          ),
                       );
                         //new Text(litems[index]);
                     }
@@ -81,5 +79,22 @@ class WorkerSelFamily extends StatelessWidget {
     );
 
   }
-
+  Widget buildText(int items) {
+  return Card(
+  child: ExpansionTile(
+  title: Text(
+  litems[items] + "Family",
+  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+  ),
+  children: <Widget>[
+  ListTile(
+  title: Text(
+    'Child 1',
+  style: TextStyle(fontWeight: FontWeight.w700),
+  ),
+  )
+  ],
+  ),
+  );
+  }
 }
