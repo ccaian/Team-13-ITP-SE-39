@@ -2,8 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/nav.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -155,3 +153,4 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
     //redirect to parent home
   }
 }
+
