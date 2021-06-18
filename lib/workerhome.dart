@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/workerselfamily.dart';
 
 
 
@@ -110,11 +111,7 @@ class WorkerHome extends StatelessWidget {
 
                             ),
                             onPressed: () {
-
-                              print('pressed log in');
-                              Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => Nav()
-                              ));
+                              _navigateAndDisplaySelection(context);
                             },
                           )
                       )
@@ -127,4 +124,13 @@ class WorkerHome extends StatelessWidget {
       ),
     );
   }
+}
+void _navigateAndDisplaySelection(BuildContext context) async {
+  // Navigator.push returns a Future that completes after calling
+  // Navigator.pop on the Selection Screen.
+  final result = await Navigator.push(context, new MaterialPageRoute(
+      builder: (context) => WorkerSelFamily()
+  ));
+  print('$result');
+
 }
