@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/growthpage.dart';
 import 'package:growth_app/nav.dart';
 import 'package:intl/intl.dart';
@@ -18,16 +19,20 @@ class AddMeasurements extends StatefulWidget {
 
 class _AddMeasurementsPageState extends State<AddMeasurements> {
 
-  // Firebase initialisation
-  final firebaseDB = FirebaseDatabase.instance.reference();
-
   String date = '';
   double weight = 0;
   double height = 0;
   double head = 0;
 
+  //final databaseRef = FirebaseDatabase.instance.reference();
   final _formKey = GlobalKey<FormState>();
   final format = DateFormat("dd-MM-yyyy");
+
+  var _growthRef = FirebaseDatabase.instance.reference().child('growth');
+  TextEditingController _dateControl = TextEditingController();
+  TextEditingController _weightControl = TextEditingController();
+  TextEditingController _heightControl = TextEditingController();
+  TextEditingController _headControl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +98,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                         onChanged: (val) {
                           setState(() => date);
                         },
+                        controller: _dateControl,
                       ),
                     ),
                     Padding(
@@ -114,6 +120,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                         onChanged: (val) {
                           setState(() => weight = val as double);
                         },
+                        controller: _weightControl,
                       ),
                     ),
                     Padding(
@@ -135,6 +142,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                         onChanged: (val) {
                           setState(() => height = val as double);
                         },
+                        controller: _heightControl,
                       ),
                     ),
                     Padding(
@@ -156,6 +164,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                         onChanged: (val) {
                           setState(() => head = val as double);
                         },
+                        controller: _headControl,
                       ),
                     ),
                     new Row(
@@ -181,9 +190,21 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                 onPressed: () async {
                                   if(_formKey.currentState!.validate()){
                                     print('Submit');
+                                    addData(date, weight, height, head);
                                     Navigator.push(context, new MaterialPageRoute(
                                         builder: (context) => GrowthPage()
                                     ));
+                                  }
+                                  else {
+                                    Fluttertoast.showToast(
+                                        msg: "Please fill in all required fields.",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
                                   }
                                 },
                               )
@@ -200,5 +221,14 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
       ),
     ),
     );
+  }
+
+  void addData(date, weight, height, head) {
+    _growthRef.push().set({
+      'date': _dateControl.text,
+      'weight': _weightControl.text,
+      'height': _heightControl.text,
+      'head': _headControl.text
+    });
   }
 }
