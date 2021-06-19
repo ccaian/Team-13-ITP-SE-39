@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,12 @@ class GrowthPage extends StatefulWidget{
 
 class _GrowthPageState extends State<GrowthPage> {
 
-  // Firebase initialisation
-  final firebaseDB = FirebaseDatabase.instance.reference();
+  String date = '';
+  double weight = 0;
+  double height = 0;
+  double head = 0;
+
+  var growthRef = FirebaseDatabase.instance.reference().child('growth');
 
   @override
   Widget build(BuildContext context) {
@@ -70,61 +75,52 @@ class _GrowthPageState extends State<GrowthPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0.0,50.0,0.0,0.0),
-                      child: DataTable (
-                        columnSpacing: 40.0,
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Text(
-                              'Date',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Weight',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Height',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                          DataColumn(
-                            label: Text(
-                              'Head',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ),
-                        ],
-                        rows: const <DataRow>[
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text('2021-06-10')),
-                              DataCell(Text('4.4 kg')),
-                              DataCell(Text('54.6 cm')),
-                              DataCell(Text('34.2 cm')),
-                            ],
-                          ),
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text('2021-06-11')),
-                              DataCell(Text('4.6 kg')),
-                              DataCell(Text('54.7 cm')),
-                              DataCell(Text('34.3 cm')),
-                            ],
-                          ),
-                          DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text('2021-06-12')),
-                              DataCell(Text('4.7 kg')),
-                              DataCell(Text('54.8 cm')),
-                              DataCell(Text('34.4 cm')),
-                            ],
-                          ),
-                        ],
+                      child: FutureBuilder (
+                        future: viewData(),
+                        builder: (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.data == null) {
+                            print("future builder:");
+                            print(snapshot.data);
+                            return Text('no data');
+                          } else {
+                            print('data present');
+                            if(!snapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if(snapshot.hasData) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                verticalDirection: VerticalDirection.down,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                        padding: EdgeInsets.all(5),
+                                        child: dataBody(snapshot.data)
+                                    ),
+                                  )
+                                ],
+                              );
+                            }
+                            return Center();
+                            }
+                        }
                       )
+                      // child: StreamBuilder<QuerySnapshot> (
+                      //   stream: growthRef,
+                      //   builder: (context, snapshot) {
+                      //     if (!snapshot.hasData) return LinearProgressIndicator();
+                      //     return DataTable(
+                      //     columns: [
+                      //       DataColumn(label: Text('Date')),
+                      //       DataColumn(label: Text('Weight')),
+                      //       DataColumn(label: Text('Height')),
+                      //       DataColumn(label: Text('Head')),
+                      //     ],
+                      //     rows: _buildList(context, snapshot.data!.docs)
+                      //     );
+                      //     },
+                      // )
                     )
                   ],
                 ),
@@ -134,4 +130,114 @@ class _GrowthPageState extends State<GrowthPage> {
       ),
     );
   }
+
+  viewData() {
+    growthRef.once().then((DataSnapshot snapshot){
+      Map<dynamic, dynamic> data = snapshot.value;
+      data.forEach((key,values) {
+        print("view data");
+        print(data.values);
+      });
+      return data.values;
+      //print(values);
+      //return values;
+      //values.forEach((key,values) {
+      //print(values);
+      // print(values["date"]);
+      // print(values["weight"]);
+      // print(values["height"]);
+      // print(values["head"]);
+      //});
+    });
+  }
+
+  SingleChildScrollView dataBody(List<Growth> growthList) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: DataTable(
+        sortColumnIndex: 0,
+        showCheckboxColumn: false,
+        columns: [
+          DataColumn(
+              label: Text("Date"),
+              numeric: false,
+              tooltip: "Date"
+          ),
+          DataColumn(
+            label: Text("Weight"),
+            numeric: false,
+            tooltip: "Weight",
+          ),
+          DataColumn(
+            label: Text("Height"),
+            numeric: false,
+            tooltip: "Height",
+          ),
+          DataColumn(
+            label: Text("Head"),
+            numeric: false,
+            tooltip: "Head",
+          ),
+        ],
+        rows: growthList
+            .map(
+              (growth) => DataRow(
+              cells: [
+                DataCell(
+                    Text(growth.date)
+                ),
+                DataCell(
+                  Text(growth.weight.toString()),
+                ),
+                DataCell(
+                  Text(growth.height.toString()),
+                ),
+                DataCell(
+                  Text(growth.head.toString()),
+                ),
+              ]),
+        )
+            .toList(),
+      ),
+    );
+  }
+
+  // List<DataRow> _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+  //   return  snapshot.map((data) => _buildListItem(context, data)).toList();
+  // }
+  //
+  // DataRow _buildListItem(BuildContext context, DocumentSnapshot data) {
+  //   final growth = Growth.fromSnapshot(data);
+  //
+  //   return DataRow(cells: [
+  //     DataCell(Text(growth.date)),
+  //     DataCell(Text(growth.weight.toString())),
+  //     DataCell(Text(growth.height.toString())),
+  //     DataCell(Text(growth.head.toString())),
+  //   ]);
+  // }
+}
+
+class Growth {
+  final String date;
+  final double weight;
+  final double height;
+  final double head;
+  final DocumentReference reference;
+
+  Growth.fromMap(Map<dynamic, dynamic> map, {required this.reference})
+      : assert(map['date'] != null),
+        assert(map['weight'] != null),
+        assert(map['height'] != null),
+        assert(map['head'] != null),
+        date = map['date'],
+        weight = map['weight'],
+        height = map['height'],
+        head = map['head'];
+
+  Growth.fromSnapshot(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data as Map<dynamic, dynamic>, reference: snapshot.reference);
+
+  @override
+  String toString() => "Growth<$date:$weight:$height:$head>";
 }
