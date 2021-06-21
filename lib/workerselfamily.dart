@@ -11,7 +11,6 @@ class WorkerSelFamily extends StatefulWidget{
 }
 
 class _WorkerSelFamilyState extends State<WorkerSelFamily> {
-
   List<String> litems = ["Lim", "Miranda", "Tan", "Ian"];
 
   @override
@@ -55,7 +54,10 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                         return new GestureDetector(
                           //You need to make my child interactive
                           onTap: () {
-                            Navigator.pop(context, litems[index]);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => Nav()));
                           },
 
                           child: new Column(
