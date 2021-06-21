@@ -128,9 +128,12 @@ class _PhotoPageState extends State<PhotoPage> {
                                                         child: const Text('Cancel'),
                                                       ),
                                                       TextButton(
-                                                        onPressed: () =>Navigator.push(context, new MaterialPageRoute(
+                                                        onPressed: (){
+
+                                                          Navigator.pop(context);
+                                                          Navigator.push(context, new MaterialPageRoute(
                                                             builder: (context) => UploadPhoto(refUrl: 'ccaian3@gmail.com/'+albumNameController.text.replaceAll(' ', '_'))
-                                                        )),
+                                                        ));},
                                                         child: const Text('OK'),
                                                       ),
                                                     ],

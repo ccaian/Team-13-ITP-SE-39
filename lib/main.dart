@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/milestoneguidance.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/workerhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -156,6 +157,27 @@ class LandingPage extends StatelessWidget {
 
                 ]
             ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0,0.0,15.0,0.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.announcement_rounded),
+                    color: Colors.indigo[500],
+                    tooltip: 'Increase volume by 10',
+                    onPressed: () {
+                      Navigator.push(context, new MaterialPageRoute(
+                          builder: (context) => MilestoneGuidance()
+                      ));
+                    },
+                  ),
+                ),
+
+              ],
+
+            )
           ]
         ),
       )
