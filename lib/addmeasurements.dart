@@ -24,7 +24,6 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
   double height = 0;
   double head = 0;
 
-  //final databaseRef = FirebaseDatabase.instance.reference();
   final _formKey = GlobalKey<FormState>();
   final format = DateFormat("dd-MM-yyyy");
 

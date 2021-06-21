@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/workerselfamily.dart';
 
 
 
-class WorkerHome extends StatelessWidget {
+class ParentHome extends StatelessWidget {
   @override
-  String famName = "Miranda Family";
+  String PatName = "Mable";
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
@@ -32,44 +33,44 @@ class WorkerHome extends StatelessWidget {
               )
           ),
           Positioned(
-              top: 40,
-              right: -10,
-              child: new Image.asset('assets/healthcare.png', width: 140.0),
+            top: 40,
+            right: -10,
+            child: new Image.asset('assets/healthcare.png', width: 140.0),
           ),
           Positioned(
             bottom: 0,
             child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
 
-                  topRight: Radius.circular(25.0),
-                  topLeft: Radius.circular(25.0)),
-              ),
+                      topRight: Radius.circular(25.0),
+                      topLeft: Radius.circular(25.0)),
+                ),
                 child: Stack(
                     children: <Widget>[
-                    Positioned(
-                    top: MediaQuery.of(context).size.width * 0.07,
-                    left: MediaQuery.of(context).size.width * 0.05,
-                    child: Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        decoration: BoxDecoration(
-                          color: Color(0xff4C52A8),
-
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(25),
-                          ),
-                        ),
-                      )
-                    ),
                       Positioned(
-                          top: MediaQuery.of(context).size.width * 0.13,
-                          left: MediaQuery.of(context).size.width * 0.11,
+                          top: MediaQuery.of(context).size.width * 0.07,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            decoration: BoxDecoration(
+                              color: Color(0xff4C52A8),
 
-                          child: buildText(context),
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                          )
+                      ),
+                      Positioned(
+                        top: MediaQuery.of(context).size.width * 0.13,
+                        left: MediaQuery.of(context).size.width * 0.11,
+
+                        child: buildText(context),
                       ),
                       Positioned(
                           top: MediaQuery.of(context).size.width * 0.28,
@@ -118,7 +119,7 @@ class WorkerHome extends StatelessWidget {
     );
   }
   Widget buildText(BuildContext context) => Text(
-      "Currently Managing\n" + famName + " Family",
+      "Currently Managing\n" + PatName,
       style: TextStyle(
         fontSize: 22.0,
         fontWeight: FontWeight.bold,
@@ -130,11 +131,10 @@ class WorkerHome extends StatelessWidget {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(context, new MaterialPageRoute(
-        builder: (context) => WorkerSelFamily()
+        builder: (context) => ParentSelChild()
     ));
-    famName = result;
+    PatName = result;
     (context as Element).reassemble();
     print(result);
   }
 }
-
