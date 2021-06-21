@@ -195,6 +195,10 @@ class _LoginPageState extends State<LoginPage> {
            });*/
         }
       }
+      else{
+        Navigator.pushReplacement(
+            context, new MaterialPageRoute(builder: (context) => Nav()));
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
