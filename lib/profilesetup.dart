@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:growth_app/workerhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -149,8 +150,9 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       'email': prefs.getString('email'),
       'mobile': int.parse(mobileNumber)
     });
-    
-    //redirect to parent home
+
+    Navigator.pushReplacement(context,
+        new MaterialPageRoute(builder: (context) => WorkerHome()));
   }
 }
 
