@@ -197,10 +197,15 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
       else{
-        Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
-        // Navigator.pushReplacement(
-        //     context, new MaterialPageRoute(builder: (context) => Nav()));
+        if (email == "darrellerjr@gmail.com") {
+          Navigator.pushReplacement(
+              context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
+        } else {
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
+          // Navigator.pushReplacement(
+          //     context, new MaterialPageRoute(builder: (context) => Nav()));
+        }
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
