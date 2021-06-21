@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/resetpassword.dart';
+import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -176,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
               context, new MaterialPageRoute(builder: (context) => Nav()));
         } else {
           Navigator.push(context,
-              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
+              new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
           /*Query _userQuery = _database
                .reference()
                .child("user")
