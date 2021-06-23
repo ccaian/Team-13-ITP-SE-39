@@ -3,12 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/workerselfamily.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-
-
-class WorkerHome extends StatelessWidget {
+class WorkerHome extends StatefulWidget {
   @override
-  String famName = "Miranda Family";
+  _WorkerHomeState createState() => _WorkerHomeState();
+
+}
+class _WorkerHomeState extends State<WorkerHome> {
+  @override
+  void initState(){
+    loadPagePref();
+    super.initState();
+  }
+  String? famName = "Miranda Family";
+  String?  result = "";
+
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
@@ -117,8 +127,9 @@ class WorkerHome extends StatelessWidget {
       ),
     );
   }
+
   Widget buildText(BuildContext context) => Text(
-      "Currently Managing\n" + famName + " Family",
+      "Currently Managing\n" + famName! + " Family",
       style: TextStyle(
         fontSize: 22.0,
         fontWeight: FontWeight.bold,
@@ -129,12 +140,21 @@ class WorkerHome extends StatelessWidget {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(context, new MaterialPageRoute(
+    Navigator.push(context, new MaterialPageRoute(
         builder: (context) => WorkerSelFamily()
     ));
-    famName = result;
+
+
+
     (context as Element).reassemble();
     print(result);
   }
-}
 
+  Future loadPagePref() async{
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    result = sharedPreferences.getString('Fam');
+    setState(() {
+      famName = result;
+    });
+  }
+}
