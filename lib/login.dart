@@ -174,10 +174,10 @@ class _LoginPageState extends State<LoginPage> {
         print(email);
         if (email == "darrellerjr@gmail.com") {
           Navigator.pushReplacement(
-              context, new MaterialPageRoute(builder: (context) => Nav()));
+              context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
         } else {
-          Navigator.push(context,
-              new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
           /*Query _userQuery = _database
                .reference()
                .child("user")
@@ -197,10 +197,15 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
       else{
-        Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
-        // Navigator.pushReplacement(
-        //     context, new MaterialPageRoute(builder: (context) => Nav()));
+        if (email == "darrellerjr@gmail.com") {
+          Navigator.pushReplacement(
+              context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
+        } else {
+          Navigator.pushReplacement(context,
+              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
+          // Navigator.pushReplacement(
+          //     context, new MaterialPageRoute(builder: (context) => Nav()));
+        }
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

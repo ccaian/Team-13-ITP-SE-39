@@ -190,9 +190,10 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                   if(_formKey.currentState!.validate()){
                                     print('Submit');
                                     addData(date, weight, height, head);
-                                    Navigator.push(context, new MaterialPageRoute(
+                                    Navigator.pushReplacement(context, new MaterialPageRoute(
                                         builder: (context) => GrowthPage()
                                     ));
+                                    Navigator.pop(context);
                                   }
                                   else {
                                     Fluttertoast.showToast(
