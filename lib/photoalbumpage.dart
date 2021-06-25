@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:flutter/services.dart';
+import 'package:growth_app/photodetail.dart';
 import 'package:growth_app/uploadphoto.dart';
 
 import 'api/firebase_api.dart';
@@ -113,7 +114,6 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                                             mainAxisSpacing: 20.0,
                                           ),
                                           itemBuilder: (context, index) {
-
                                             final file = files[index];
                                             return buildFile(context, file, index);
                                           },
@@ -154,23 +154,29 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
 
   Widget buildFile(BuildContext context, FirebaseFile file, int index) => Stack(
     children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(30.0),
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: Image.network(
-              file.url,
-              fit: BoxFit.fill
+      InkWell(
+        onTap: () {
+          Navigator.push(context, new MaterialPageRoute(
+              builder: (context) => PhotoDetail()
+          ));
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30.0),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Image.network(
+                file.url,
+                fit: BoxFit.fill
+            ),
           ),
-        ),
 
-        /*Image.network(
+          /*Image.network(
           file.url,
           height: 200.0,
           width: 200.0,
         ),*/
-      ),
-
+        ),
+      )
 
     ],
   );
