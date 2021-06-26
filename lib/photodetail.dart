@@ -57,48 +57,6 @@ class _PhotoDetailState extends State<PhotoDetail> {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
                             child: new Image(image: new NetworkImage(imageUrl), width: 140.0)
-        // child:FutureBuilder<List<FirebaseFile>>(
-                          //   future: futureFiles,
-                          //   builder: (context, snapshot) {
-                          //     switch (snapshot.connectionState) {
-                          //       case ConnectionState.waiting:
-                          //
-                          //         return Center(child: CircularProgressIndicator());
-                          //       default:
-                          //         if (snapshot.hasError) {
-                          //           return Center(child: Text('Some error occurred!'));
-                          //         } else {
-                          //           final files = snapshot.data!;
-                          //
-                          //           print(snapshot.data!.length);
-                          //           return Column(
-                          //             crossAxisAlignment: CrossAxisAlignment.start,
-                          //             children: [
-                          //               Expanded(
-                          //                 child: Padding(
-                          //                   padding: const EdgeInsets.fromLTRB(0,0.0,0,0),
-                          //                   child: GridView.builder(
-                          //                     itemCount: files.length,
-                          //                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          //                       childAspectRatio: 1,
-                          //                       crossAxisCount: 2,
-                          //                       crossAxisSpacing: 20.0,
-                          //                       mainAxisSpacing: 20.0,
-                          //                     ),
-                          //                     itemBuilder: (context, index) {
-                          //
-                          //                       final file = files[index];
-                          //                       return buildFile(context, file, index);
-                          //                     },
-                          //                   ),
-                          //                 ),
-                          //               ),
-                          //             ],
-                          //           );
-                          //         }
-                          //     }
-                          //   },
-                          // ),
 
                         )
                     ),
