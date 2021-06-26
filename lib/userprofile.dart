@@ -9,18 +9,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-class ProfileSetUpPage extends StatefulWidget{
+class UserProfilePage extends StatefulWidget{
 
-  @override
-  _ProfileSetUpPageState createState() => _ProfileSetUpPageState();
+  _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
+class _UserProfilePageState extends State<UserProfilePage> {
 
   // text field state
   var firstName;
   var lastName;
   var mobileNumber;
+  var _editToggle = true;
 
   final _userRef = FirebaseDatabase.instance.reference().child('user');
   final _formKey = GlobalKey<FormState>();
@@ -32,7 +32,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
     );
     return new Scaffold(
         body: new SingleChildScrollView(
-            //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
+          //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
             child: Form(
               key: _formKey,
               child: Column(children: <Widget>[
@@ -43,6 +43,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(40.0,0.0,40.0,20.0),
                   child: TextFormField(
+                    readOnly: _editToggle,
                     decoration: InputDecoration(
                       fillColor: Colors.grey,
                       border: new OutlineInputBorder(
@@ -155,6 +156,10 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
     Navigator.pushReplacement(context,
         new MaterialPageRoute(builder: (context) => ParentHome()));
+  }
+
+  void readData() async {
+
   }
 }
 

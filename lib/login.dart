@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final _formKey = GlobalKey<FormState>();
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final _userDbRef = FirebaseDatabase.instance.reference().child("user");
 
   @override
   Widget build(BuildContext context) {
@@ -176,24 +176,25 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
               context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
         } else {
+
           Navigator.pushReplacement(context,
               new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
-          /*Query _userQuery = _database
-               .reference()
-               .child("user")
+
+          Query _userQuery = _userDbRef
                .orderByChild("email")
                .equalTo(email);
 
-           _database.reference().child("user").once().then((DataSnapshot snapShot) {
+           _userQuery.once().then((DataSnapshot snapShot) {
              print(snapShot.value);
               if(snapShot.value != null) {
+                print(snapShot);
                 //redirect to parent home. Waiting for Linus update
               } else {
                 Navigator.pushReplacement(context, new MaterialPageRoute(
                     builder: (context) => ProfileSetUpPage()
                 ));
               }
-           });*/
+           });
         }
       }
       else{
