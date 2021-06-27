@@ -1,13 +1,6 @@
-import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:growth_app/model/child_data.dart';
-import 'package:growth_app/nav.dart';
-import 'package:growth_app/workerhome.dart';
-
 import 'addChild.dart';
 
 
