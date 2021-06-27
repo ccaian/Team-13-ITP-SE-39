@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:growth_app/parenthome.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/resetpassword.dart';
+import 'package:growth_app/userprofile.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   // text field state
   bool checkboxValue = false;
   String email = '';
@@ -25,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final _formKey = GlobalKey<FormState>();
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final _userDbRef = FirebaseDatabase.instance.reference().child("user");
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
                   child: (TextFormField(
+                    initialValue: email,
                     decoration: InputDecoration(
                       fillColor: Colors.grey,
                       border: new OutlineInputBorder(
@@ -79,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                   padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
                   child: (TextFormField(
+                    initialValue: password,
                     obscureText: true,
                     decoration: InputDecoration(
                       fillColor: Colors.grey,
@@ -170,30 +175,13 @@ class _LoginPageState extends State<LoginPage> {
 
       print(email);
       if (checkboxValue == true) {
+        prefs.setBool('rmbMe', true);
         prefs.setString('password', password);
-        print(email);
         if (email == "darrellerjr@gmail.com") {
           Navigator.pushReplacement(
               context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
         } else {
-          Navigator.pushReplacement(context,
-              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
-          /*Query _userQuery = _database
-               .reference()
-               .child("user")
-               .orderByChild("email")
-               .equalTo(email);
-
-           _database.reference().child("user").once().then((DataSnapshot snapShot) {
-             print(snapShot.value);
-              if(snapShot.value != null) {
-                //redirect to parent home. Waiting for Linus update
-              } else {
-                Navigator.pushReplacement(context, new MaterialPageRoute(
-                    builder: (context) => ProfileSetUpPage()
-                ));
-              }
-           });*/
+          userVerification();
         }
       }
       else{
@@ -201,10 +189,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
               context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
         } else {
-          Navigator.pushReplacement(context,
-              new MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
-          // Navigator.pushReplacement(
-          //     context, new MaterialPageRoute(builder: (context) => Nav()));
+          userVerification();
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -228,5 +213,25 @@ class _LoginPageState extends State<LoginPage> {
             fontSize: 16.0);
       }
     }
+  }
+
+  void userVerification() {
+    Query _userQuery = _userDbRef
+        .orderByChild("email")
+        .equalTo(email);
+
+    _userQuery.once().then((DataSnapshot snapShot) {
+      print(snapShot.value);
+      // User profile exist in DB => to home page
+      if(snapShot.value != null) {
+        Navigator.pushReplacement(context,
+            new MaterialPageRoute(builder: (context) => UserProfilePage()));
+      } else {
+        // User profile does not exist in DB => to home page
+        Navigator.pushReplacement(context, new MaterialPageRoute(
+            builder: (context) => ProfileSetUpPage()
+        ));
+      }
+    });
   }
 }

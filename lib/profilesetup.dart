@@ -104,7 +104,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
                       }
                     },
                     onChanged: (val) {
-                      setState(() => mobileNumber = val as int);
+                      setState(() => mobileNumber = val);
                     },
                   ),
                 ),
