@@ -155,16 +155,46 @@ class _UserProfilePageState extends State<UserProfilePage> {
         SizedBox(height: 0.0),
         _buttonToggle
             ? const SizedBox.shrink()
+            : new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                Widget>[
+                Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(80.0, 0.0, 80.0, 0.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.redAccent,
+                          minimumSize: Size(50, 50),
+                          shape: shape,
+                        ),
+                        child: new Text(
+                          "Cancel",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          _editToggle = false;
+                          hideButton();
+                        },
+                      )),
+                )
+              ]),
+        SizedBox(height: 0.0),
+        _buttonToggle
+            ? const SizedBox.shrink()
             : new Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                     Expanded(
                         child: Padding(
                             padding: const EdgeInsets.fromLTRB(
-                                80.0, 00.0, 80.0, 0.0),
+                                80.0, 10.0, 80.0, 0.0),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.redAccent,
+                                primary: Colors.blueAccent,
                                 minimumSize: Size(50, 50),
                                 shape: shape,
                               ),
@@ -183,44 +213,41 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 hideButton();
                               },
                             )))
-                  ]),
+                  ])
       ]),
     )));
   }
 
-  void retrieveData() async {
+  Future<void> retrieveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     email = prefs.getString('email');
 
     Query _userQuery = _userRef.orderByChild("email").equalTo(email);
 
-    _userQuery.once().then((DataSnapshot snapShot) {
+    await _userQuery.once().then((DataSnapshot snapShot) {
       print(snapShot.value);
       // User profile exist in DB => to home page
       if (snapShot.value != null) {
         Map<dynamic, dynamic> values = snapShot.value;
-        values.forEach((key,values) {
+        values.forEach((key, values) {
           userKey = key;
           firstName = values['firstName'];
           lastName = values['lastName'];
           mobileNumber = values['mobile'];
         });
-        print(userKey);
+        setState(() {});
       }
     });
   }
 
   updateDetails() {
-    _userRef.child(userKey).update({
-      'firstName': firstName,
-      'lastName': lastName,
-      'mobile': mobileNumber
-    });
+    _userRef.child(userKey).update(
+        {'firstName': firstName, 'lastName': lastName, 'mobile': mobileNumber});
   }
 
   void hideButton() {
     setState(() {
-      if(_buttonToggle) {
+      if (_buttonToggle) {
         _buttonToggle = !_buttonToggle;
       } else {
         _buttonToggle = true;
