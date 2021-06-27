@@ -225,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
       // User profile exist in DB => to home page
       if(snapShot.value != null) {
         Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => UserProfilePage()));
+            new MaterialPageRoute(builder: (context) => ParentHome()));
       } else {
         // User profile does not exist in DB => to home page
         Navigator.pushReplacement(context, new MaterialPageRoute(
