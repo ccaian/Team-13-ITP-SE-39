@@ -1,14 +1,34 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/model/child_data.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/workerhome.dart';
 
+import 'addChild.dart';
 
 
-class ParentSelChild extends StatelessWidget {
-  List<String> litems = ["Andrew","Ian","Joshua","Mable"];
+
+class ParentSelChild extends StatefulWidget {
   @override
+  _ParentSelChildState createState() => _ParentSelChildState();
+}
+
+class _ParentSelChildState extends State<ParentSelChild> {
+  List<String> litems = [];
+  String name = '';
+  DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
+
+  @override
+  void initState(){
+    makeList();
+    print('post func');
+    print(litems);
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xff4C52A8),
@@ -46,7 +66,6 @@ class ParentSelChild extends StatelessWidget {
                     topLeft: Radius.circular(25.0)),
               ),
               child: Scaffold(
-
                   body: new ListView.builder
                     (padding: const EdgeInsets.all(8),
                       itemCount: litems.length,
@@ -84,7 +103,9 @@ class ParentSelChild extends StatelessWidget {
 
 
   }
+
   Widget buildText(int items) {
+    print('at build text');
     return Card(
       child:
           ListTile(
@@ -99,38 +120,37 @@ class ParentSelChild extends StatelessWidget {
   Widget addButton(BuildContext context){
     return  Column(
         children: <Widget>[ TextButton(
-        style: TextButton.styleFrom(
-        textStyle: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
-    ),
-      onPressed: () async {
-        createAlertDialog(context).then((onValue){
-          litems.add("$onValue");
-          (context as Element).reassemble();
-        });
-    },
-      child: const Text('+'),
-    ),
-    ]);}
-
-    Future<dynamic> createAlertDialog(BuildContext context) {
-      TextEditingController patientContoller = TextEditingController();
-
-      return showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          title: Text("Enter New Patient's Name: "),
-          content: TextField(
-            controller: patientContoller,
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          actions: <Widget>[
-            MaterialButton(
-              elevation: 5.0,
-              child: Text('Submit'),
-              onPressed: (){
-                Navigator.of(context).pop(patientContoller.text.toString());
-              },
-            )
-          ]
-        );
+          onPressed: () async {
+            Navigator.push(context, new MaterialPageRoute(
+                builder: (context) => AddChild()
+            ));
+          },
+          child: const Text('+'),
+        ),
+        ]);}
+
+  makeList(){
+    List<String> newList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        newList.add(value['name'].toString());
       });
-    }
+      print(newList);
+      setState(() {
+        litems = newList;
+      });
+      print(litems);
+    });
+  }
 }
+

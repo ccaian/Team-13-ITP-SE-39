@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/workerhome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkerSelFamily extends StatefulWidget{
 
@@ -53,11 +54,14 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                       itemBuilder: (BuildContext ctxt, int index) {
                         return new GestureDetector(
                           //You need to make my child interactive
-                          onTap: () {
+                          onTap: () async{
+                            final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                            sharedPreferences.setString('Fam',litems[index]);
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                builder: (context) => Nav()));
+                                builder: (context) => Nav())).then((value) => setState( () {} ));;
                           },
 
                           child: new Column(
