@@ -24,7 +24,7 @@ class ParentHome extends StatelessWidget {
               top: 80,
               left: 30,
               child: Text(
-                  "Welcome,\nJia Ming",
+                  "Currently Monitoring\n Alexandra",
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class ParentHome extends StatelessWidget {
                               shape: shape,
                             ),
                             child: new Text(
-                              "Change Patient",
+                              "Change Baby",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14.0,

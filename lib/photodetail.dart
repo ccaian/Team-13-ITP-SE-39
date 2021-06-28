@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,13 +7,28 @@ import 'package:image_downloader/image_downloader.dart';
 import 'package:growth_app/api/firebase_api.dart';
 
 class PhotoDetail extends StatefulWidget {
+
+  final String url;
+  const PhotoDetail({
+    Key? key,
+    required this.url,
+  }) : super(key: key);
+
+
   @override
   _PhotoDetailState createState() => _PhotoDetailState();
 }
 
 class _PhotoDetailState extends State<PhotoDetail> {
 
-  var imageUrl = "https://firebasestorage.googleapis.com/v0/b/growthapplication-77bb4.appspot.com/o/ccaian3%40gmail.com%2FWeek_1%2F1.jpg?alt=media&token=0d8576fe-a68c-47c9-9843-75d58acad217";
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  late String imageUrl = "";
+  late String user = "Miranda";
+  @override
+  void initState() {
+    imageUrl = widget.url;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +70,17 @@ class _PhotoDetailState extends State<PhotoDetail> {
                               topRight: Radius.circular(25.0),
                               topLeft: Radius.circular(25.0)),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
-                            child: new Image(image: new NetworkImage(imageUrl), width: 140.0)
+                        child: Stack(
+                          children: <Widget>[
 
-                        )
+                            new Text(user)
+                            ,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
+                                child: new Image(image: new NetworkImage(imageUrl), width: 140.0)
+                            ),
+
+                          ])
                     ),
                     Positioned(
                       bottom: 20,
@@ -106,5 +128,5 @@ class _PhotoDetailState extends State<PhotoDetail> {
       ),
     );
   }
-  
+
 }

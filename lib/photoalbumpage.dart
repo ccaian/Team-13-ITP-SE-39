@@ -30,6 +30,7 @@ class PhotoAlbum extends StatefulWidget {
 
 class _PhotoAlbumState extends State<PhotoAlbum> {
 
+  String selectedimageurl = "";
   late Future<List<FirebaseFile>> futureFiles;
 
   @override
@@ -157,7 +158,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
       InkWell(
         onTap: () {
           Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => PhotoDetail()
+              builder: (context) => PhotoDetail(url:file.url)
           ));
         },
         child: ClipRRect(
