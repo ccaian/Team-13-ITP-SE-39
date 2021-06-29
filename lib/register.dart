@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/verify.dart';
 
 
 
@@ -16,9 +17,7 @@ class RegisterPage extends StatefulWidget{
 class _RegisterPageState extends State<RegisterPage> {
 
   // text field state
-  String email ='';
-  String password = '';
-  String cfmPassword = '';
+  var email, password, cfmPassword = '';
 
   // Email and Password Regex Expression
   RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
@@ -66,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       },
                       onChanged: (val) {
-                        setState(() => email = val);
+                        setState(() => email = val.trim());
                       },
                     ),
                 ),
@@ -95,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       },
                       onChanged: (val) {
-                        setState(() => password = val);
+                        setState(() => password = val.trim());
                       },
                     ),
                 ),
@@ -115,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       validator: (val) =>
                         val != password ? 'Password does not match' : null,
                       onChanged: (val) {
-                        setState(() => cfmPassword = val);
+                        setState(() => cfmPassword = val.trim());
                       },
                     ),
                   ),
@@ -194,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       Navigator.push(context, new MaterialPageRoute(
-          builder: (context) => LoginPage()
+          builder: (context) => VerifyPage()
       ));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

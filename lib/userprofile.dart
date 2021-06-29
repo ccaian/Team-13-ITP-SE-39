@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     retrieveData();
   }
 
+  final _auth = FirebaseAuth.instance;
   final _userRef = FirebaseDatabase.instance.reference().child('user');
   final _formKey = GlobalKey<FormState>();
 
@@ -230,12 +232,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
       if (snapShot.value != null) {
         Map<dynamic, dynamic> values = snapShot.value;
         values.forEach((key, values) {
-          userKey = key;
-          firstName = values['firstName'];
-          lastName = values['lastName'];
-          mobileNumber = values['mobile'];
+          setState(() {
+            userKey = key;
+            firstName = values['firstName'];
+            lastName = values['lastName'];
+            mobileNumber = values['mobile'];
+          });
         });
-        setState(() {});
       }
     });
   }
@@ -243,6 +246,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
   updateDetails() {
     _userRef.child(userKey).update(
         {'firstName': firstName, 'lastName': lastName, 'mobile': mobileNumber});
+
+    User? user = _auth.currentUser;
+    user!.updateDisplayName(firstName + " " + lastName);
   }
 
   void hideButton() {

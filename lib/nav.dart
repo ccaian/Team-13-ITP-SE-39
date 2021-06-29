@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milkpage.dart';
 import 'package:growth_app/photopage.dart';
+import 'package:growth_app/setting.dart';
 import 'package:growth_app/workerhome.dart';
 
 import 'growthpage.dart';
@@ -21,7 +22,7 @@ class _NavState extends State<Nav> {
     PhotoPage(),
     GrowthPage(),
     MilkPage(),
-    Text('Home'),
+    SettingPage(),
   ];
 
   void _onItemTap(int index){
