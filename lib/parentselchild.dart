@@ -20,6 +20,7 @@ class ParentSelChild extends StatefulWidget {
 
 class _ParentSelChildState extends State<ParentSelChild> {
   List<String> litems = [];
+  List<String> childNRICList = [];
   String name = '';
   String temp ='';
   String username ='';
@@ -78,6 +79,8 @@ class _ParentSelChildState extends State<ParentSelChild> {
                           onTap: () async {
                             final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                             sharedPreferences.setString('ChildName',litems[index]);
+                            sharedPreferences.setString('ChildNRIC',childNRICList[index]);
+                            print('GET CHILD NRIC: ' + childNRICList[index]);
 
                             Navigator.push(
                                 context,
@@ -162,6 +165,29 @@ class _ParentSelChildState extends State<ParentSelChild> {
         litems = newList;
       });
       print(litems);
+    });
+    getChildNRIC();
+  }
+
+  getChildNRIC(){
+    List<String> tempList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .orderByChild("parent")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        tempList.add(value['nric'].toString());
+      });
+      print('child List:');
+      print(tempList);
+      setState(() {
+        childNRICList = tempList;
+      });
     });
   }
 

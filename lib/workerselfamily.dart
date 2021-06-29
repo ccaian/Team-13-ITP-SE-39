@@ -14,12 +14,11 @@ class WorkerSelFamily extends StatefulWidget{
 
 class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List<String> litems = [];
-
+  List<String> childParentEmailList = [];
+  List<String> parentEmailList = [];
   @override
   void initState(){
     makeList();
-    print('post func');
-    print(litems);
     super.initState();
   }
   Widget build(BuildContext context) {
@@ -89,6 +88,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   Widget buildText(int items) {
+    String parentEmail = parentEmailList[items].toString();
+    print("in BuildText: " + litems[items]);
     return Card(
       child: ExpansionTile(
         title: Text(
@@ -96,15 +97,33 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
         children: <Widget>[
-          ListTile(
-            title: Text(
-              'Child 1',
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-          )
+      ListTile(
+      title: Text(
+        'PlaceHolder',
+        style: TextStyle(fontWeight: FontWeight.w700),
+      ),
+    )
         ],
       ),
     );
+
+  }
+
+  buildListTile(parentEmail){
+    print("in BuildListTile: " + parentEmail);
+    print("in BuildListTile: " + childParentEmailList[0]);
+      for(var i = 0; i < parentEmailList.length; i++){
+        if(parentEmail == childParentEmailList[i]){
+          return ListTile(
+            title: Text(
+              parentEmail,
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          );
+        } else{
+        }
+      }
+
   }
 
   makeList(){
@@ -112,6 +131,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     FirebaseDatabase.instance
         .reference()
         .child("user")
+        .orderByChild("email")
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
@@ -124,7 +144,51 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       setState(() {
         litems = newList;
       });
-      print(litems);
+    });
+      getChildParentEmail();
+  }
+
+  getChildParentEmail(){
+    List<String> tempList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .orderByChild("parent")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        tempList.add(value['parent'].toString());
+      });
+      print('child List:');
+      print(tempList);
+      setState(() {
+        childParentEmailList = tempList;
+      });
+    });
+    getParentEmail();
+  }
+  getParentEmail(){
+    List<String> tempList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("user")
+        .orderByChild("email")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        tempList.add(value['email'].toString());
+      });
+      print('Parent List:');
+      print(tempList);
+      setState(() {
+        parentEmailList = tempList;
+      });
     });
   }
 }
