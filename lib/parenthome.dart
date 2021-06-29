@@ -15,7 +15,8 @@ class ParentHome extends StatefulWidget {
 
 class _ParentHomeState extends State<ParentHome> {
   String? userName = "";
-  String?  result = "";
+  String?  temp = "";
+  String?  temp2 = "";
   String babyName = "";
   @override
   void initState(){
@@ -143,19 +144,18 @@ class _ParentHomeState extends State<ParentHome> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(context, new MaterialPageRoute(
+    Navigator.push(context, new MaterialPageRoute(
         builder: (context) => ParentSelChild()
     ));
-    babyName = result;
-    (context as Element).reassemble();
-    print(result);
   }
 
   Future loadPagePref() async{
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    result = sharedPreferences.getString('Session');
+    temp = sharedPreferences.getString('Session');
+    temp2 = sharedPreferences.getString('ChildName');
     setState(() {
-      userName = result;
+      userName = temp;
+      babyName = temp2!;
     });
   }
 }
