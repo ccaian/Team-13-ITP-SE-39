@@ -221,14 +221,20 @@ class _LoginPageState extends State<LoginPage> {
         .orderByChild("email")
         .equalTo(email);
 
-    _userQuery.once().then((DataSnapshot snapShot) {
+    _userQuery.once().then((DataSnapshot snapShot) async {
       print(snapShot.value);
       // User profile exist in DB => to home page
       if(snapShot.value != null) {
+        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString('Session',email);
+
         Navigator.pushReplacement(context,
             new MaterialPageRoute(builder: (context) => NavParent()));
       } else {
         // User profile does not exist in DB => to home page
+        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString('Session',email);
+
         Navigator.pushReplacement(context, new MaterialPageRoute(
             builder: (context) => ProfileSetUpPage()
         ));

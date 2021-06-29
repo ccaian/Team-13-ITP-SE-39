@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,9 +13,15 @@ class WorkerSelFamily extends StatefulWidget{
 }
 
 class _WorkerSelFamilyState extends State<WorkerSelFamily> {
-  List<String> litems = ["Lim", "Miranda", "Tan", "Ian"];
+  List<String> litems = [];
 
   @override
+  void initState(){
+    makeList();
+    print('post func');
+    print(litems);
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xff4C52A8),
@@ -98,5 +105,26 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         ],
       ),
     );
+  }
+
+  makeList(){
+    List<String> newList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("user")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        newList.add(value['firstName'].toString() + " " + value['lastName'].toString());
+      });
+      print(newList);
+      setState(() {
+        litems = newList;
+      });
+      print(litems);
+    });
   }
 }

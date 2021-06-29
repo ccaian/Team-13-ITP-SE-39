@@ -4,12 +4,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/workerselfamily.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-class ParentHome extends StatelessWidget {
+class ParentHome extends StatefulWidget {
   @override
-  String PatName = "Mable";
+  _ParentHomeState createState() => _ParentHomeState();
+}
+
+class _ParentHomeState extends State<ParentHome> {
+  String? userName = "";
+  String?  result = "";
+  String babyName = "";
+  @override
+  void initState(){
+    loadPagePref();
+    super.initState();
+  }
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
@@ -24,7 +36,7 @@ class ParentHome extends StatelessWidget {
               top: 80,
               left: 30,
               child: Text(
-                  "Currently Monitoring\n Alexandra",
+                  "Welcome!\n"+ userName!,
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
@@ -118,8 +130,9 @@ class ParentHome extends StatelessWidget {
       ),
     );
   }
+
   Widget buildText(BuildContext context) => Text(
-      "Currently Managing\n" + PatName,
+      "Currently Managing\n" + babyName,
       style: TextStyle(
         fontSize: 22.0,
         fontWeight: FontWeight.bold,
@@ -133,8 +146,16 @@ class ParentHome extends StatelessWidget {
     final result = await Navigator.push(context, new MaterialPageRoute(
         builder: (context) => ParentSelChild()
     ));
-    PatName = result;
+    babyName = result;
     (context as Element).reassemble();
     print(result);
+  }
+
+  Future loadPagePref() async{
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    result = sharedPreferences.getString('Session');
+    setState(() {
+      userName = result;
+    });
   }
 }
