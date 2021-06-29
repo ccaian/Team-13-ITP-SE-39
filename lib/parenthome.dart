@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -150,12 +151,27 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Future loadPagePref() async{
+    List newList = [];
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     temp = sharedPreferences.getString('Session');
     temp2 = sharedPreferences.getString('ChildName');
-    setState(() {
-      userName = temp;
-      babyName = temp2!;
+    FirebaseDatabase.instance
+        .reference()
+        .child("user")
+        .orderByChild("email")
+        .equalTo(temp)
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List tempList = childMap.values.toList();
+      childMap.forEach((key, value) {
+        newList.add(value['firstName'].toString());
+      });
+      setState(() {
+        userName = newList[0].toString();
+        babyName = temp2!;
+      });
     });
   }
 }
