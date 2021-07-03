@@ -191,10 +191,13 @@ class _RegisterPageState extends State<RegisterPage> {
           email: email,
           password: password
       );
-
       Navigator.push(context, new MaterialPageRoute(
-          builder: (context) => VerifyPage()
+          builder: (context) => LoginPage()
       ));
+      // TO BE USED FOR FINAL
+      // Navigator.push(context, new MaterialPageRoute(
+      //     builder: (context) => VerifyPage()
+      //));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(
