@@ -1,15 +1,29 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/workerselfamily.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-class ParentHome extends StatelessWidget {
+class ParentHome extends StatefulWidget {
   @override
-  String PatName = "Mable";
+  _ParentHomeState createState() => _ParentHomeState();
+}
+
+class _ParentHomeState extends State<ParentHome> {
+  String? userName = "";
+  String?  temp = "";
+  String?  temp2 = "";
+  String babyName = "";
+  @override
+  void initState(){
+    loadPagePref();
+    super.initState();
+  }
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
@@ -24,7 +38,7 @@ class ParentHome extends StatelessWidget {
               top: 80,
               left: 30,
               child: Text(
-                  "Currently Monitoring\n Alexandra",
+                  "Welcome!\n"+ userName!,
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
@@ -118,8 +132,9 @@ class ParentHome extends StatelessWidget {
       ),
     );
   }
+
   Widget buildText(BuildContext context) => Text(
-      "Currently Managing\n" + PatName,
+      "Currently Managing\n" + babyName,
       style: TextStyle(
         fontSize: 22.0,
         fontWeight: FontWeight.bold,
@@ -130,11 +145,33 @@ class ParentHome extends StatelessWidget {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    final result = await Navigator.push(context, new MaterialPageRoute(
+    Navigator.push(context, new MaterialPageRoute(
         builder: (context) => ParentSelChild()
     ));
-    PatName = result;
-    (context as Element).reassemble();
-    print(result);
+  }
+
+  Future loadPagePref() async{
+    List newList = [];
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    temp = sharedPreferences.getString('Session');
+    temp2 = sharedPreferences.getString('ChildName');
+    FirebaseDatabase.instance
+        .reference()
+        .child("user")
+        .orderByChild("email")
+        .equalTo(temp)
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List tempList = childMap.values.toList();
+      childMap.forEach((key, value) {
+        newList.add(value['firstName'].toString());
+      });
+      setState(() {
+        userName = newList[0].toString();
+        babyName = temp2!;
+      });
+    });
   }
 }

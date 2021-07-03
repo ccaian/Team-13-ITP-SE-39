@@ -10,6 +10,7 @@ import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AddChild extends StatefulWidget {
@@ -21,6 +22,8 @@ class _AddChildPageState extends State<AddChild> {
 
   String name = '';
   String nric = '';
+  String temp = '';
+  String parentEmail = '';
 
   final _addchildKey = GlobalKey<FormState>();
 
@@ -121,7 +124,7 @@ class _AddChildPageState extends State<AddChild> {
                                   ),
                                   onPressed: () async {
                                       print('Submit');
-                                      addChildData(name, nric);
+                                      getPrefAddChild(name, nric);
                                       Navigator.push(context, new MaterialPageRoute(
                                           builder: (context) => ParentSelChild()
                                       ));
@@ -146,6 +149,18 @@ class _AddChildPageState extends State<AddChild> {
     _childRef.push().set({
       'name': _nameControl.text,
       'nric': _nricControl.text,
+      'parent': parentEmail,
     });
   }
+
+  Future getPrefAddChild(name, nric) async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    temp = sharedPreferences.getString('Session')!;
+    setState(() {
+      parentEmail = temp;
+    });
+    print("In getPref "+parentEmail);
+    addChildData(name, nric);
+  }
+
 }

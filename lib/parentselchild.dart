@@ -1,6 +1,14 @@
+import 'dart:async';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/nav.dart';
+import 'package:growth_app/navparent.dart';
+import 'package:growth_app/workerhome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'addChild.dart';
 
 
@@ -12,16 +20,20 @@ class ParentSelChild extends StatefulWidget {
 
 class _ParentSelChildState extends State<ParentSelChild> {
   List<String> litems = [];
+  List<String> childNRICList = [];
   String name = '';
+  String temp ='';
+  String username ='';
   DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
 
   @override
   void initState(){
-    makeList();
+    getPref();
     print('post func');
     print(litems);
     super.initState();
   }
+
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xff4C52A8),
@@ -64,9 +76,16 @@ class _ParentSelChildState extends State<ParentSelChild> {
                       itemCount: litems.length,
                       itemBuilder: (BuildContext ctxt, int index) {
                         return new GestureDetector( //You need to make my child interactive
-                          onTap: () {
+                          onTap: () async {
+                            final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                            sharedPreferences.setString('ChildName',litems[index]);
+                            sharedPreferences.setString('ChildNRIC',childNRICList[index]);
+                            print('GET CHILD NRIC: ' + childNRICList[index]);
 
-                            Navigator.pop(context, litems[index]);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NavParent())).then((value) => setState( () {} ));;
                           },
 
                           child: new Column(
@@ -127,9 +146,12 @@ class _ParentSelChildState extends State<ParentSelChild> {
 
   makeList(){
     List<String> newList = [];
+    print("in makeList" + username);
     FirebaseDatabase.instance
         .reference()
         .child("child")
+        .orderByChild("parent")
+        .equalTo(username)
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
@@ -144,6 +166,41 @@ class _ParentSelChildState extends State<ParentSelChild> {
       });
       print(litems);
     });
+    getChildNRIC();
   }
+
+  getChildNRIC(){
+    List<String> tempList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .orderByChild("parent")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        tempList.add(value['nric'].toString());
+      });
+      print('child List:');
+      print(tempList);
+      setState(() {
+        childNRICList = tempList;
+      });
+    });
+  }
+
+  Future getPref() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    temp = sharedPreferences.getString('Session')!;
+    setState(() {
+      username = temp;
+    });
+    print("In getPref "+username);
+
+    makeList();
+  }
+
 }
 
