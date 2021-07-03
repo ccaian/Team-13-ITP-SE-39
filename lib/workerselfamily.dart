@@ -16,6 +16,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List<String> litems = [];
   List<String> childParentEmailList = [];
   List<String> parentEmailList = [];
+  List<String> listOfChildren = [];
   @override
   void initState(){
     makeList();
@@ -58,6 +59,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                       padding: const EdgeInsets.all(8),
                       itemCount: litems.length,
                       itemBuilder: (BuildContext ctxt, int index) {
+                        List testList = [];
+                        testList = validateChildren(parentEmailList[index]);
+                        for(var i = 0; i < testList.length; i++){
+                          print('Debugg: '+parentEmailList[index]+ ' child: ' + testList[i]);
+                        }
                         return new GestureDetector(
                           //You need to make my child interactive
                           onTap: () async{
@@ -74,7 +80,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                             children: <Widget>[
                               //new Image.network(video[index]),
                               new Padding(padding: new EdgeInsets.all(16.0)),
-                              buildText(index),
+                              buildText(index, testList),
                             ],
                           ),
                         );
@@ -87,42 +93,49 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     );
   }
 
-  Widget buildText(int items) {
+  Widget buildText(int items, List babyList) {
     String parentEmail = parentEmailList[items].toString();
-    print("in BuildText: " + litems[items]);
+    print("in BuildText: " + parentEmail);
+
     return Card(
       child: ExpansionTile(
         title: Text(
           litems[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
-        children: <Widget>[
-      ListTile(
-      title: Text(
-        'PlaceHolder',
-        style: TextStyle(fontWeight: FontWeight.w700),
-      ),
-    )
+        children: [
+      for(var i = 0; i < babyList.length; i++)
+        newTile(babyList[i])
         ],
       ),
     );
 
   }
 
-  buildListTile(parentEmail){
-    print("in BuildListTile: " + parentEmail);
-    print("in BuildListTile: " + childParentEmailList[0]);
-      for(var i = 0; i < parentEmailList.length; i++){
-        if(parentEmail == childParentEmailList[i]){
-          return ListTile(
-            title: Text(
-              parentEmail,
-              style: TextStyle(fontWeight: FontWeight.w700),
-            ),
-          );
-        } else{
-        }
+ List validateChildren(String parentEmail) {
+    List listOfChildrenEmail =[];
+    for(var i = 0; i < childParentEmailList.length; i++){
+      if(parentEmail == childParentEmailList[i]){
+        listOfChildrenEmail.add(listOfChildren[i].toString());
       }
+    }
+    if (listOfChildrenEmail.length == 0){
+      listOfChildrenEmail.add('No Children');
+    }
+    return listOfChildrenEmail;
+}
+
+  newTile(String title){
+      return new ListTile(
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      );
+
+}
+
+  getBabyName(){
 
   }
 
@@ -188,6 +201,26 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       print(tempList);
       setState(() {
         parentEmailList = tempList;
+      });
+    });
+    getChildList();
+  }
+  getChildList(){
+    List<String> tempList = [];
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .orderByChild("parent")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      List temp = childMap.values.toList();
+      childMap.forEach((key, value) {
+        tempList.add(value['name'].toString());
+      });
+      setState(() {
+        listOfChildren = tempList;
       });
     });
   }
