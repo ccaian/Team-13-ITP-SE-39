@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,10 @@ class ProfileSetUpPage extends StatefulWidget{
 class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
   // text field state
-  var firstName;
-  var lastName;
-  var mobileNumber;
+  var firstName, lastName, mobileNumber;
 
   final _userRef = FirebaseDatabase.instance.reference().child('user');
+  final _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -145,6 +145,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
   void writeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    User? user = _auth.currentUser;
 
     _userRef.push().set({
       'firstName': firstName,
