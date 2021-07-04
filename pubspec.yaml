@@ -41,6 +41,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   datetime_picker_formfield: ^2.0.0
 
+  # create pdf document
+  pdf: ^3.1.0
+
+  # open pdf document
+  open_file: ^3.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
