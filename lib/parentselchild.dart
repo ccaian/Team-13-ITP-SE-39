@@ -93,10 +93,19 @@ class _ParentSelChildState extends State<ParentSelChild> {
             ),
           ),
           Positioned(
-            top: 200,
-            right: -10,
-            child: addButton(context),
-          )
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton(
+              child: Icon(Icons.add),
+              backgroundColor: Color(0xff4C52A8),
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) => AddChild()));
+              },
+            ),
+          ),
         ],
       ),
     );

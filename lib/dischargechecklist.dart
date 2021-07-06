@@ -75,7 +75,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             bottom: 0,
             child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height * 0.8,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
