@@ -101,21 +101,50 @@ class _WorkerForumState extends State<WorkerForum> {
                   showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Enter Album Name'),
+                      title: const Text('Enter Post Details'),
                       content: Container(
-                        height: MediaQuery.of(context).size.height* 0.5,
+                        height: MediaQuery.of(context).size.height* 0.3,
                         width: MediaQuery.of(context).size.width*0.4,
-                        child: TextField(
-                          controller: titleController,
-                          decoration: InputDecoration(
-                            border: new OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                const Radius.circular(25),
+                        child: Column(
+                          children: [
+                            Container(
+
+                              height: MediaQuery.of(context).size.height* 0.1,
+                              width: MediaQuery.of(context).size.width*0.8,
+                              child: TextField(
+                              controller: titleController,
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
+                                  ),
+                                ),
+                                fillColor: Colors.red,
+                                labelText: 'Title',
+                              ),
                               ),
                             ),
-                            fillColor: Colors.red,
-                            labelText: 'Album Name',
-                          ),),
+                            Container(
+                              height: MediaQuery.of(context).size.height* 0.2,
+                              width: MediaQuery.of(context).size.width*0.8,
+                              child: TextField(
+                                maxLines: 12,
+                                controller: titleController,
+                                decoration: InputDecoration(
+                                  border: new OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                      const Radius.circular(25),
+                                    ),
+                                  ),
+                                  fillColor: Colors.red,
+                                  labelText: 'Description',
+                                ),
+                              ),
+                            ),
+
+
+                          ]
+                        ),
                       ),
                       actions: <Widget>[
                         TextButton(

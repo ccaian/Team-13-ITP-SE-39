@@ -165,6 +165,15 @@ class _WorkerHomeState extends State<WorkerHome> {
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.425,
                               height: MediaQuery.of(context).size.height * 0.2,
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(25.0,20.0,0.0,0.0),
+                                  child: Text(
+                                      "Wellbeing Survey",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.grey[600],
+                                      )
+                                  )),
                               decoration: BoxDecoration(
                                 color: Color(0xfff2f2f2),
 
