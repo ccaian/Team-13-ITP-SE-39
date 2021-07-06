@@ -10,6 +10,7 @@ import 'package:growth_app/growthpage.dart';
 import 'package:growth_app/nav.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class AddMeasurements extends StatefulWidget {
@@ -189,11 +190,11 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                 onPressed: () async {
                                   if(_formKey.currentState!.validate()){
                                     print('Submit');
-                                    addData(date, weight, height, head);
-                                    Navigator.pushReplacement(context, new MaterialPageRoute(
-                                        builder: (context) => GrowthPage()
-                                    ));
-                                    Navigator.pop(context);
+
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    var nric = prefs.getString('ChildNRIC');
+
+                                    addData(nric, date, weight, height, head);
                                   }
                                   else {
                                     Fluttertoast.showToast(
@@ -209,7 +210,6 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                 },
                               )
                           ))
-
                         ]
                     ),
                   ]
@@ -223,12 +223,18 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
     );
   }
 
-  void addData(date, weight, height, head) {
+  void addData(nric, date, weight, height, head) async{
     _growthRef.push().set({
+      'nric': nric,
       'date': _dateControl.text,
       'weight': _weightControl.text,
       'height': _heightControl.text,
       'head': _headControl.text
     });
+    await Navigator.pushReplacement(context, new MaterialPageRoute(
+        builder: (context) => new GrowthPage()
+    ));
+    Navigator.pop(context);
+    setState(() {});
   }
 }

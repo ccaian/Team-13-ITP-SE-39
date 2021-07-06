@@ -20,7 +20,7 @@ class ParentSelChild extends StatefulWidget {
 
 class _ParentSelChildState extends State<ParentSelChild> {
   List<String> litems = [];
-  List<String> childNRICList = [];
+  List babyData = [];
   String name = '';
   String temp ='';
   String username ='';
@@ -76,18 +76,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
                       itemCount: litems.length,
                       itemBuilder: (BuildContext ctxt, int index) {
                         return new GestureDetector( //You need to make my child interactive
-                          onTap: () async {
-                            final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                            sharedPreferences.setString('ChildName',litems[index]);
-                            sharedPreferences.setString('ChildNRIC',childNRICList[index]);
-                            print('GET CHILD NRIC: ' + childNRICList[index]);
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => NavParent())).then((value) => setState( () {} ));;
-                          },
-
                           child: new Column(
                             children: <Widget>[
                               //new Image.network(video[index]),
@@ -117,14 +105,26 @@ class _ParentSelChildState extends State<ParentSelChild> {
   }
 
   Widget buildText(int items) {
-    print('at build text');
+    String babyTitle ='';
+    babyTitle = getBabyName(litems[items]);
     return Card(
       child:
           ListTile(
             title: Text(
-              litems[items],
+              babyTitle,
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
+            onTap: () async {
+              final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+              sharedPreferences.setString('ChildName',babyTitle);
+              sharedPreferences.setString('ChildNRIC',litems[items]);
+              print('GET CHILD NRIC: ' + litems[items]);
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NavParent())).then((value) => setState( () {} ));;
+            },
           )
     );
   }
@@ -158,7 +158,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
       Map<dynamic, dynamic> childMap = snapshot.value;
       List temp = childMap.values.toList();
       childMap.forEach((key, value) {
-        newList.add(value['name'].toString());
+        newList.add(value['nric'].toString());
       });
       print(newList);
       setState(() {
@@ -166,11 +166,11 @@ class _ParentSelChildState extends State<ParentSelChild> {
       });
       print(litems);
     });
-    getChildNRIC();
+    getChildList();
   }
 
-  getChildNRIC(){
-    List<String> tempList = [];
+  getChildList(){
+    List tempList = [];
     FirebaseDatabase.instance
         .reference()
         .child("child")
@@ -179,14 +179,13 @@ class _ParentSelChildState extends State<ParentSelChild> {
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
       childMap.forEach((key, value) {
-        tempList.add(value['nric'].toString());
+        tempList.add(value);
       });
       print('child List:');
       print(tempList);
       setState(() {
-        childNRICList = tempList;
+        babyData = tempList;
       });
     });
   }
@@ -202,5 +201,17 @@ class _ParentSelChildState extends State<ParentSelChild> {
     makeList();
   }
 
+  String getBabyName( String babyNRIC) {
+    String babyName = '';
+    for(var i = 0; i < babyData.length; i++){
+      if(babyNRIC == babyData[i]["nric"].toString()){
+        babyName = babyData[i]["name"].toString();
+      }
+    }
+    if(babyName == ''){
+      babyName = 'No Children';
+    }
+    return babyName;
+  }
 }
 
