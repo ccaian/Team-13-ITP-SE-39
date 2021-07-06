@@ -88,6 +88,7 @@ class MilestonePage extends StatelessWidget {
                           new Text ("Congratulations on the birth of your baby! We would like to welcome you to the Neonatal Intensive Care Unit (NICU) at the Khoo Teck Puat- National University Children’s Medical Institute.",
                               style: TextStyle(
                                 fontSize: 16.0,
+                                color: Colors.grey,
                               ),
                               textAlign: TextAlign.center),
                           Padding(
@@ -95,6 +96,7 @@ class MilestonePage extends StatelessWidget {
                             child: new Text ("We understand that this is a challenging and exciting time for your family. The NICU can be an overwhelming place. At first glance, all you may see are rows of incubators or warmers, tubes and wires attached to your baby, and hear alarms beeping. The amount of equipment surrounding your baby may appear frightening and with each beep of the alarm, you worry that something is not right with your baby. Our NICU staff are specially trained to interpret and respond to any concerning alarms and can explain to you what they mean. Over time, you too will begin to distinguish and understand the various alarm sounds. ",
                                 style: TextStyle(
                                   fontSize: 16.0,
+                                  color: Colors.grey,
                                 ),textAlign: TextAlign.center),
                           ),
                         ],
