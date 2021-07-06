@@ -190,10 +190,10 @@ class _GrowthPageState extends State<GrowthPage> {
               head: values['head'],
             )
           );
-        });
-        setState(() {
-          growthList = rows;
-          growthItems = items;
+          setState(() {
+            growthList = rows;
+            growthItems = items;
+          });
         });
       }
     });
