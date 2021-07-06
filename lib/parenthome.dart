@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/dischargechecklist.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/workerselfamily.dart';
@@ -122,7 +123,63 @@ class _ParentHomeState extends State<ParentHome> {
                               _navigateAndDisplaySelection(context);
                             },
                           )
-                      )
+                      ),
+                      Positioned(
+                          top: MediaQuery.of(context).size.width * 0.70,
+                          left: MediaQuery.of(context).size.width * 0.06,
+                          child: Column(
+                          children: [
+                            Row( mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Container(
+                                child: Text(
+                                  "Discharge CheckList",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  )),
+                                padding: EdgeInsets.all(20.0),
+                                width: 175,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(15)
+
+                                ),
+
+                              )
+                              ],
+                            )
+
+                          ]
+
+                      )),
+                      Positioned(
+                          top: MediaQuery.of(context).size.width * 1.00,
+                          left: MediaQuery.of(context).size.width * 0.09,
+
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.redAccent,
+                              minimumSize: Size(100,25),
+                              shape: shape,
+                            ),
+                            child: new Text(
+                              "Go to Form",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
+
+                            ),
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => DischargeCheckListPage()));
+                            },
+                          )
+                      ),
                     ]
 
                 )
