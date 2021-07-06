@@ -61,6 +61,7 @@ class _GrowthPageState extends State<GrowthPage> {
                 child: new Image.asset('assets/milkbottle.png', width: 140.0),
               ),
               Positioned(
+                top: 190,
                 bottom: 0,
                 child: Container(
                   width: MediaQuery
@@ -82,10 +83,10 @@ class _GrowthPageState extends State<GrowthPage> {
                       //const SizedBox(height: 100),
                       Padding(
                           padding: const EdgeInsets.fromLTRB(
-                              15.0, 30.0, 0.0, 0.0),
+                              0.0, 30.0, 0.0, 0.0),
                           child: SingleChildScrollView (
                               child: DataTable(
-                                columnSpacing: 45.0,
+                                columnSpacing: 40.0,
                                 columns: const <DataColumn>[
                                   DataColumn(
                                     label: Text(
@@ -174,7 +175,7 @@ class _GrowthPageState extends State<GrowthPage> {
                       Text(values['weight'] + " kg"),
                     ),
                     DataCell(
-                      Text(values['height'] + " kg"),
+                      Text(values['height'] + " cm"),
                     ),
                     DataCell(
                       Text(values['head'] + " cm"),
