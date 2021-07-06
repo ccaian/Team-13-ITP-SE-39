@@ -14,9 +14,14 @@ class WorkerSelFamily extends StatefulWidget{
 
 class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List<String> litems = [];
+  List userData = [];
+  List babyData = [];
   List<String> childParentEmailList = [];
   List<String> parentEmailList = [];
-  List<String> listOfChildren = [];
+  List<String> listOfChildrenNRIC = [];
+  List<String> babyNameList = [];
+
+  String selectedChildNRIC ='';
   @override
   void initState(){
     makeList();
@@ -61,20 +66,13 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                       itemBuilder: (BuildContext ctxt, int index) {
                         List testList = [];
                         testList = validateChildren(parentEmailList[index]);
+                        print("print data: " + babyData[index].toString());
                         for(var i = 0; i < testList.length; i++){
                           print('Debugg: '+parentEmailList[index]+ ' child: ' + testList[i]);
                         }
                         return new GestureDetector(
                           //You need to make my child interactive
-                          onTap: () async{
-                            final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-                            sharedPreferences.setString('Fam',litems[index]);
 
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                builder: (context) => Nav())).then((value) => setState( () {} ));;
-                          },
 
                           child: new Column(
                             children: <Widget>[
@@ -93,9 +91,10 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     );
   }
 
-  Widget buildText(int items, List babyList) {
+  Widget buildText(int items, List babyNRICList) {
     String parentEmail = parentEmailList[items].toString();
     print("in BuildText: " + parentEmail);
+
 
     return Card(
       child: ExpansionTile(
@@ -104,8 +103,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
         children: [
-      for(var i = 0; i < babyList.length; i++)
-        newTile(babyList[i])
+      for(var i = 0; i < babyNRICList.length; i++)
+        newTile(babyNRICList[i], items)
         ],
       ),
     );
@@ -116,7 +115,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     List listOfChildrenEmail =[];
     for(var i = 0; i < childParentEmailList.length; i++){
       if(parentEmail == childParentEmailList[i]){
-        listOfChildrenEmail.add(listOfChildren[i].toString());
+        listOfChildrenEmail.add(listOfChildrenNRIC[i].toString());
       }
     }
     if (listOfChildrenEmail.length == 0){
@@ -125,22 +124,31 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     return listOfChildrenEmail;
 }
 
-  newTile(String title){
+  newTile(String title, int index){
+    String babyTitle ='';
+    babyTitle = getBabyName(title);
       return new ListTile(
         title: Text(
-          title,
+          babyTitle,
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
+        onTap: () async{
+          final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+          sharedPreferences.setString('Fam',litems[index]);
+          sharedPreferences.setString('ChildNRIC',title);
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Nav())).then((value) => setState( () {} ));
+        },
       );
 
 }
 
-  getBabyName(){
-
-  }
-
   makeList(){
     List<String> newList = [];
+    List temp = [];
     FirebaseDatabase.instance
         .reference()
         .child("user")
@@ -149,13 +157,14 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
       childMap.forEach((key, value) {
         newList.add(value['firstName'].toString() + " " + value['lastName'].toString());
+        temp.add(value);
       });
       print(newList);
       setState(() {
         litems = newList;
+        userData = temp;
       });
     });
       getChildParentEmail();
@@ -163,6 +172,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   getChildParentEmail(){
     List<String> tempList = [];
+    List temp = [];
     FirebaseDatabase.instance
         .reference()
         .child("child")
@@ -171,14 +181,15 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
       childMap.forEach((key, value) {
         tempList.add(value['parent'].toString());
+        temp.add(value);
       });
       print('child List:');
       print(tempList);
       setState(() {
         childParentEmailList = tempList;
+        babyData = temp;
       });
     });
     getParentEmail();
@@ -203,9 +214,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         parentEmailList = tempList;
       });
     });
-    getChildList();
+    getChildNRICList();
   }
-  getChildList(){
+  getChildNRICList(){
     List<String> tempList = [];
     FirebaseDatabase.instance
         .reference()
@@ -217,11 +228,26 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       Map<dynamic, dynamic> childMap = snapshot.value;
       List temp = childMap.values.toList();
       childMap.forEach((key, value) {
-        tempList.add(value['name'].toString());
+        tempList.add(value['nric'].toString());
       });
       setState(() {
-        listOfChildren = tempList;
+        listOfChildrenNRIC = tempList;
       });
     });
   }
+
+ String getBabyName( String babyNRIC) {
+    String babyName = '';
+    for(var i = 0; i < babyData.length; i++){
+      if(babyNRIC == babyData[i]["nric"].toString()){
+        babyName = babyData[i]["name"].toString();
+      }
+    }
+    if(babyName == ''){
+      babyName = 'No Children';
+    }
+    return babyName;
+  }
+
+
 }

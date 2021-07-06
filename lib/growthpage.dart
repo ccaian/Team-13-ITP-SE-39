@@ -1,24 +1,40 @@
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/addmeasurements.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'api/pdf_api.dart';
+import 'api/pdf_growth_api.dart';
 
-
-class GrowthPage extends StatefulWidget{
+class GrowthPage extends StatefulWidget {
   @override
   _GrowthPageState createState() => _GrowthPageState();
 }
 
 class _GrowthPageState extends State<GrowthPage> {
+  late Query _growthRef;
+  late Growth growthFile;
 
-  late Query _ref;
-  DatabaseReference reference = FirebaseDatabase.instance.reference().child('growth');
+  List<DataRow> growthList = [];
+  List<GrowthItem> growthItems = [];
+
+  var nric;
+  var name;
+  var date;
+  var weight;
+  var height;
+  var head;
+
+  @override
+  List<DataRow> get rows => growthList;
 
   @override
   void initState() {
     super.initState();
-    _ref = FirebaseDatabase.instance.reference().child('growth').orderByChild('date');
+    _growthRef = FirebaseDatabase.instance.reference().child('growth');
+    retrieveData();
   }
 
   @override
@@ -33,15 +49,12 @@ class _GrowthPageState extends State<GrowthPage> {
               Positioned(
                   top: 80,
                   left: 30,
-                  child: Text(
-                      "Baby Name",
+                  child: Text("Baby Name",
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                      )
-                  )
-              ),
+                      ))),
               Positioned(
                 top: 40,
                 right: -10,
@@ -61,78 +74,47 @@ class _GrowthPageState extends State<GrowthPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-
                         topRight: Radius.circular(25.0),
                         topLeft: Radius.circular(25.0)),
                   ),
                   child: Stack(
                     children: <Widget>[
-                      const SizedBox(height: 100),
+                      //const SizedBox(height: 100),
                       Padding(
-                          padding: const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
-                          child: FirebaseAnimatedList(
-                              query: _ref,
-                              itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                                Map growth = snapshot.value;
-                                growth['key'] = snapshot.key;
-                                return _buildGrowthItem(growth: growth);
-                              }
+                          padding: const EdgeInsets.fromLTRB(
+                              15.0, 30.0, 0.0, 0.0),
+                          child: SingleChildScrollView (
+                              child: DataTable(
+                                columnSpacing: 45.0,
+                                columns: const <DataColumn>[
+                                  DataColumn(
+                                    label: Text(
+                                      'Date',
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Weight',
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Height',
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      'Head',
+                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                                rows: growthList,
+                              )
                           )
-                        // child: DataTable(
-                        //   columnSpacing: 40.0,
-                        //   columns: const <DataColumn>[
-                        //     DataColumn(
-                        //       label: Text(
-                        //         'Date',
-                        //         style: TextStyle(fontStyle: FontStyle.italic),
-                        //       ),
-                        //     ),
-                        //     DataColumn(
-                        //       label: Text(
-                        //         'Weight',
-                        //         style: TextStyle(fontStyle: FontStyle.italic),
-                        //       ),
-                        //     ),
-                        //     DataColumn(
-                        //       label: Text(
-                        //         'Height',
-                        //         style: TextStyle(fontStyle: FontStyle.italic),
-                        //       ),
-                        //     ),
-                        //     DataColumn(
-                        //       label: Text(
-                        //         'Head',
-                        //         style: TextStyle(fontStyle: FontStyle.italic),
-                        //       ),
-                        //     ),
-                        //   ],
-                        //   rows: const <DataRow>[
-                        //     DataRow(
-                        //       cells: <DataCell>[
-                        //         DataCell(Text('16-06-2021')),
-                        //         DataCell(Text('10 kg')),
-                        //         DataCell(Text('20 cm')),
-                        //         DataCell(Text('30 cm')),
-                        //       ],
-                        //     ),
-                        //     DataRow(
-                        //       cells: <DataCell>[
-                        //         DataCell(Text('18-06-2021')),
-                        //         DataCell(Text('30 kg')),
-                        //         DataCell(Text('40 cm')),
-                        //         DataCell(Text('50 cm')),
-                        //       ],
-                        //     ),
-                        //     DataRow(
-                        //       cells: <DataCell>[
-                        //         DataCell(Text('18-06-2021')),
-                        //         DataCell(Text('30.1 kg')),
-                        //         DataCell(Text('20.1 cm')),
-                        //         DataCell(Text('10.1 cm')),
-                        //       ],
-                        //     ),
-                        //   ],
-                        // )
                       )
                     ],
                   ),
@@ -145,66 +127,95 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Icon(Icons.add),
                   backgroundColor: Color(0xff4C52A8),
                   onPressed: () async {
-                    Navigator.push(context, new MaterialPageRoute(
-                        builder: (context) => AddMeasurements()
-                    ));
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => AddMeasurements()));
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 20,
+                right: 90,
+                child: FloatingActionButton(
+                  child: Icon(Icons.download),
+                  backgroundColor: Color(0xff4C52A8),
+                  onPressed: () async {
+                    growthFile = Growth(items: growthItems);
+                    final pdfFile = await PdfGrowthApi.generate(growthFile);
+                    PdfApi.openFile(pdfFile);
                   },
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
+  }
+
+  Future<void> retrieveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    nric = prefs.getString('ChildNRIC');
+
+    Query _growthQuery = _growthRef.orderByChild('nric').equalTo(nric);
+    List<DataRow> rows = [];
+    List<GrowthItem> items = [];
+
+    await _growthQuery.once().then((DataSnapshot snapShot) {
+      if (snapShot.value != null) {
+        Map<dynamic, dynamic> values = snapShot.value;
+        values.forEach((key, values) {
+          rows.add(
+              DataRow(
+                  cells: [
+                    DataCell(
+                      Text(values['date']),
+                    ),
+                    DataCell(
+                      Text(values['weight'] + " kg"),
+                    ),
+                    DataCell(
+                      Text(values['height'] + " kg"),
+                    ),
+                    DataCell(
+                      Text(values['head'] + " cm"),
+                    ),
+                  ]
+              )
+          );
+          items.add(
+            GrowthItem(
+              date: values['date'],
+              weight: values['weight'],
+              height: values['height'],
+              head: values['head'],
+            )
+          );
+        });
+        setState(() {
+          growthList = rows;
+          growthItems = items;
+        });
+      }
+    });
   }
 }
 
-Widget _buildGrowthItem({required Map growth}) {
-  return Container(
-    margin: EdgeInsets.symmetric(),
-    padding: EdgeInsets.all(10),
-    height: 80,
-    color: Colors.white,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            SizedBox(width: 30),
-            Text(
-              growth['date'],
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(width: 30),
-            Text(
-              "Weight: " + growth['weight'] + "kg, ",
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black),
-            ),
-            Text(
-              "Height: " + growth['height'] + "cm, ",
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black),
-            ),
-            Text(
-              "Head: " + growth['head'] + "cm",
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black),
-            ),
-          ]
-        ),
-      ],
-    ),
-  );
+class Growth {
+  final List<GrowthItem> items;
+
+  Growth({required this.items});
 }
 
+class GrowthItem {
+  final String date;
+  final String weight;
+  final String height;
+  final String head;
+
+  const GrowthItem({
+    required this.date,
+    required this.weight,
+    required this.height,
+    required this.head,
+  });
+}
