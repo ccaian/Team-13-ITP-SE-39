@@ -26,24 +26,15 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   //
   // }
   Map<String, bool> List = {
-    's' : false,
-    'f' : false,
-    'g' : false,
-    'h' : false,
-    'j' : false,
-    'a' : false,
-    'd' : false,
-    'c' : false,
-    'v' : false,
-    'w' : false,
-    'q' : false,
-    'e' : false,
-    'r' : false,
-    't' : false,
-    'y' : false,
-    'u' : false,
-    'i' : false,
-    'o' : false
+    'I am confident with bathing, diaper-changing and dressing my baby.' : false,
+    'I have fed my baby and feel comfortable feeding my baby.' : false,
+    'I know how to take my child’s temperature.' : false,
+    'I have successfully given medication/vitamin to my baby. I am familiar with the dose and frequency of the medication. I understand the purpose of each medication.' : false,
+    'I am familiar with the method of preparation of milk for my child. (If applicable) I know the proportion of fortification of my child’s milk.' : false,
+    'I have completed parental safety/CPR training.' : false,
+    'Members of the household have received updated vaccinations for influenza, pertussis/diphtheria and pneumococcal vaccines.' : false,
+    'I am familiar with the equipment or care (feeding tube/tracheostomy/suctioning) my baby may need and have received adequate training on that equipment.' : false,
+    'I understand my baby will go home using a car seat, I have brought a car seat to check its suitability.' : false,
   };
 
   double progress = 0;
