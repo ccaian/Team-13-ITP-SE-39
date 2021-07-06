@@ -201,7 +201,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
 
   Future getPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    temp = sharedPreferences.getString('Session')!;
+    temp = sharedPreferences.getString('email')!;
     setState(() {
       username = temp;
     });
