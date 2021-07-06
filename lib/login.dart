@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/navparent.dart';
+import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
@@ -278,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString('Session',email);
 
         Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => NavParent()));
+            new MaterialPageRoute(builder: (context) => ParentSelChild()));
       } else {
         // User profile does not exist in DB => to home page
         final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

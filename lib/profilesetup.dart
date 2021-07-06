@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/parenthome.dart';
+import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/workerhome.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -155,7 +156,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
     });
 
     Navigator.pushReplacement(context,
-        new MaterialPageRoute(builder: (context) => ParentHome()));
+        new MaterialPageRoute(builder: (context) => ParentSelChild()));
   }
 }
 
