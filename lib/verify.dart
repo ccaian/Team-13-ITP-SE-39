@@ -47,8 +47,8 @@ class _VerifyPageState extends State<VerifyPage> {
     await user.reload();
     if(user.emailVerified) {
       timer.cancel();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => ProfileSetUpPage()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => ProfileSetUpPage()));
     }
   }
 }
