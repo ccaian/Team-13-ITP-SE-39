@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:growth_app/navparent.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,8 +9,13 @@ class DischargeCheckListPage extends StatefulWidget {
   @override
   _DischargeCheckListPageState createState() => _DischargeCheckListPageState();
 }
-
+var _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
+String?  childnric = "";
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
+  void initState(){
+    loadPref();
+    super.initState();
+  }
   // text field state
 
   // Map<String, bool> routineCareList = {
@@ -41,6 +47,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
   final FirebaseDatabase _database = FirebaseDatabase.instance;
+  Color Colour = Color(0xfff2f2f2);
 
   @override
   Widget build(BuildContext context) {
@@ -85,26 +92,45 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                         Expanded(
                           child : ListView(
                             children: List.keys.map((String key) {
-                              return new CheckboxListTile(
-                                title: new Text(key),
-                                value: List[key],
-                                activeColor: Colors.deepPurple[400],
-                                checkColor: Colors.white,
-                                onChanged: (value) {
-                                  setState(() {
-                                    List[key] = value as bool;
-                                    if(value == true){
-                                      progress = progress + 100/List.length;
-                                    }else{
-                                      progress = progress - 100/List.length;
-                                    }if(progress > 100){
-                                      progress = 100;
-                                    }if(progress < 0){
-                                      progress = 0;
-                                    }
-                                  });
-                                },
-                              );
+                              return new  SizedBox(
+                                  width: 400,
+                                  child: Center(
+                                  child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                              decoration: BoxDecoration(
+                              color: Color(0xfff2f2f2),
+                              borderRadius: BorderRadius.circular(25),
+                              ),
+                                  child: CheckboxListTile(
+                                    title: new Text(key, style: TextStyle(
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700],
+                                    )),
+                                    value: List[key],
+                                    activeColor: Colors.deepPurple[400],
+                                    checkColor: Colors.white,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        List[key] = value as bool;
+                                        if(value == true){
+                                          progress = progress + 100/List.length;
+                                        }else{
+                                          progress = progress - 100/List.length;
+                                        }if(progress > 100){
+                                          progress = 100;
+                                        }if(progress < 0){
+                                          progress = 0;
+                                        }
+                                      });
+                                    },
+                                  )
+                              )
+                                  )
+                                  )
+                              ); //BoxDecoration
+
                             }).toList(),
                           ),),
                         new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
@@ -128,9 +154,16 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       ),
                                     ),
                                     onPressed: () async {
-                                      List.forEach((key, value) {
-                                        print(key + " - " + value.toString());
-                                      });
+                                      int i = 0;
+                                      List.forEach((index, value) {
+                                        print(childnric.toString() + " - " + value.toString());
+                                        i++;
+                                      }
+                                      );
+                                      Navigator.push(context, new MaterialPageRoute(
+                                          builder: (context) => NavParent()
+                                      ));
+                                      //addCheckListData(value.toString(), i, childnric);
                                     },
                                   )))
                         ]),
@@ -165,7 +198,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                         Text('\nProgress \n', style: TextStyle(
                           fontSize: 20,fontWeight: FontWeight.bold, color: Colors.white
                         ),),
-                        Text('Percentage of \ncompletion \n \n 2 more weeks to \n discharge', style: TextStyle(
+                        Text('Percentage of \ncompletion', style: TextStyle(
                             fontSize: 12, color: Colors.white
                         ),),
                       ],
@@ -195,7 +228,39 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       ],
     );
   }
-  Widget buildChecklist() {
+
+  addCheckListData(result, index, nric)  {
+    print('in Data upload');
+    FirebaseDatabase.instance
+        .reference()
+        .child("checklist")
+        .orderByChild("userNRIC")
+        .equalTo(nric)
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+
+        print('Creating data');
+        _checklistRef.push().set({
+          'userNRIC' : nric,
+          'checklist '+ index.toString(): result
+        });
+
+
+
+    });
+  }
+
+
+  Future loadPref() async {
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      childnric = sharedPreferences.getString('ChildNRIC');
+    });
+    print('In Load Pref');
+  }
+
+  /*Widget buildChecklist() {
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Column(children: <Widget>[
@@ -244,5 +309,5 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             ]),
           ]
         );
-  }
+  }*/
 }
