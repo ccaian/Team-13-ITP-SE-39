@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growth_app/controllers/surveycontroller.dart';
 import 'package:growth_app/model/survey_score.dart';
+import 'package:uuid/uuid.dart';
 
 import 'components/score_card.dart';
 import 'controllers/scorecontroller.dart';
@@ -33,7 +34,6 @@ class _WellbeingScoreState extends State<WellbeingScore> {
 
     ScoreController _scoreController = Get.put(ScoreController());
     SurveyController _surveyController = Get.put(SurveyController());
-
     SurveyScore sc = SurveyScore(id: 3, score: _surveyController.totalScore, userEmail: "ccaian3@gmail.com", date: DateTime.now().toString());
     addScore(sc);
     return Material(
@@ -118,9 +118,10 @@ class _WellbeingScoreState extends State<WellbeingScore> {
 }
 void addScore(SurveyScore score){
 
+  var uuid = Uuid();
   final databaseReference = FirebaseDatabase.instance.reference().child("wellbeingscore");
   print("testpost");
-  databaseReference.child("ccaian3").child("2138192311123").set({
+  databaseReference.child("ccaian3").child(uuid.v1()).set({
     'score': score.score,
     'date': score.date
   }

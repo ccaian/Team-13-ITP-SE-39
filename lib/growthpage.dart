@@ -161,6 +161,7 @@ class _GrowthPageState extends State<GrowthPage> {
     List<GrowthItem> items = [];
 
     await _growthQuery.once().then((DataSnapshot snapShot) {
+
       if (snapShot.value != null) {
         Map<dynamic, dynamic> values = snapShot.value;
         values.forEach((key, values) {
