@@ -250,7 +250,7 @@ class _ParentHomeState extends State<ParentHome> {
   Future loadPagePref() async{
     List newList = [];
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    temp = sharedPreferences.getString('Session');
+    temp = sharedPreferences.getString('email');
     temp2 = sharedPreferences.getString('ChildName');
     FirebaseDatabase.instance
         .reference()
