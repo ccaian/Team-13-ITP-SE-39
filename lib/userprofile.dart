@@ -41,6 +41,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Form(
       key: _formKey,
       child: Column(children: <Widget>[
+
         FittedBox(
           child: new Image.asset(
             'assets/loginsplash.png',
