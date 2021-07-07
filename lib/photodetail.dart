@@ -73,52 +73,123 @@ class _PhotoDetailState extends State<PhotoDetail> {
                         child: Stack(
                           children: <Widget>[
 
-                            new Text(user)
-                            ,
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
-                                child: new Image(image: new NetworkImage(imageUrl), width: 140.0)
-                            ),
+                            Positioned(
 
+                                top: MediaQuery.of(context).size.height*0.025,
+                                left: MediaQuery.of(context).size.width*0.08,
+                                child: Text(
+                                    user,
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff9397ca),
+                                    )
+                                ))
+                            ,
+                            Positioned(
+                                top: MediaQuery.of(context).size.width*0.12,
+                                left: MediaQuery.of(context).size.width*0.05,
+                                child:  Image(image: new NetworkImage(imageUrl), width: MediaQuery.of(context).size.width*0.9),
+                            height: MediaQuery.of(context).size.height*0.3,)
                           ])
                     ),
                     Positioned(
-                      bottom: 20,
-                      right: 20,
-                      child: FloatingActionButton(
-                        // isExtended: true,
-                        child: Icon(Icons.download),
-                        backgroundColor: Color(0xff4C52A8),
-                        onPressed: () async {
-                          // Navigator.push(context, new MaterialPageRoute(
-                          //     builder: (context) => UploadPhoto(refUrl: widget.refUrl)
-                          // ));
-                          try {
-                            // Saved with this method.
-                            var imageId =
-                            await ImageDownloader.downloadImage(imageUrl);
-                            if (imageId == null) {
-                            return;
-                            }
-                            // Below is a method of obtaining saved image information.
-                            var fileName = await ImageDownloader.findName(imageId);
-                            var path = await ImageDownloader.findPath(imageId);
-                            var size = await ImageDownloader.findByteSize(imageId);
-                            var mimeType = await ImageDownloader.findMimeType(imageId);
-                            Navigator.pop(context);
-                            Fluttertoast.showToast(
-                                msg: "Image has been downloaded to your device.",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.grey,
-                                textColor: Colors.white,
-                                fontSize: 16.0);
+
+                        top: MediaQuery.of(context).size.height*0.4,
+                        left: MediaQuery.of(context).size.width*0.1,
+                      child: Container(
+                        child: Icon(Icons.download_sharp,color: Color(0xff9397ca)),
+                        height: MediaQuery.of(context).size.width*0.18,
+                        width: MediaQuery.of(context).size.width*0.18,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color(0xff9397ca),width: 2),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width*0.2))
+                        ),
+
+                      )
+                    ),
+
+                    Positioned(
+
+                        top: MediaQuery.of(context).size.height*0.4,
+                        left: MediaQuery.of(context).size.width*0.3,
+                        child: Container(
+                          child: Icon(Icons.edit,color: Color(0xff9397ca)),
+                          height: MediaQuery.of(context).size.width*0.18,
+                          width: MediaQuery.of(context).size.width*0.18,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xff9397ca),width: 2),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width*0.2))
+                          ),
+
+                        )
+                    ),
+
+                    Positioned(
+
+                        top: MediaQuery.of(context).size.height*0.4,
+                        left: MediaQuery.of(context).size.width*0.5,
+                        child: Container(
+                          child: Icon(Icons.delete,color: Color(0xff9397ca)),
+                          height: MediaQuery.of(context).size.width*0.18,
+                          width: MediaQuery.of(context).size.width*0.18,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Color(0xff9397ca),width: 2),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width*0.2))
+                          ),
+
+                        )
+                    ),
+
+                    Positioned(
+
+                        top: MediaQuery.of(context).size.height*0.4,
+                        left: MediaQuery.of(context).size.width*0.7,
+                        child: InkWell(
+                          onTap: ()async {
+                            // Navigator.push(context, new MaterialPageRoute(
+                            //     builder: (context) => UploadPhoto(refUrl: widget.refUrl)
+                            // ));
+                            try {
+                              // Saved with this method.
+                              var imageId =
+                              await ImageDownloader.downloadImage(imageUrl);
+                              if (imageId == null) {
+                                return;
+                              }
+                              // Below is a method of obtaining saved image information.
+                              var fileName = await ImageDownloader.findName(imageId);
+                              var path = await ImageDownloader.findPath(imageId);
+                              var size = await ImageDownloader.findByteSize(imageId);
+                              var mimeType = await ImageDownloader.findMimeType(imageId);
+                              Navigator.pop(context);
+                              Fluttertoast.showToast(
+                                  msg: "Image has been downloaded to your device.",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.grey,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
                             } on PlatformException catch (error) {
-                            print(error);
+                              print(error);
                             }
-                            },
-                      ),
+                          },
+                          child: Container(
+                            height: MediaQuery.of(context).size.width*0.18,
+                            width: MediaQuery.of(context).size.width*0.18,
+                            child: Icon(Icons.share,color: Color(0xff9397ca)),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Color(0xff9397ca),width: 2),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width*0.2))
+                            ),
+
+                          ),
+                        )
                     ),
                   ]
               ),
