@@ -102,29 +102,31 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                               color: Color(0xfff2f2f2),
                               borderRadius: BorderRadius.circular(25),
                               ),
-                                  child: CheckboxListTile(
-                                    title: new Text(key, style: TextStyle(
-                                      fontSize: 22.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
-                                    )),
-                                    value: List[key],
-                                    activeColor: Colors.deepPurple[400],
-                                    checkColor: Colors.white,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        List[key] = value as bool;
-                                        if(value == true){
-                                          progress = progress + 100/List.length;
-                                        }else{
-                                          progress = progress - 100/List.length;
-                                        }if(progress > 100){
-                                          progress = 100;
-                                        }if(progress < 0){
-                                          progress = 0;
-                                        }
-                                      });
-                                    },
+                                  child: Center(
+                                    child: CheckboxListTile(
+                                      title: new Text(key, style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      )),
+                                      value: List[key],
+                                      activeColor: Colors.deepPurple[400],
+                                      checkColor: Colors.white,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          List[key] = value as bool;
+                                          if(value == true){
+                                            progress = progress + 100/List.length;
+                                          }else{
+                                            progress = progress - 100/List.length;
+                                          }if(progress > 100){
+                                            progress = 100;
+                                          }if(progress < 0){
+                                            progress = 0;
+                                          }
+                                        });
+                                      },
+                                    ),
                                   )
                               )
                                   )

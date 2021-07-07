@@ -18,8 +18,9 @@ class _WorkerHomeState extends State<WorkerHome> {
     loadPagePref();
     super.initState();
   }
-  String? famName = "Miranda Family";
+  String? famName = "";
   String?  result = "";
+  String?  childName = "";
 
   Widget build(BuildContext context) {
     final shape = RoundedRectangleBorder(
@@ -36,7 +37,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                 top: 80,
                 left: 30,
                 child: Text(
-                    "Welcome,\nJia Ming",
+                    "Welcome,\nAdmin",
                     style: TextStyle(
                       fontSize: 26.0,
                       fontWeight: FontWeight.bold,
@@ -89,7 +90,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                             left: MediaQuery.of(context).size.width * 0.11,
 
                             child: Text(
-                                "Enter information here",
+                                "Currently Monitoring Child: \n" +childName.toString(),
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   color: Colors.white,
@@ -220,8 +221,10 @@ class _WorkerHomeState extends State<WorkerHome> {
   Future loadPagePref() async{
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     result = sharedPreferences.getString('Fam');
+    childName = sharedPreferences.getString('ChildName');
     setState(() {
       famName = result;
+      childName = sharedPreferences.getString('ChildName');
     });
   }
 }
