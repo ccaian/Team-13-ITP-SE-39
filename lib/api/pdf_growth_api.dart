@@ -46,7 +46,7 @@ class PdfGrowthApi {
       return [
         item.date,
         item.weight + " kg",
-        item.height + " kg",
+        item.height + " cm",
         item.head + " cm",
       ];
     }).toList();
