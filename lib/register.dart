@@ -35,8 +35,9 @@ class _RegisterPageState extends State<RegisterPage> {
             //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
             child: Form(
       key: _formKey,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-          Widget>[
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
         FittedBox(
           child: new Image.asset(
             'assets/loginsplash.png',
@@ -183,13 +184,6 @@ class _RegisterPageState extends State<RegisterPage> {
       user = auth.currentUser!;
       user.sendEmailVerification();
       VerificationDialog(context);
-      // Navigator.push(context, new MaterialPageRoute(
-      //     builder: (context) => LoginPage()
-      // ));
-      // TO BE USED FOR FINAL
-      // Navigator.push(context, new MaterialPageRoute(
-      //     builder: (context) => VerifyPage()
-      //));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(

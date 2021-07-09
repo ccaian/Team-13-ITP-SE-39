@@ -2,12 +2,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/login.dart';
-import 'package:growth_app/nav.dart';
 import 'package:growth_app/setting.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ChangePasswordPage extends StatefulWidget{
@@ -20,7 +17,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   // text field state
   var _oldPassword, _newPassword, _cfmPassword;
-  bool checkCurrentPw = true;
 
   // Password Regex Expression
   RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
@@ -39,7 +35,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
             child: Form(
               key: _formKey,
-              child: Column(children: <Widget>[
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
                 FittedBox(
                   child: new Image.asset('assets/loginsplash.png', width: 400, height: 380,),
                   fit: BoxFit.fill,
@@ -146,7 +144,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               shape: shape,
                             ),
                             child: new Text(
-                              "Reset Password",
+                              "Change Password",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14.0,
@@ -157,18 +155,39 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             onPressed: () async {
                               if(_formKey.currentState!.validate()){
                                 print('pressed reset');
-                                  _changePassword(_newPassword);
+                                _reauthenticateUser(_oldPassword, _newPassword);
                               }
                             },
                           )
                       ))
-
                     ]
                 ),
               ]
               ),
             )
         ));
+  }
+
+  void _reauthenticateUser(String oldPassword, String newPassword) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userEmail = prefs.getString('email').toString();
+
+    AuthCredential credential = EmailAuthProvider.credential(email: userEmail, password: oldPassword);
+
+    await auth.currentUser!.reauthenticateWithCredential(credential).then((_){
+      _changePassword(newPassword);
+    }).catchError((error){
+      Fluttertoast.showToast(
+          msg: "Old Password is Invalid",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+      print("Password can't be changed");
+    });
   }
 
   void _changePassword(String password) {
