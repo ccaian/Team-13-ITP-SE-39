@@ -8,6 +8,7 @@ import 'package:growth_app/controllers/surveycontroller.dart';
 import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/model/survey_question.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/scorehistory.dart';
 import 'package:growth_app/wellbeingscore.dart';
 
 import 'components/question_card.dart';
@@ -34,7 +35,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
   Widget build(BuildContext context) {
 
     SurveyController _surveyController = Get.put(SurveyController());
-    print("hi main page");
+    _surveyController.resetSurvey();
     print(_surveyController.questions.length);
     return Scaffold(
 
@@ -109,35 +110,65 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
 
                         ))
                         ,
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.05, 0, 0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.redAccent,
-                              minimumSize: Size(50, 50),
-                              shape: shape,
-                            ),
-                            child: new Text(
-                              "Finish Survey",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
+                        Row(
+                          children: [
+
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.05, MediaQuery.of(context).size.width*0.05, 0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.redAccent,
+                                  minimumSize: Size(50, 50),
+                                  shape: shape,
+                                ),
+                                child: new Text(
+                                  "Finish Survey",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  if (_surveyController.isFinished){
+
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (context) => WellbeingScore()));
+                                  }
+                                },
                               ),
                             ),
-                            onPressed: () async {
-                                if (_surveyController.isFinished){
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.05, 0, 0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white,
+                                  minimumSize: Size(50, 50),
+                                  shape: shape,
+                                ),
+                                child: new Text(
+                                  "Score History",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                onPressed: ()  {
+                                    Navigator.push(context, new MaterialPageRoute(
+                                        builder: (context) => ScoreHistory()
+                                    ));
 
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => WellbeingScore()));
-                                }
-                            },
-                          ),
-                        )
+                                },
+                              ),
+                            )
+                          ],
+                        ),
 
                       ],
                     ),

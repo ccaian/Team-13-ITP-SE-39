@@ -15,17 +15,6 @@ class ScoreController extends GetxController
     with SingleGetTickerProviderMixin{
 
 
-  List<SurveyScore> _scores = sample_scores
-      .map(
-        (surveyscore) => SurveyScore(
-        id: surveyscore['id'],
-        date: surveyscore['date'],
-        score: surveyscore['score'],
-        userEmail: surveyscore['userEmail']),
-  )
-      .toList();
-  List<SurveyScore> get scores => this._scores;
-
   @override
   void onInit() {
 

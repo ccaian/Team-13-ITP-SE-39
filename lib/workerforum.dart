@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'components/forum_card.dart';
 import 'controllers/forumcontroller.dart';
@@ -19,9 +21,14 @@ class WorkerForum extends StatefulWidget {
 }
 class _WorkerForumState extends State<WorkerForum> {
 
+  String title = '';
+  String description = '';
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final databaseReference = FirebaseDatabase.instance.reference().child("forum");
+  CollectionReference posts = FirebaseFirestore.instance
+      .collection('forumposts')
+      ;
   @override
   void initState(){
     loadPagePref();
@@ -32,7 +39,7 @@ class _WorkerForumState extends State<WorkerForum> {
 
   Widget build(BuildContext context) {
 
-    ForumController _forumController = Get.put(ForumController());
+
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
     );
@@ -79,11 +86,38 @@ class _WorkerForumState extends State<WorkerForum> {
 
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
-                          child: ListView.builder(
-                              itemCount: sample_posts.length,
-                              itemBuilder: (context, index){
-                                return ForumCard(forumPost:_forumController.posts[index]);
-                              }),
+                          child: StreamBuilder(
+                            stream: posts
+                              .snapshots(),
+                            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
+                              //if (snapshot.connectionState == ConnectionState.done){
+
+                              //}
+                              List forumposts = snapshot.data!.docs;
+                              List<ForumPost> _posts = forumposts.map(
+                                    (forumpost) => ForumPost(
+                                    id: 123,
+                                    date: forumpost['date'],
+                                    author: 'Admin',
+                                    title: forumpost['title'],
+                                    description: forumpost['description']),
+                              )
+                                  .toList();
+                              //print(data['title']);
+                              return ListView.builder(
+                                itemCount: snapshot.data!.size,
+                                itemBuilder: (context, index){
+                                  return ForumCard(forumPost: _posts[index],);
+                                },
+                              );
+                              return Text("loading");
+
+
+                            }
+                            ,
+
+                          )
+
                         ),
                       ]
 
@@ -112,6 +146,9 @@ class _WorkerForumState extends State<WorkerForum> {
                               height: MediaQuery.of(context).size.height* 0.1,
                               width: MediaQuery.of(context).size.width*0.8,
                               child: TextField(
+                                onChanged: (val) {
+                                  setState(() => title);
+                                },
                               controller: titleController,
                               decoration: InputDecoration(
                                 border: new OutlineInputBorder(
@@ -129,7 +166,10 @@ class _WorkerForumState extends State<WorkerForum> {
                               width: MediaQuery.of(context).size.width*0.8,
                               child: TextField(
                                 maxLines: 12,
-                                controller: titleController,
+                                onChanged: (val) {
+                                  setState(() => description);
+                                },
+                                controller: descriptionController,
                                 decoration: InputDecoration(
                                   border: new OutlineInputBorder(
                                     borderRadius: const BorderRadius.all(
@@ -153,8 +193,10 @@ class _WorkerForumState extends State<WorkerForum> {
                         ),
                         TextButton(
                           onPressed: (){
-
-                            Navigator.pop(context);
+                            Navigator.pop(context, 'Cancel');
+                            if (titleController.text != '' && descriptionController != '')
+                              print("bumbblebee");
+                              addForumPost(titleController.text, descriptionController.text);
                             },
                           child: const Text('OK'),
                         ),
@@ -174,15 +216,19 @@ class _WorkerForumState extends State<WorkerForum> {
     );
   }
 
+  void addForumPost(String title, String description){
+    print("chocolate 2");
+    DateTime now = new DateTime.now();
+    posts.add({
 
-  void addForumPost(ForumPost post){
-    print("testpost");
-    databaseReference.child("hihi").set({
-      'hello': "poop"
-    }
+      'title': title,
+      'description': description,
+      'author': 'Admin',
+      'date': now.toString(),
 
 
-    );
+    });
+
 
   }
 
