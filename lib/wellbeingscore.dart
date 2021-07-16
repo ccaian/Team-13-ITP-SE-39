@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:growth_app/controllers/surveycontroller.dart';
 import 'package:growth_app/model/survey_score.dart';
 import 'package:growth_app/scorehistory.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'components/score_card.dart';
@@ -22,14 +23,14 @@ class WellbeingScore extends StatefulWidget {
 
 class _WellbeingScoreState extends State<WellbeingScore> {
 
-
-  CollectionReference scores = FirebaseFirestore.instance
-      .collection('wellbeingscore').doc('ccaian3').collection('scores');
+  late CollectionReference scores;
+  var email;
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(50));
   @override
   void initState(){
 
+    getEmail();
     super.initState();
 
   }
@@ -37,6 +38,10 @@ class _WellbeingScoreState extends State<WellbeingScore> {
 
   Widget build(BuildContext context) {
 
+    print("TESTING");
+    print(email);
+    scores = FirebaseFirestore.instance
+        .collection('wellbeingscore').doc(email).collection('scores');
     SurveyController _surveyController = Get.put(SurveyController());
     addScore(_surveyController.totalScore);
     return Material(
@@ -144,5 +149,15 @@ class _WellbeingScoreState extends State<WellbeingScore> {
       'score': score,
       'date' : now.toString()
     });
+  }
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    setState(() {
+
+      email = prefs.getString('parentemail');
+    });
+    print(email);
+    print("hello");
   }
 }

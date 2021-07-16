@@ -10,6 +10,7 @@ import 'package:growth_app/model/survey_question.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/scorehistory.dart';
 import 'package:growth_app/wellbeingscore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/question_card.dart';
 
@@ -180,7 +181,6 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
       ),
     );
   }
-
 }
 
 

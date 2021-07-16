@@ -21,9 +21,7 @@ class ScoreHistory extends StatefulWidget {
 }
 
 class _ScoreHistoryState extends State<ScoreHistory> {
-
-  CollectionReference scores = FirebaseFirestore.instance
-      .collection('wellbeingscore').doc('ccaian3').collection('scores');
+  var email;
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(50));
   @override
@@ -36,6 +34,8 @@ class _ScoreHistoryState extends State<ScoreHistory> {
 
   Widget build(BuildContext context) {
 
+    CollectionReference scores = FirebaseFirestore.instance
+        .collection('wellbeingscore').doc(email).collection('scores');
     return Material(
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -112,9 +112,10 @@ class _ScoreHistoryState extends State<ScoreHistory> {
   getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
-    String? stringValue = prefs.getString('email');
+    setState(() {
+      email = prefs.getString('parentemail');
+
+    });
     print("hello");
-    print(stringValue);
-    return stringValue;
   }
 }

@@ -104,7 +104,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         ),
         children: [
       for(var i = 0; i < babyNRICList.length; i++)
-        newTile(babyNRICList[i], items)
+        newTile(babyNRICList[i], items,parentEmail)
         ],
       ),
     );
@@ -124,7 +124,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     return listOfChildrenEmail;
 }
 
-  newTile(String title, int index){
+  newTile(String title, int index, String parentEmail){
     String babyTitle ='';
     babyTitle = getBabyName(title);
       return new ListTile(
@@ -136,6 +136,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString('Fam',litems[index]);
           sharedPreferences.setString('ChildNRIC',title);
+          sharedPreferences.setString('parentemail',parentEmail);
 
           Navigator.push(
               context,

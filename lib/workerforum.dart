@@ -20,6 +20,7 @@ class WorkerForum extends StatefulWidget {
 
 }
 class _WorkerForumState extends State<WorkerForum> {
+  var email;
 
   String title = '';
   String description = '';
@@ -32,6 +33,7 @@ class _WorkerForumState extends State<WorkerForum> {
   @override
   void initState(){
     loadPagePref();
+    getEmail();
     super.initState();
   }
   String? famName = "Miranda Family";
@@ -127,93 +129,105 @@ class _WorkerForumState extends State<WorkerForum> {
             Positioned(
               bottom: 20,
               right: 20,
-              child: FloatingActionButton(
-                // isExtended: true,
-                child: Icon(Icons.add),
-                backgroundColor: Color(0xff4C52A8),
-                onPressed: ()  {
-                  showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Enter Post Details'),
-                      content: Container(
-                        height: MediaQuery.of(context).size.height* 0.3,
-                        width: MediaQuery.of(context).size.width*0.4,
-                        child: Column(
-                          children: [
-                            Container(
-
-                              height: MediaQuery.of(context).size.height* 0.1,
-                              width: MediaQuery.of(context).size.width*0.8,
-                              child: TextField(
-                                onChanged: (val) {
-                                  setState(() => title);
-                                },
-                              controller: titleController,
-                              decoration: InputDecoration(
-                                border: new OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                    const Radius.circular(25),
-                                  ),
-                                ),
-                                fillColor: Colors.red,
-                                labelText: 'Title',
-                              ),
-                              ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height* 0.2,
-                              width: MediaQuery.of(context).size.width*0.8,
-                              child: TextField(
-                                maxLines: 12,
-                                onChanged: (val) {
-                                  setState(() => description);
-                                },
-                                controller: descriptionController,
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
-                                  ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Description',
-                                ),
-                              ),
-                            ),
-
-
-                          ]
-                        ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: (){
-                            Navigator.pop(context, 'Cancel');
-                            if (titleController.text != '' && descriptionController != '')
-                              print("bumbblebee");
-                              addForumPost(titleController.text, descriptionController.text);
-                            },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                    ),
-                  );
-
-
-                },
-              ),
+              child: buildFloatingActionButton(context),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget buildFloatingActionButton(BuildContext context) {
+    print(email);
+    if (email=='darrellerjr@gmail.com'){
+      return FloatingActionButton(
+        // isExtended: true,
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xff4C52A8),
+        onPressed: ()  {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Enter Post Details'),
+              content: Container(
+                height: MediaQuery.of(context).size.height* 0.3,
+                width: MediaQuery.of(context).size.width*0.4,
+                child: Column(
+                    children: [
+                      Container(
+
+                        height: MediaQuery.of(context).size.height* 0.1,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child: TextField(
+                          onChanged: (val) {
+                            setState(() => title);
+                          },
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            labelText: 'Title',
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height* 0.2,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child: TextField(
+                          maxLines: 12,
+                          onChanged: (val) {
+                            setState(() => description);
+                          },
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            labelText: 'Description',
+                          ),
+                        ),
+                      ),
+
+
+                    ]
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: (){
+                    Navigator.pop(context, 'Cancel');
+                    if (titleController.text != '' && descriptionController != '')
+                      print("bumbblebee");
+                    addForumPost(titleController.text, descriptionController.text);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+            ),
+          );
+
+
+        },
+      );
+    }
+    else return Text(
+      " "
+    );
+
+
   }
 
   void addForumPost(String title, String description){
@@ -232,6 +246,16 @@ class _WorkerForumState extends State<WorkerForum> {
 
   }
 
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    setState(() {
+
+      email = prefs.getString('email');
+    });
+    print(email);
+    print("hello");
+  }
   Future loadPagePref() async{
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     result = sharedPreferences.getString('Fam');
