@@ -1,10 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:growth_app/navparent.dart';
-import 'package:growth_app/parentselchild.dart';
-import 'package:growth_app/profilesetup.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
-import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -226,12 +224,18 @@ class _LoginPageState extends State<LoginPage> {
         if (snapShot.value != null) {
           Map<dynamic, dynamic> values = snapShot.value;
           values.forEach((key, values) {
+
             prefs.setBool('admin', values['admin']);
+            prefs.setString('firebaseKey', key);
+
+            if (values['adminPin'] != null) {
+              prefs.setString('adminPin', values['adminPin']);
+            }
           });
 
           if(prefs.getBool('admin') == true) {
             // user is a healthcare worker
-            Navigator.of(context).pushNamed('/workerHome');
+            Navigator.of(context).pushNamed('/adminHome');
           } else {
             // user is a parent and not first login
             Navigator.of(context).pushNamed('/parentHome');

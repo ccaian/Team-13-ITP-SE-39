@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:growth_app/adminpin.dart';
 import 'package:growth_app/changepassword.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
@@ -27,6 +28,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => UserProfilePage());
       case '/changePassword':
         return MaterialPageRoute(builder: (_) => ChangePasswordPage());
+      case '/changeAdminPIN':
+        return MaterialPageRoute(builder: (_) => ChangePINPage());
       case '/adminHome':
         return MaterialPageRoute(builder: (_) => WorkerSelFamily());
       case '/parentHome':

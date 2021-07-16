@@ -8,6 +8,14 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
 
+  var _isAdmin = false;
+
+  @override
+  void initState() {
+    checkAdmin();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final shape =
@@ -72,6 +80,35 @@ class _SettingPageState extends State<SettingPage> {
                 )),
           )
         ]),
+        SizedBox(height: 0.0),
+        !_isAdmin
+            ? const SizedBox.shrink()
+            : Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                Widget>[
+                Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(80.0, 15.0, 80.0, 0.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blueAccent,
+                          minimumSize: Size(50, 50),
+                          shape: shape,
+                        ),
+                        child: Text(
+                          "Change Admin PIN",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/changeAdminPIN');
+                        },
+                      )),
+                )
+              ]),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
           Expanded(
               child: Padding(
@@ -100,9 +137,16 @@ class _SettingPageState extends State<SettingPage> {
     ));
   }
 
+  void checkAdmin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isAdmin = prefs.getBool('admin')!;
+    });
+  }
+
   void logout() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.clear();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     await FirebaseAuth.instance.signOut();
 
     Navigator.popUntil(context, ModalRoute.withName("/"));

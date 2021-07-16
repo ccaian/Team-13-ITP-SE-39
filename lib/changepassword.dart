@@ -16,7 +16,7 @@ class ChangePasswordPage extends StatefulWidget{
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   // text field state
-  var _oldPassword, _newPassword, _cfmPassword;
+  var _oldPassword, _newPassword;
 
   // Password Regex Expression
   RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
@@ -112,9 +112,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                     validator: (val) =>
                     val != _newPassword ? 'Password does not match' : null,
-                    onChanged: (val) {
-                      setState(() => _cfmPassword = val.trim());
-                    },
                   ),
                 ),
                 Padding(
