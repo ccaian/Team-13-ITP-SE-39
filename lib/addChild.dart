@@ -17,19 +17,21 @@ class AddChild extends StatefulWidget {
   @override
   _AddChildPageState createState() => _AddChildPageState();
 }
-
+enum SingingCharacter { Male, Female }
 class _AddChildPageState extends State<AddChild> {
 
   String name = '';
   String nric = '';
   String temp = '';
   String parentEmail = '';
+  String gender = 'male';
 
   final _addchildKey = GlobalKey<FormState>();
 
   var _childRef = FirebaseDatabase.instance.reference().child('child');
   TextEditingController _nameControl = TextEditingController();
   TextEditingController _nricControl = TextEditingController();
+  SingingCharacter? _character = SingingCharacter.Male;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +104,36 @@ class _AddChildPageState extends State<AddChild> {
                           controller: _nricControl,
                         ),
                       ),
+                      new Column(
+                        children: <Widget>[
+                          ListTile(
+                            title: const Text('Male'),
+                            leading: Radio<SingingCharacter>(
+                              value: SingingCharacter.Male,
+                              groupValue: _character,
+                              onChanged: (SingingCharacter? value) {
+                                setState(() {
+                                  _character = value;
+                                  gender = 'male';
+                                });
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            title: const Text('Female'),
+                            leading: Radio<SingingCharacter>(
+                              value: SingingCharacter.Female,
+                              groupValue: _character,
+                              onChanged: (SingingCharacter? value) {
+                                setState(() {
+                                  _character = value;
+                                  gender = 'female';
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                       new Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -150,6 +182,7 @@ class _AddChildPageState extends State<AddChild> {
       'name': _nameControl.text,
       'nric': _nricControl.text,
       'parent': parentEmail,
+      'gender' : gender
     });
   }
 
@@ -164,3 +197,4 @@ class _AddChildPageState extends State<AddChild> {
   }
 
 }
+
