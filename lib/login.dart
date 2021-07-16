@@ -1,10 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:growth_app/navparent.dart';
-import 'package:growth_app/parentselchild.dart';
-import 'package:growth_app/profilesetup.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
-import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +17,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   // text field state
-  bool checkboxValue = false;
   var _email, _password;
 
   // Email Regex Expression
-  RegExp emailRegExp = new RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp emailRegExp = new RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   final _formKey = GlobalKey<FormState>();
   final _userDbRef = FirebaseDatabase.instance.reference().child("user");
@@ -32,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+    RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(
@@ -67,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                       if (val!.isEmpty) {
                         return 'Enter an email address';
                       }
-                      else if (!emailRegExp.hasMatch(val)){
+                      else if (!emailRegExp.hasMatch(val)) {
                         return 'Enter a valid email address';
                       }
                       else {
@@ -94,21 +92,9 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'Password',
                     ),
                     validator: (val) =>
-                        val!.isEmpty ? 'Enter your password' : null,
+                    val!.isEmpty ? 'Enter your password' : null,
                     onChanged: (val) {
                       setState(() => _password = val.trim());
-                    },
-                  ))),
-              SizedBox(height: 20.0),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
-                  child: (CheckboxListTile(
-                    title: Text("Keep me signed in?"),
-                    value: this.checkboxValue,
-                    onChanged: (value) {
-                      setState(() {
-                        this.checkboxValue = value as bool;
-                      });
                     },
                   ))),
               SizedBox(height: 20.0),
@@ -136,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  authenticate(_email, _password, checkboxValue);
+                                  authenticate(_email, _password);
                                   print('pressed log in');
                                 }
                               },
@@ -161,55 +147,33 @@ class _LoginPageState extends State<LoginPage> {
                 },
               ),
               Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                      80.0, 0.0, 80.0, 0.0),
-                  child: TextButton(
-                      child: new Text(
-                        "Forgot Password",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      onPressed: () {
-                        print('Forgot Password');
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) => ResetPasswordPage()));
-                      }
-                ),
-              ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  80.0, 0.0, 80.0, 0.0),
-              child: TextButton(
-                child: new Text(
-                  "Forgot Password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.grey[700],
+                padding: const EdgeInsets.fromLTRB(
+                    80.0, 0.0, 80.0, 0.0),
+                child: TextButton(
+                  child: new Text(
+                    "Forgot Password",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey[700],
+                    ),
                   ),
+                  onPressed: () {
+                    print('Forgot Password');
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) => ResetPasswordPage()));
+                  },
                 ),
-                onPressed: () {
-                  print('Forgot Password');
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => ResetPasswordPage()));
-                },
-              ),
-          )
+              )
             ]),
           ),
         ));
   }
 
-  void authenticate(email, password, checkboxValue) async {
+  void authenticate(email, password) async {
     try {
       UserCredential userAuth = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -219,24 +183,7 @@ class _LoginPageState extends State<LoginPage> {
       currentUser = FirebaseAuth.instance.currentUser;
       print(currentUser);
 
-      if (checkboxValue == true) {
-        prefs.setBool('rmbMe', true);
-        prefs.setString('password', password);
-        if (email == "darrellerjr@gmail.com") {
-          Navigator.pushReplacement(
-              context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
-        } else {
-          userVerification(email);
-        }
-      }
-      else{
-        if (email == "darrellerjr@gmail.com") {
-          Navigator.pushReplacement(
-              context, new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
-        } else {
-          userVerification(email);
-        }
-      }
+      userVerification(email);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
@@ -260,35 +207,58 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void userVerification(email) async{
+  void userVerification(email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Query _userQuery = _userDbRef
-        .orderByChild("email")
-        .equalTo(email);
+    if (currentUser.emailVerified) {
+      Query _userQuery = _userDbRef
+          .orderByChild("email")
+          .equalTo(email);
 
-    _userQuery.once().then((DataSnapshot snapShot) async {
-      print(snapShot.value);
+      prefs.setString('Session', email);
 
-      // User profile exist in DB => to home page
-      if(snapShot.value != null) {
-        Map<dynamic, dynamic> values = snapShot.value;
-        values.forEach((key, values) {
-          prefs.setString('displayName', values['firstName'] + " " + values['lastName']);
-        });
-        prefs.setString('Session',email);
+      _userQuery.once().then((DataSnapshot snapShot) async {
+        print(snapShot.value);
 
-        Navigator.pushReplacement(context,
-            new MaterialPageRoute(builder: (context) => ParentSelChild()));
-      } else {
-        // User profile does not exist in DB => to home page
-        final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-        sharedPreferences.setString('Session',email);
+        // User profile exist in DB => to home page
+        if (snapShot.value != null) {
+          Map<dynamic, dynamic> values = snapShot.value;
+          values.forEach((key, values) {
 
-        Navigator.pushReplacement(context, new MaterialPageRoute(
-            builder: (context) => ProfileSetUpPage()
-        ));
-      }
-    });
+            prefs.setBool('admin', values['admin']);
+            prefs.setString('firebaseKey', key);
+
+            if (values['adminPin'] != null) {
+              prefs.setString('adminPin', values['adminPin']);
+            }
+          });
+
+          if(prefs.getBool('admin') == true) {
+            // user is a healthcare worker
+            Navigator.of(context).pushNamed('/adminHome');
+          } else {
+            // user is a parent and not first login
+            Navigator.of(context).pushNamed('/parentHome');
+          }
+        } else {
+          // user is a parent and this is the first login
+          Navigator.of(context).pushNamed('/profileSetup');
+        }
+      });
+    }
+    else {
+      // clear user if account not verified
+      await prefs.clear();
+      await FirebaseAuth.instance.signOut();
+
+      Fluttertoast.showToast(
+          msg: "Account is not verified. Please verify and try again.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 }
