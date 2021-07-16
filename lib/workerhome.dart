@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
+import 'package:growth_app/workerdischargechecklist.dart';
 import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -184,7 +185,38 @@ class _WorkerHomeState extends State<WorkerHome> {
                               ),
 
                             ),
-                          ),)
+                          ),),
+
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.5,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => WorkerDischargeCheckListPage()));
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.425,
+                              height: MediaQuery.of(context).size.height * 0.17,
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(25.0,20.0,0.0,0.0),
+                                  child: Text(
+                                      "Discharge Checklist",
+                                      style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.grey[600],
+                                      )
+                                  )),
+                              decoration: BoxDecoration(
+                                color: Color(0xfff2f2f2),
+
+                                borderRadius: const BorderRadius.all(
+                                  const Radius.circular(25),
+                                ),
+                              ),
+
+                            ),
+                          ),),
                       ]
 
                   )

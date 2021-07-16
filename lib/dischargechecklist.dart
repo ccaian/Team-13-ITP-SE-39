@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/navparent.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -11,6 +13,7 @@ class DischargeCheckListPage extends StatefulWidget {
 }
 var _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
 String?  childnric = "";
+List<String> checkList = [];
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
     loadPref();
@@ -160,12 +163,13 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       List.forEach((index, value) {
                                         print(childnric.toString() + " - " + value.toString());
                                         i++;
+                                        checkList.add(value.toString());
                                       }
                                       );
                                       Navigator.push(context, new MaterialPageRoute(
                                           builder: (context) => NavParent()
                                       ));
-                                      //addCheckListData(value.toString(), i, childnric);
+                                      addCheckListData(checkList, i, childnric);
                                     },
                                   )))
                         ]),
@@ -241,11 +245,18 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
-
         print('Creating data');
         _checklistRef.push().set({
           'userNRIC' : nric,
-          'checklist '+ index.toString(): result
+          'checklist1': result[0],
+          'checklist2': result[1],
+          'checklist3': result[2],
+          'checklist4': result[3],
+          'checklist5': result[4],
+          'checklist6': result[5],
+          'checklist7': result[6],
+          'checklist8': result[7],
+          'checklist9': result[8]
         });
 
 
