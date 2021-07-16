@@ -112,10 +112,16 @@ class _ScoreHistoryState extends State<ScoreHistory> {
   getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
+    bool isAdmin = false;
+
     setState(() {
-      email = prefs.getString('parentemail');
+      isAdmin = prefs.getBool('admin')!;
+      if (isAdmin)
+        email = prefs.getString('parentemail');
+      else
+        email = prefs.getString('email');
 
     });
-    print("hello");
+    print(email);
   }
 }

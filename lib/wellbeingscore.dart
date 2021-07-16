@@ -155,9 +155,9 @@ class _WellbeingScoreState extends State<WellbeingScore> {
     //Return String
     setState(() {
 
-      email = prefs.getString('parentemail');
+      email = prefs.getString('email');
     });
     print(email);
-    print("hello");
+    print("testingemail");
   }
 }
