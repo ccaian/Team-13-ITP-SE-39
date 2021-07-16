@@ -39,9 +39,9 @@ class AdminLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: WorkerSelFamily(),
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      initialRoute: '/adminHome',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }
@@ -52,9 +52,9 @@ class ParentLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: ParentSelChild(),
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      initialRoute: '/parentHome',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }
@@ -65,9 +65,9 @@ class GrowthApp extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: LandingPage(),
       initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }
