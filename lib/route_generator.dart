@@ -3,6 +3,7 @@ import 'package:growth_app/adminpin.dart';
 import 'package:growth_app/changepassword.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
+import 'package:growth_app/milestoneguidance.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/register.dart';
@@ -18,6 +19,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => GrowthApp());
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginPage());
+      case '/milestoneGuideline':
+        return MaterialPageRoute(builder: (_) => MilestoneGuidance());
       case '/profileSetup':
         return MaterialPageRoute(builder: (_) => ProfileSetUpPage());
       case '/resetPassword':

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milestoneguidance.dart';
-import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/route_generator.dart';
-import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:growth_app/login.dart';
 
@@ -127,10 +125,7 @@ class LandingPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       print('pressed log in');
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => LoginPage()));
+                      Navigator.of(context).pushNamed('/login');
                     },
                   )))
         ]),
@@ -149,11 +144,7 @@ class LandingPage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      print('pressed register');
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => RegisterPage()));
+                      Navigator.of(context).pushNamed('/register');
                     },
                   )))
         ]),
@@ -167,10 +158,7 @@ class LandingPage extends StatelessWidget {
                 color: Colors.indigo[500],
                 tooltip: 'Increase volume by 10',
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => MilestoneGuidance()));
+                  Navigator.of(context).pushNamed('/milestoneGuideline');
                 },
               ),
             ),
@@ -187,10 +175,7 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => MilestoneGuidance()));
+                    Navigator.of(context).pushNamed('/milestoneGuideline');
                   },
                 )),
           ],
