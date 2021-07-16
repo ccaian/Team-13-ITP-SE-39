@@ -1,11 +1,7 @@
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
-import 'package:growth_app/profilesetup.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -35,9 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
             //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
             child: Form(
       key: _formKey,
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+          Widget>[
         FittedBox(
           child: new Image.asset(
             'assets/loginsplash.png',
