@@ -178,7 +178,8 @@ class _RegisterPageState extends State<RegisterPage> {
           .createUserWithEmailAndPassword(email: email, password: password);
       user = auth.currentUser!;
       user.sendEmailVerification();
-      VerificationDialog(context);
+
+      verificationDialog(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         Fluttertoast.showToast(
@@ -205,7 +206,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 }
 
-void VerificationDialog(BuildContext context) {
+void verificationDialog(BuildContext context) {
   var alert = AlertDialog(
       title: Text(
         'An email has been sent to your email for verification. Please verify before logging in.',

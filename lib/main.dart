@@ -6,7 +6,7 @@ import 'package:growth_app/register.dart';
 import 'package:growth_app/route_generator.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
+import 'package:growth_app/login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
