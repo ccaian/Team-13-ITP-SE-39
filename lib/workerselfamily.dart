@@ -67,9 +67,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                         List testList = [];
                         testList = validateChildren(parentEmailList[index]);
                         print("print data: " + babyData[index].toString());
-                        for(var i = 0; i < testList.length; i++){
-                          print('Debugg: '+parentEmailList[index]+ ' child: ' + testList[i]);
-                        }
                         return new GestureDetector(
                           //You need to make my child interactive
 
@@ -114,8 +111,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
  List validateChildren(String parentEmail) {
     List listOfChildrenEmail =[];
     for(var i = 0; i < childParentEmailList.length; i++){
-      if(parentEmail == childParentEmailList[i]){
-        listOfChildrenEmail.add(listOfChildrenNRIC[i].toString());
+      if(parentEmail == babyData[i]["parent"]){
+        print('in validate children: '+ parentEmail +' child email '+ babyData[i]["parent"]);
+        listOfChildrenEmail.add(babyData[i]["nric"].toString());
       }
     }
     if (listOfChildrenEmail.length == 0){
@@ -136,6 +134,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString('Fam',litems[index]);
           sharedPreferences.setString('ChildNRIC',title);
+          sharedPreferences.setString('ChildName',babyTitle);
 
           Navigator.push(
               context,
