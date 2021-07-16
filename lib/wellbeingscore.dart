@@ -1,9 +1,12 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growth_app/controllers/surveycontroller.dart';
 import 'package:growth_app/model/survey_score.dart';
+import 'package:growth_app/scorehistory.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'components/score_card.dart';
@@ -20,11 +23,14 @@ class WellbeingScore extends StatefulWidget {
 
 class _WellbeingScoreState extends State<WellbeingScore> {
 
+  late CollectionReference scores;
+  var email;
   final shape =
-  RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+  RoundedRectangleBorder(borderRadius: BorderRadius.circular(50));
   @override
   void initState(){
 
+    getEmail();
     super.initState();
 
   }
@@ -32,10 +38,12 @@ class _WellbeingScoreState extends State<WellbeingScore> {
 
   Widget build(BuildContext context) {
 
-    ScoreController _scoreController = Get.put(ScoreController());
+    print("TESTING");
+    print(email);
+    scores = FirebaseFirestore.instance
+        .collection('wellbeingscore').doc(email).collection('scores');
     SurveyController _surveyController = Get.put(SurveyController());
-    SurveyScore sc = SurveyScore(id: 3, score: _surveyController.totalScore, userEmail: "ccaian3@gmail.com", date: DateTime.now().toString());
-    addScore(sc);
+    addScore(_surveyController.totalScore);
     return Material(
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -44,58 +52,45 @@ class _WellbeingScoreState extends State<WellbeingScore> {
         child: Stack(
           children: [
             Positioned(
-              left: MediaQuery.of(context).size.width*0.1,
-              top: MediaQuery.of(context).size.height*0.1,
+              left: MediaQuery.of(context).size.width*0.12,
+              top: MediaQuery.of(context).size.height*0.12,
               child: Text(
                   "Score",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2
+              ),
+            ),
+
+            Positioned(
+              left: MediaQuery.of(context).size.width*0.12,
+              top: MediaQuery.of(context).size.height*0.2,
+              child: Text(
+                  "${_surveyController.totalScore}/30",
                   style: Theme.of(context)
                       .textTheme
                       .headline3
               ),
             ),
 
-            Positioned(
-              left: MediaQuery.of(context).size.width*0.1,
-              top: MediaQuery.of(context).size.height*0.16,
-              child: Text(
-                  "${_surveyController.totalScore}/30",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline4
-              ),
-            ),
-
-            Positioned(
-              top: MediaQuery.of(context).size.height*0.24,
-              child: SizedBox(
-
-                height: MediaQuery.of(context).size.height* 0.57,
-                width: MediaQuery.of(context).size.width,
-                child: ListView.builder(
-                    itemCount: sample_scores.length,
-                    itemBuilder: (context, index){
-                      return ScoreCard(scores:_scoreController.scores[index]);
-                    }),
-              ),
-            ),
 
             Align(
-                alignment: Alignment.bottomCenter,
+                alignment: Alignment.center,
 
                 child: Container(
 
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.width*0.1),
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.width*0.15),
                   child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   primary: Colors.white,
-                  minimumSize: Size(200, 50),
+                  minimumSize: Size(280, 100),
                   shape: shape,
               ),
               child: new Text(
-                  "Go Back",
+                  "View Scores",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14.0,
+                    fontSize: 18.0,
                     fontWeight: FontWeight.normal,
                     color: Colors.grey[800],
                   ),
@@ -104,9 +99,41 @@ class _WellbeingScoreState extends State<WellbeingScore> {
                   if (_surveyController.isFinished){
 
                     Navigator.pop(context);
+                    Navigator.push(context, new MaterialPageRoute(
+                        builder: (context) => ScoreHistory()
+                    ));
                   }
               },
             ),
+                )),
+            Align(
+                alignment: Alignment.center,
+
+                child: Container(
+
+                  margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.5, 0, 0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      minimumSize: Size(280, 100),
+                      shape: shape,
+                    ),
+                    child: new Text(
+                      "Go Back",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (_surveyController.isFinished){
+
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
                 ))
           ],
         ),
@@ -115,18 +142,22 @@ class _WellbeingScoreState extends State<WellbeingScore> {
     );
 
   }
-}
-void addScore(SurveyScore score){
+  void addScore(int score){
 
-  var uuid = Uuid();
-  final databaseReference = FirebaseDatabase.instance.reference().child("wellbeingscore");
-  print("testpost");
-  databaseReference.child("ccaian3").child(uuid.v1()).set({
-    'score': score.score,
-    'date': score.date
+    DateTime now = new DateTime.now();
+    scores.add({
+      'score': score,
+      'date' : now.toString()
+    });
   }
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    setState(() {
 
-
-  );
-
+      email = prefs.getString('email');
+    });
+    print(email);
+    print("testingemail");
+  }
 }

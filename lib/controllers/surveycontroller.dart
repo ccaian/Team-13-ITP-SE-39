@@ -39,6 +39,14 @@ with SingleGetTickerProviderMixin{
   int _totalScore = 0;
   int get totalScore => this._totalScore;
 
+  void resetSurvey(){
+    _questionNumber.value = 1;
+    _isFinished = false;
+    _totalScore = 0;
+    _selectedAns = 0;
+    _isAnswered = false;
+
+  }
   @override
   void onInit() {
     _pageController = PageController();

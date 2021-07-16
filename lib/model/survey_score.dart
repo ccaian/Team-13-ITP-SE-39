@@ -1,9 +1,8 @@
 class SurveyScore {
-  final int id, score;
-  final String userEmail;
+  final int  score;
   final String date;
 
-  SurveyScore({required this.id, required this.score, required this.userEmail, required this.date});
+  SurveyScore({required this.score, required this.date});
 }
 const List sample_scores = [
   {
