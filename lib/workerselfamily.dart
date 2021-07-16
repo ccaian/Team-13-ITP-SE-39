@@ -159,8 +159,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
       childMap.forEach((key, value) {
-        newList.add(value['firstName'].toString() + " " + value['lastName'].toString());
-        temp.add(value);
+        if(value['admin']==false){
+          newList.add(value['firstName'].toString() + " " + value['lastName'].toString());
+          temp.add(value);
+        }
+
       });
       print(newList);
       setState(() {
@@ -207,7 +210,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       Map<dynamic, dynamic> childMap = snapshot.value;
       List temp = childMap.values.toList();
       childMap.forEach((key, value) {
-        tempList.add(value['email'].toString());
+        if(value['admin']==false){
+          tempList.add(value['email'].toString());
+        }
       });
       print('Parent List:');
       print(tempList);
