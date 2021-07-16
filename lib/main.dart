@@ -6,7 +6,7 @@ import 'package:growth_app/register.dart';
 import 'package:growth_app/route_generator.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login.dart';
+import 'package:growth_app/login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,9 +39,9 @@ class AdminLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: WorkerSelFamily(),
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      initialRoute: '/adminHome',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }
@@ -52,9 +52,9 @@ class ParentLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: ParentSelChild(),
-      initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      initialRoute: '/parentHome',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }
@@ -65,9 +65,9 @@ class GrowthApp extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: LandingPage(),
       initialRoute: '/',
-      onGenerateRoute: RouteGenerator.generateRoute
+      onGenerateRoute: RouteGenerator.generateRoute,
+      home: LandingPage()
     );
   }
 }

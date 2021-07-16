@@ -1,10 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   // text field state
   var _email, _password;
 
@@ -30,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final shape =
-    RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(
@@ -64,11 +60,9 @@ class _LoginPageState extends State<LoginPage> {
                     validator: (val) {
                       if (val!.isEmpty) {
                         return 'Enter an email address';
-                      }
-                      else if (!emailRegExp.hasMatch(val)) {
+                      } else if (!emailRegExp.hasMatch(val)) {
                         return 'Enter a valid email address';
-                      }
-                      else {
+                      } else {
                         return null;
                       }
                     },
@@ -92,42 +86,40 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'Password',
                     ),
                     validator: (val) =>
-                    val!.isEmpty ? 'Enter your password' : null,
+                        val!.isEmpty ? 'Enter your password' : null,
                     onChanged: (val) {
                       setState(() => _password = val.trim());
                     },
                   ))),
               SizedBox(height: 20.0),
-              new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                                80.0, 0, 80.0, 0.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.redAccent,
-                                minimumSize: Size(50, 50),
-                                shape: shape,
-                              ),
-                              child: new Text(
-                                "Log In",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  authenticate(_email, _password);
-                                  print('pressed log in');
-                                }
-                              },
-                            )))
-                  ]),
+              new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                  Widget>[
+                Expanded(
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(80.0, 0, 80.0, 0.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.redAccent,
+                            minimumSize: Size(50, 50),
+                            shape: shape,
+                          ),
+                          child: new Text(
+                            "Log In",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              authenticate(_email, _password);
+                              print('pressed log in');
+                            }
+                          },
+                        )))
+              ]),
               TextButton(
                 child: new Text(
                   "Register an Account",
@@ -139,16 +131,11 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 onPressed: () {
-                  print('Forgot Password');
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => RegisterPage()));
+                  Navigator.of(context).pushReplacementNamed("/register");
                 },
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    80.0, 0.0, 80.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(80.0, 0.0, 80.0, 0.0),
                 child: TextButton(
                   child: new Text(
                     "Forgot Password",
@@ -160,11 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   onPressed: () {
-                    print('Forgot Password');
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => ResetPasswordPage()));
+                    Navigator.of(context).pushReplacementNamed("/resetPassword");
                   },
                 ),
               )
@@ -211,20 +194,17 @@ class _LoginPageState extends State<LoginPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (currentUser.emailVerified) {
-      Query _userQuery = _userDbRef
-          .orderByChild("email")
-          .equalTo(email);
+      Query _userQuery = _userDbRef.orderByChild("email").equalTo(email);
 
       prefs.setString('Session', email);
 
-      _userQuery.once().then((DataSnapshot snapShot) async {
+      _userQuery.once().then((DataSnapshot snapShot) {
         print(snapShot.value);
 
         // User profile exist in DB => to home page
         if (snapShot.value != null) {
           Map<dynamic, dynamic> values = snapShot.value;
           values.forEach((key, values) {
-
             prefs.setBool('admin', values['admin']);
             prefs.setString('firebaseKey', key);
 
@@ -233,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
             }
           });
 
-          if(prefs.getBool('admin') == true) {
+          if (prefs.getBool('admin') == true) {
             // user is a healthcare worker
             Navigator.of(context).pushNamed('/adminHome');
           } else {
@@ -245,8 +225,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.of(context).pushNamed('/profileSetup');
         }
       });
-    }
-    else {
+    } else {
       // clear user if account not verified
       await prefs.clear();
       await FirebaseAuth.instance.signOut();

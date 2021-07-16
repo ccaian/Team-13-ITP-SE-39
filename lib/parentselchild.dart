@@ -45,7 +45,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
               top: 80,
               left: 30,
               child: Text(
-                  "Select Patient",
+                  "Select Child",
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
