@@ -1,50 +1,73 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milestoneguidance.dart';
-import 'package:growth_app/parenthome.dart';
+import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/register.dart';
-import 'package:growth_app/workerhome.dart';
+import 'package:growth_app/route_generator.dart';
+import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'login.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  print('start');
-  var email = prefs.getString('email');
-  if (email != null) {
-    print(email);
-    if (email == 'darrellerjr@gmail.com') {
-      MaterialApp(
-        title: 'Growth App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Roboto'),
-        home: WorkerHome(),
-      );
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  var isLoggedInStatus = true;
+  var admin = false;
+
+  if(prefs.getString('email') == null) {
+    isLoggedInStatus = false;
+  } else {
+    if(prefs.getBool('admin') == true){
+      admin = true;
     } else {
-      MaterialApp(
-        title: 'Growth App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Roboto'),
-        home: ParentHome(),
-      );
+      admin = false;
     }
   }
-  runApp(GrowthApp());
+
+  if(isLoggedInStatus == false) {
+    runApp(GrowthApp());
+  } else {
+    runApp(admin ? AdminLogin() : ParentLogin());
+  }
 }
 
-class GrowthApp extends StatelessWidget {
-  @override
+class AdminLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      home: LandingPage(), // change to parent home when done
+      home: WorkerSelFamily(),
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute
+    );
+  }
+}
+
+class ParentLogin extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Growth App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Roboto'),
+      home: ParentSelChild(),
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute
+    );
+  }
+}
+
+class GrowthApp extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Growth App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Roboto'),
+      home: LandingPage(),
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute
     );
   }
 }

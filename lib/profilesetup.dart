@@ -21,9 +21,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
   // text field state
   var firstName, lastName, mobileNumber;
-
   final _userRef = FirebaseDatabase.instance.reference().child('user');
-  final _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -146,13 +144,13 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
 
   void writeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    User? user = _auth.currentUser;
 
     _userRef.push().set({
       'firstName': firstName,
       'lastName': lastName,
       'email': prefs.getString('email'),
-      'mobile': mobileNumber
+      'mobile': mobileNumber,
+      'admin': false
     });
 
     Navigator.pushReplacement(context,

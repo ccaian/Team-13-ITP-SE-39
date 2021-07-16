@@ -19,7 +19,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   // text field state
-  bool checkboxValue = false;
   var _email, _password;
 
   // Email Regex Expression
@@ -101,18 +100,6 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ))),
               SizedBox(height: 20.0),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
-                  child: (CheckboxListTile(
-                    title: Text("Keep me signed in?"),
-                    value: this.checkboxValue,
-                    onChanged: (value) {
-                      setState(() {
-                        this.checkboxValue = value as bool;
-                      });
-                    },
-                  ))),
-              SizedBox(height: 20.0),
               new Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -137,8 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  authenticate(
-                                      _email, _password, checkboxValue);
+                                  authenticate(_email, _password);
                                   print('pressed log in');
                                 }
                               },
@@ -161,28 +147,6 @@ class _LoginPageState extends State<LoginPage> {
                       new MaterialPageRoute(
                           builder: (context) => RegisterPage()));
                 },
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    80.0, 0.0, 80.0, 0.0),
-                child: TextButton(
-                    child: new Text(
-                      "Forgot Password",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    onPressed: () {
-                      print('Forgot Password');
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => ResetPasswordPage()));
-                    }
-                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -211,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
         ));
   }
 
-  void authenticate(email, password, checkboxValue) async {
+  void authenticate(email, password) async {
     try {
       UserCredential userAuth = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -221,26 +185,7 @@ class _LoginPageState extends State<LoginPage> {
       currentUser = FirebaseAuth.instance.currentUser;
       print(currentUser);
 
-      if (checkboxValue == true) {
-        prefs.setBool('rmbMe', true);
-        prefs.setString('password', password);
-        if (email == "darrellerjr@gmail.com") {
-          Navigator.pushReplacement(
-              context,
-              new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
-        } else {
-          userVerification(email);
-        }
-      }
-      else {
-        if (email == "darrellerjr@gmail.com") {
-          Navigator.pushReplacement(
-              context,
-              new MaterialPageRoute(builder: (context) => WorkerSelFamily()));
-        } else {
-          userVerification(email);
-        }
-      }
+      userVerification(email);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
@@ -272,34 +217,33 @@ class _LoginPageState extends State<LoginPage> {
           .orderByChild("email")
           .equalTo(email);
 
+      prefs.setString('Session', email);
+
       _userQuery.once().then((DataSnapshot snapShot) async {
         print(snapShot.value);
-
 
         // User profile exist in DB => to home page
         if (snapShot.value != null) {
           Map<dynamic, dynamic> values = snapShot.value;
           values.forEach((key, values) {
-            prefs.setString(
-                'displayName', values['firstName'] + " " + values['lastName']);
+            prefs.setBool('admin', values['admin']);
           });
-          prefs.setString('Session', email);
 
-          Navigator.pushReplacement(context,
-              new MaterialPageRoute(builder: (context) => ParentSelChild()));
+          if(prefs.getBool('admin') == true) {
+            // user is a healthcare worker
+            Navigator.of(context).pushNamed('/workerHome');
+          } else {
+            // user is a parent and not first login
+            Navigator.of(context).pushNamed('/parentHome');
+          }
         } else {
-          // User profile does not exist in DB => to home page
-          final SharedPreferences sharedPreferences = await SharedPreferences
-              .getInstance();
-          sharedPreferences.setString('Session', email);
-
-          Navigator.pushReplacement(context, new MaterialPageRoute(
-              builder: (context) => ProfileSetUpPage()
-          ));
+          // user is a parent and this is the first login
+          Navigator.of(context).pushNamed('/profileSetup');
         }
       });
     }
     else {
+      // clear user if account not verified
       await prefs.clear();
       await FirebaseAuth.instance.signOut();
 
