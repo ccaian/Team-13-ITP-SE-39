@@ -89,9 +89,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                     child: Column(
                       children: <Widget>[
                         buildcircleProgressbar(),
-                        const  SizedBox(
-                          height: 10,
-                        ),
                         Expanded(
                           child : ListView(
                             children: List.keys.map((String key) {
@@ -99,7 +96,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                   width: 400,
                                   child: Center(
                                   child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
                               child: Container(
                               decoration: BoxDecoration(
                               color: Color(0xfff2f2f2),
@@ -142,7 +139,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                             Widget>[
                           Expanded(
                               child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(80.0, 0, 80.0, 20.0),
+                                  padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       primary: Colors.redAccent,

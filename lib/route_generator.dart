@@ -33,9 +33,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ChangePasswordPage());
       case '/changeAdminPIN':
         return MaterialPageRoute(builder: (_) => ChangePINPage());
-      case '/adminHome':
+      case '/selectFamily':
         return MaterialPageRoute(builder: (_) => WorkerSelFamily());
-      case '/parentHome':
+      case '/selectChild':
         return MaterialPageRoute(builder: (_) => ParentSelChild());
       case '/setting':
         return MaterialPageRoute(builder: (_) => SettingPage());

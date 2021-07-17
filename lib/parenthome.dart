@@ -242,9 +242,7 @@ class _ParentHomeState extends State<ParentHome> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (context) => ParentSelChild()
-    ));
+    Navigator.of(context).pushReplacementNamed("/parentHome");
   }
 
   Future loadPagePref() async{
