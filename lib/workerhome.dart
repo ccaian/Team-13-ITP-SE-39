@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/scorehistory.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
 import 'package:growth_app/workerdischargechecklist.dart';
 import 'package:growth_app/workerforum.dart';
@@ -161,7 +162,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                           child: InkWell(
                             onTap: () {
                             Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => WellbeingSurvey()
+                                builder: (context) => ScoreHistory()
                             ));
                           },
                             child: Container(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'components/forum_card.dart';
 import 'controllers/forumcontroller.dart';
@@ -18,13 +20,20 @@ class WorkerForum extends StatefulWidget {
 
 }
 class _WorkerForumState extends State<WorkerForum> {
+  var email;
 
+  String title = '';
+  String description = '';
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final databaseReference = FirebaseDatabase.instance.reference().child("forum");
+  CollectionReference posts = FirebaseFirestore.instance
+      .collection('forumposts')
+      ;
   @override
   void initState(){
     loadPagePref();
+    getEmail();
     super.initState();
   }
   String? famName = "Miranda Family";
@@ -32,7 +41,7 @@ class _WorkerForumState extends State<WorkerForum> {
 
   Widget build(BuildContext context) {
 
-    ForumController _forumController = Get.put(ForumController());
+
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
     );
@@ -79,11 +88,38 @@ class _WorkerForumState extends State<WorkerForum> {
 
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
-                          child: ListView.builder(
-                              itemCount: sample_posts.length,
-                              itemBuilder: (context, index){
-                                return ForumCard(forumPost:_forumController.posts[index]);
-                              }),
+                          child: StreamBuilder(
+                            stream: posts
+                              .snapshots(),
+                            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
+                              //if (snapshot.connectionState == ConnectionState.done){
+
+                              //}
+                              List forumposts = snapshot.data!.docs;
+                              List<ForumPost> _posts = forumposts.map(
+                                    (forumpost) => ForumPost(
+                                    id: 123,
+                                    date: forumpost['date'],
+                                    author: 'Admin',
+                                    title: forumpost['title'],
+                                    description: forumpost['description']),
+                              )
+                                  .toList();
+                              //print(data['title']);
+                              return ListView.builder(
+                                itemCount: snapshot.data!.size,
+                                itemBuilder: (context, index){
+                                  return ForumCard(forumPost: _posts[index],);
+                                },
+                              );
+                              return Text("loading");
+
+
+                            }
+                            ,
+
+                          )
+
                         ),
                       ]
 
@@ -93,80 +129,7 @@ class _WorkerForumState extends State<WorkerForum> {
             Positioned(
               bottom: 20,
               right: 20,
-              child: FloatingActionButton(
-                // isExtended: true,
-                child: Icon(Icons.add),
-                backgroundColor: Color(0xff4C52A8),
-                onPressed: ()  {
-                  showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('Enter Post Details'),
-                      content: Container(
-                        height: MediaQuery.of(context).size.height* 0.3,
-                        width: MediaQuery.of(context).size.width*0.4,
-                        child: Column(
-                          children: [
-                            Container(
-
-                              height: MediaQuery.of(context).size.height* 0.1,
-                              width: MediaQuery.of(context).size.width*0.8,
-                              child: TextField(
-                              controller: titleController,
-                              decoration: InputDecoration(
-                                border: new OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                    const Radius.circular(25),
-                                  ),
-                                ),
-                                fillColor: Colors.red,
-                                labelText: 'Title',
-                              ),
-                              ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height* 0.2,
-                              width: MediaQuery.of(context).size.width*0.8,
-                              child: TextField(
-                                maxLines: 12,
-                                controller: titleController,
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
-                                  ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Description',
-                                ),
-                              ),
-                            ),
-
-
-                          ]
-                        ),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: (){
-
-                            Navigator.pop(context);
-                            },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                    ),
-                  );
-
-
-                },
-              ),
+              child: buildFloatingActionButton(context),
             ),
           ],
         ),
@@ -174,18 +137,125 @@ class _WorkerForumState extends State<WorkerForum> {
     );
   }
 
+  Widget buildFloatingActionButton(BuildContext context) {
+    print(email);
+    if (email=='darrellerjr@gmail.com'){
+      return FloatingActionButton(
+        // isExtended: true,
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xff4C52A8),
+        onPressed: ()  {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Enter Post Details'),
+              content: Container(
+                height: MediaQuery.of(context).size.height* 0.3,
+                width: MediaQuery.of(context).size.width*0.4,
+                child: Column(
+                    children: [
+                      Container(
 
-  void addForumPost(ForumPost post){
-    print("testpost");
-    databaseReference.child("hihi").set({
-      'hello': "poop"
+                        height: MediaQuery.of(context).size.height* 0.1,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child: TextField(
+                          onChanged: (val) {
+                            setState(() => title);
+                          },
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            labelText: 'Title',
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height* 0.2,
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child: TextField(
+                          maxLines: 12,
+                          onChanged: (val) {
+                            setState(() => description);
+                          },
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            labelText: 'Description',
+                          ),
+                        ),
+                      ),
+
+
+                    ]
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: (){
+                    Navigator.pop(context, 'Cancel');
+                    if (titleController.text != '' && descriptionController != '')
+                      print("bumbblebee");
+                    addForumPost(titleController.text, descriptionController.text);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0))),
+            ),
+          );
+
+
+        },
+      );
     }
-
-
+    else return Text(
+      " "
     );
+
 
   }
 
+  void addForumPost(String title, String description){
+    print("chocolate 2");
+    DateTime now = new DateTime.now();
+    posts.add({
+
+      'title': title,
+      'description': description,
+      'author': 'Admin',
+      'date': now.toString(),
+
+
+    });
+
+
+  }
+
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    setState(() {
+
+      email = prefs.getString('email');
+    });
+    print(email);
+    print("hello");
+  }
   Future loadPagePref() async{
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     result = sharedPreferences.getString('Fam');
