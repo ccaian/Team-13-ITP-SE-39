@@ -18,8 +18,9 @@ List<String> checkListSaved = [];
 var userKey;
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
-    loadPref();
     super.initState();
+    clearCheckList();
+    loadPref();
   }
   // text field state
 
@@ -261,7 +262,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             'checklist6': result[5],
             'checklist7': result[6],
             'checklist8': result[7],
-            'checklist9': result[8]
+            'checklist9': result[8],
+            'progress': progress
           });
         } else{
           print('update checklist');
@@ -276,6 +278,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   getCheckListData(nric)  {
     var tempKey;
+    double tempProg = 0;
     print('in Data upload nric:'+ nric);
     FirebaseDatabase.instance
         .reference()
@@ -297,12 +300,14 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         checkList.add(value['checklist7']);
         checkList.add(value['checklist8']);
         checkList.add(value['checklist9']);
+        tempProg = value['progress'];
       });
       print('child List:');
       print(checkList);
       setState(() {
         checkList = checkList;
         userKey = tempKey;
+        progress = tempProg;
       });
       if(snapshot.value != null){
         getCheckListState();
@@ -402,7 +407,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
           'checklist6': result[5],
           'checklist7': result[6],
           'checklist8': result[7],
-          'checklist9': result[8]
+          'checklist9': result[8],
+          'progress': progress
         });
 
   }
@@ -417,54 +423,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     print('In Load Pref');
   }
 
-  /*Widget buildChecklist() {
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-    return new Column(children: <Widget>[
-            Expanded(
-            child : ListView(
-              children: List.keys.map((String key) {
-                return new CheckboxListTile(
-                  title: new Text(key),
-                  value: List[key],
-                  activeColor: Colors.deepPurple[400],
-                  checkColor: Colors.white,
-                  onChanged: (value) {
-                    setState(() {
-                      List[key] = value as bool;
-                    });
-                  },
-                );
-              }).toList(),
-            ),),
-            new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                Widget>[
-              Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(80.0, 0, 80.0, 20.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.redAccent,
-                          minimumSize: Size(50, 50),
-                          shape: shape,
-                        ),
-                        child: new Text(
-                          "Save",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () async {
-                          List.forEach((key, value) {
-                            print(key + " - " + value.toString());
-                          });
-                        },
-                      )))
-            ]),
-          ]
-        );
-  }*/
+  clearCheckList(){
+    setState(() {
+      checkList = [];
+    });
+  }
 }

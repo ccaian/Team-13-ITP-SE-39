@@ -89,18 +89,7 @@ class _ParentHomeState extends State<ParentHome> {
 
                         child: buildText(context),
                       ),
-                      Positioned(
-                          top: MediaQuery.of(context).size.width * 0.28,
-                          left: MediaQuery.of(context).size.width * 0.11,
 
-                          child: Text(
-                              "Enter information here",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.white,
-                              )
-                          )
-                      ),
                       Positioned(
                           top: MediaQuery.of(context).size.width * 0.38,
                           left: MediaQuery.of(context).size.width * 0.10,
