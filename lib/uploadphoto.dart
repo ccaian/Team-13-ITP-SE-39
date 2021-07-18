@@ -2,11 +2,13 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api/firebase_api.dart';
 import 'model/firebase_file.dart';
@@ -27,6 +29,8 @@ class UploadPhoto extends StatefulWidget {
 
 class _UploadPhotoState extends State<UploadPhoto> {
 
+  late CollectionReference photos;
+  var email;
   final descriptionController = TextEditingController();
 
   final nameController = TextEditingController();
@@ -39,6 +43,10 @@ class _UploadPhotoState extends State<UploadPhoto> {
 
   @override
   Widget build(BuildContext context) {
+    print("refurl");
+    String title = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
+    photos = FirebaseFirestore.instance.collection('photos').doc(email).collection(title);
+
     final maxLines = 7;
     return Scaffold(
       body: Container(
@@ -97,25 +105,6 @@ class _UploadPhotoState extends State<UploadPhoto> {
                           left: MediaQuery.of(context).size.width*0.4,
                           child:TextField(
                             maxLines: maxLines,
-                            decoration: InputDecoration(
-                              border: new OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.red, width: 1),
-                                borderRadius: const BorderRadius.all(
-                                  const Radius.circular(25),
-                                ),
-                              ),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelText: 'Enter Description',
-                            ),)
-                      ),
-                      Positioned(
-                          top: maxLines *12.0 + MediaQuery.of(context).size.width*0.1,
-                          right: 20,
-                          height: maxLines * 12.0,
-                          left: MediaQuery.of(context).size.width*0.4,
-                          child:TextField(
-                            maxLines: maxLines,
                             controller: nameController,
                             decoration: InputDecoration(
                               border: new OutlineInputBorder(
@@ -127,6 +116,26 @@ class _UploadPhotoState extends State<UploadPhoto> {
                               fillColor: Colors.white,
                               filled: true,
                               labelText: 'Enter Photo Name',
+                            ),)
+                      ),
+                      Positioned(
+                          top: maxLines *12.0 + MediaQuery.of(context).size.width*0.1,
+                          right: 20,
+                          height: maxLines * 12.0,
+                          left: MediaQuery.of(context).size.width*0.4,
+                          child:TextField(
+                            maxLines: maxLines,
+                            controller: descriptionController,
+                            decoration: InputDecoration(
+                              border: new OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red, width: 1),
+                                borderRadius: const BorderRadius.all(
+                                  const Radius.circular(25),
+                                ),
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                              labelText: 'Enter Description',
                             ),)
                       ),
                       Positioned(
@@ -190,12 +199,43 @@ class _UploadPhotoState extends State<UploadPhoto> {
     );
   }
 
+  @override
+  void initState() {
+
+    getEmail();
+  }
+
+  addPhotoToFirestore(String name, String description){
+
+    DateTime now = new DateTime.now();
+    photos.add({
+      'index': photos.snapshots().length,
+      'name': name,
+      'description': description,
+      'date' : now.toString()
+    });
+
+  }
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    bool isAdmin = false;
+
+    setState(() {
+      isAdmin = prefs.getBool('admin')!;
+      if (isAdmin)
+        email = prefs.getString('parentemail');
+      else
+        email = prefs.getString('email');
+
+    });
+    print(email);
+  }
 
   getImage() async {
     final _storage = FirebaseStorage.instance;
     final _picker = ImagePicker();
     PickedFile image;
-
 
     //Check Permissions
     await Permission.photos.request();
@@ -210,8 +250,11 @@ class _UploadPhotoState extends State<UploadPhoto> {
       if (image != null){
         //Upload to Firebase
         String name = 'default';
+        String description = 'default';
         if (nameController.text!=''){
+          description = descriptionController.text;
           name = nameController.text;
+          addPhotoToFirestore(name,description);
         }
 
         var snapshot = await _storage.ref()

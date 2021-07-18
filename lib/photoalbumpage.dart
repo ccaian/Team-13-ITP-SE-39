@@ -105,7 +105,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                                   children: [
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(0,0.0,0,0),
+                                        padding: const EdgeInsets.fromLTRB(0,20.0,0,0),
                                         child: GridView.builder(
                                           itemCount: files.length,
                                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -158,7 +158,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
       InkWell(
         onTap: () {
           Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => PhotoDetail(url:file.url)
+              builder: (context) => PhotoDetail(url:file.url, index:index)
           ));
         },
         child: ClipRRect(
