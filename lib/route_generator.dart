@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growth_app/adminpin.dart';
 import 'package:growth_app/changepassword.dart';
+import 'package:growth_app/dischargechecklist.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
 import 'package:growth_app/milestoneguidance.dart';
@@ -33,12 +34,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ChangePasswordPage());
       case '/changeAdminPIN':
         return MaterialPageRoute(builder: (_) => ChangePINPage());
-      case '/adminHome':
+      case '/selectFamily':
         return MaterialPageRoute(builder: (_) => WorkerSelFamily());
-      case '/parentHome':
+      case '/selectChild':
         return MaterialPageRoute(builder: (_) => ParentSelChild());
       case '/setting':
         return MaterialPageRoute(builder: (_) => SettingPage());
+      case '/dischargeCheckList':
+        return MaterialPageRoute(builder: (_) => DischargeCheckListPage());
       default:
         return _errorRoute();
     }

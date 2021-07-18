@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/addmeasurements.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api/pdf_api.dart';
 import 'api/pdf_growth_api.dart';
+import 'editmeasurements.dart';
 
 class GrowthPage extends StatefulWidget {
   @override
@@ -16,6 +18,7 @@ class GrowthPage extends StatefulWidget {
 class _GrowthPageState extends State<GrowthPage> {
   late Query _growthRef;
   late Growth growthFile;
+  DatabaseReference reference = FirebaseDatabase.instance.reference().child('growth');
 
   List<DataRow> growthList = [];
   List<GrowthItem> growthItems = [];
@@ -26,6 +29,9 @@ class _GrowthPageState extends State<GrowthPage> {
   var weight;
   var height;
   var head;
+  var growthKey;
+
+  String? childName = "";
 
   @override
   List<DataRow> get rows => growthList;
@@ -49,7 +55,7 @@ class _GrowthPageState extends State<GrowthPage> {
               Positioned(
                   top: 80,
                   left: 30,
-                  child: Text("Baby Name",
+                  child: Text(childName.toString(),
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
@@ -84,38 +90,47 @@ class _GrowthPageState extends State<GrowthPage> {
                       Padding(
                           padding: const EdgeInsets.fromLTRB(
                               0.0, 30.0, 0.0, 0.0),
-                          child: SingleChildScrollView (
-                              child: DataTable(
-                                columnSpacing: 40.0,
-                                columns: const <DataColumn>[
-                                  DataColumn(
-                                    label: Text(
-                                      'Date',
-                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Weight',
-                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Height',
-                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Text(
-                                      'Head',
-                                      style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                                rows: growthList,
-                              )
+                          child: FirebaseAnimatedList(
+                              query: _growthRef,
+                              itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
+                                Map growth = snapshot.value;
+                                growth['key'] = snapshot.key;
+                                return _buildGrowthItem(growth: growth);
+                              }
                           )
+                          // child: SingleChildScrollView (
+                          //     child: DataTable(
+                          //       showCheckboxColumn: false,
+                          //       columnSpacing: 40.0,
+                          //       columns: const <DataColumn>[
+                          //         DataColumn(
+                          //           label: Text(
+                          //             'Date',
+                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                          //           ),
+                          //         ),
+                          //         DataColumn(
+                          //           label: Text(
+                          //             'Weight',
+                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                          //           ),
+                          //         ),
+                          //         DataColumn(
+                          //           label: Text(
+                          //             'Height',
+                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                          //           ),
+                          //         ),
+                          //         DataColumn(
+                          //           label: Text(
+                          //             'Head',
+                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //       rows: growthList,
+                          //     )
+                          // )
                       )
                     ],
                   ),
@@ -125,6 +140,7 @@ class _GrowthPageState extends State<GrowthPage> {
                 bottom: 20,
                 right: 20,
                 child: FloatingActionButton(
+                  heroTag: "add",
                   child: Icon(Icons.add),
                   backgroundColor: Color(0xff4C52A8),
                   onPressed: () async {
@@ -139,6 +155,7 @@ class _GrowthPageState extends State<GrowthPage> {
                 bottom: 20,
                 right: 90,
                 child: FloatingActionButton(
+                  heroTag: "download",
                   child: Icon(Icons.download),
                   backgroundColor: Color(0xff4C52A8),
                   onPressed: () async {
@@ -151,6 +168,139 @@ class _GrowthPageState extends State<GrowthPage> {
             ],
           ),
         ));
+  }
+
+  Widget _buildGrowthItem({required Map growth}) {
+    return Container(
+      margin: EdgeInsets.symmetric(),
+      padding: EdgeInsets.all(10),
+      height: 120,
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              SizedBox(width: 30),
+              Text(
+                growth['date'],
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          Row(
+              children: [
+                SizedBox(width: 30),
+                Text(
+                  "Weight: " + growth['weight'] + "kg, ",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black),
+                ),
+                Text(
+                  "Height: " + growth['height'] + "cm, ",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black),
+                ),
+                Text(
+                  "Head: " + growth['head'] + "cm",
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black),
+                ),
+              ]
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 30),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => EditMeasurements(
+                            growthKey: growth['key'],
+                          )));
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.edit,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Text('Edit',
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              GestureDetector(
+                onTap: () {
+                  _showDeleteDialog(growth: growth);
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete,
+                      color: Colors.red[700],
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Text('Delete',
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _showDeleteDialog({required Map growth}) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Delete Measurement'),
+            content: Text('Are you sure you want to delete?'),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel')),
+              FlatButton(
+                  onPressed: () {
+                    reference
+                        .child(growth['key'])
+                        .remove()
+                        .whenComplete(() => Navigator.pop(context));
+                  },
+                  child: Text('Delete'))
+            ],
+          );
+        });
   }
 
   Future<void> retrieveData() async {
@@ -166,6 +316,7 @@ class _GrowthPageState extends State<GrowthPage> {
       if (snapShot.value != null) {
         Map<dynamic, dynamic> values = snapShot.value;
         values.forEach((key, values) {
+          growthKey = key;
           rows.add(
               DataRow(
                   cells: [
@@ -181,20 +332,31 @@ class _GrowthPageState extends State<GrowthPage> {
                     DataCell(
                       Text(values['head'] + " cm"),
                     ),
-                  ]
+                  ],
+                      onSelectChanged: (val) {
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => EditMeasurements(
+                                  growthKey: key,
+                                )));
+                      },
               )
           );
           items.add(
             GrowthItem(
+              key: key,
               date: values['date'],
               weight: values['weight'],
               height: values['height'],
               head: values['head'],
-            )
+            ),
           );
           setState(() {
+            print(growthKey);
             growthList = rows;
             growthItems = items;
+            childName = prefs.getString('ChildName');
           });
         });
       }
@@ -209,12 +371,14 @@ class Growth {
 }
 
 class GrowthItem {
+  final String key;
   final String date;
   final String weight;
   final String height;
   final String head;
 
   const GrowthItem({
+    required this.key,
     required this.date,
     required this.weight,
     required this.height,

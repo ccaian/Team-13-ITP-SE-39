@@ -202,11 +202,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           fontSize: 16.0
       );
       print("Successfully changed password");
-
-      Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) => SettingPage()));
+      Navigator.of(context).pushReplacementNamed("/setting");
     }).catchError((error){
       Fluttertoast.showToast(
           msg: "Password can't be changed" + error.toString(),
