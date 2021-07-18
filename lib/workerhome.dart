@@ -125,71 +125,79 @@ class _WorkerHomeState extends State<WorkerHome> {
                             )
                         ),
 
-                      Positioned(
-                          top: MediaQuery.of(context).size.height * 0.37,
-                          left: MediaQuery.of(context).size.width * 0.05,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => WorkerForum()
-                              ));
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.425,
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(25.0,20.0,0.0,0.0),
-                                  child: Text(
-                                      "Forum",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.grey[600],
-                                      )
-                                  )),
-                              decoration: BoxDecoration(
-                                color: Color(0xfff2f2f2),
-                                
-                                borderRadius: const BorderRadius.all(
-                                  const Radius.circular(25),
-                                ),
-                              ),
-
-                            ),
-                          ),),
                         Positioned(
-                          top: MediaQuery.of(context).size.height * 0.37,
-                          left: MediaQuery.of(context).size.width * 0.525,
-                          child: InkWell(
-                            onTap: () {
-                            Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => ScoreHistory()
-                            ));
-                          },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.425,
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(25.0,20.0,0.0,0.0),
-                                  child: Text(
-                                      "Wellbeing Survey",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.grey[600],
-                                      )
-                                  )),
-                              decoration: BoxDecoration(
-                                color: Color(0xfff2f2f2),
+                            top: MediaQuery.of(context).size.height * 0.35,
+                            left: MediaQuery.of(context).size.width * 0.05,
 
-                                borderRadius: const BorderRadius.all(
-                                  const Radius.circular(25),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children:<Widget> [
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => WorkerForum()
+                                          ));
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width * 0.425,
+                                          height: MediaQuery.of(context).size.height * 0.17,
+                                          child: Padding(
+                                              padding: const EdgeInsets.fromLTRB(25.0,20.0,0.0,0.0),
+                                              child: Text(
+                                                  "Forum",
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.grey[600],
+                                                  )
+                                              )),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xfff2f2f2),
+
+                                            borderRadius: const BorderRadius.all(
+                                              const Radius.circular(25),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(padding:  const EdgeInsets.fromLTRB(20.0,20.0,0.0,0.0),),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => ScoreHistory()
+                                          ));
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width * 0.425,
+                                          height: MediaQuery.of(context).size.height * 0.17,
+                                          child: Padding(
+                                              padding: const EdgeInsets.fromLTRB(25.0,20.0,20.0,20.0),
+                                              child: Text(
+                                                  "Wellbeing Survey",
+                                                  style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: Colors.grey[600],
+                                                  )
+                                              )),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xfff2f2f2),
+
+                                            borderRadius: const BorderRadius.all(
+                                              const Radius.circular(25),
+                                            ),
+                                          ),
+
+                                        ),
+                                      ),
+                                    ]
+
                                 ),
-                              ),
-
-                            ),
-                          ),),
-
+                              ],
+                            )
+                        ),
                         Positioned(
-                          top: MediaQuery.of(context).size.height * 0.5,
+                          top: MediaQuery.of(context).size.height * 0.54,
                           left: MediaQuery.of(context).size.width * 0.05,
                           child: InkWell(
                             onTap: () {
