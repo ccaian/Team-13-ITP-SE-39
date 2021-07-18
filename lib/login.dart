@@ -215,10 +215,10 @@ class _LoginPageState extends State<LoginPage> {
 
           if (prefs.getBool('admin') == true) {
             // user is a healthcare worker
-            Navigator.of(context).pushNamed('/adminHome');
+            Navigator.of(context).pushNamed('/selectFamily');
           } else {
             // user is a parent and not first login
-            Navigator.of(context).pushNamed('/parentHome');
+            Navigator.of(context).pushNamed('/selectChild');
           }
         } else {
           // user is a parent and this is the first login

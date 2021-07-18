@@ -141,6 +141,6 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       'admin': false
     });
 
-    Navigator.of(context).pushNamed('/parentHome');
+    Navigator.of(context).pushNamed('/selectChild');
   }
 }
