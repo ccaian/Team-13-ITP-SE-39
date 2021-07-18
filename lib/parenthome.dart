@@ -184,8 +184,7 @@ class _ParentHomeState extends State<ParentHome> {
                         left: MediaQuery.of(context).size.width * 0.05,
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(context, new MaterialPageRoute(
-                                builder: (context) => DischargeCheckListPage()));
+                            Navigator.of(context).pushReplacementNamed("/dischargeCheckList");
                           },
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.425,
@@ -231,9 +230,7 @@ class _ParentHomeState extends State<ParentHome> {
   void _navigateAndDisplaySelection(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    Navigator.push(context, new MaterialPageRoute(
-        builder: (context) => ParentSelChild()
-    ));
+    Navigator.of(context).pushReplacementNamed("/parentHome");
   }
 
   Future loadPagePref() async{
