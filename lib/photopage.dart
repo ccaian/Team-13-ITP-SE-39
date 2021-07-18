@@ -10,6 +10,7 @@ import 'package:growth_app/nav.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/photoalbumpage.dart';
 import 'package:growth_app/uploadphoto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api/firebase_api.dart';
 import 'model/firebase_file.dart';
@@ -23,22 +24,25 @@ class PhotoPage extends StatefulWidget {
 
 class _PhotoPageState extends State<PhotoPage> {
 
+  late CollectionReference photos;
+  var email;
   final albumNameController = TextEditingController();
 
   late Future<List<FirebaseFile>> futureFiles;
 
   @override
   void initState() {
+    getEmail();
     super.initState();
     //futurePaths = FirebaseApi.listWeek('ccaian3@gmail.com/');
 
-    FirebaseApi.listWeek('ccaian3@gmail.com/');
-    futureFiles = FirebaseApi.listWeek('ccaian3@gmail.com/');
   }
 
   @override
   Widget build(BuildContext context) {
 
+    FirebaseApi.listWeek(email+'/');
+    futureFiles = FirebaseApi.listWeek(email+'/');
     return Container(
       color: Color(0xff4C52A8),
       width: double.infinity,
@@ -84,8 +88,51 @@ class _PhotoPageState extends State<PhotoPage> {
                         case ConnectionState.waiting:
                           return Center(child: CircularProgressIndicator());
                         default:
-                          if (snapshot.hasError) {
-                            return Center(child: Text('Some error occurred!'));
+                          if (snapshot.hasError) {return InkWell(
+                              onTap: () {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Enter Album Name'),
+                                    content: TextField(
+                                      controller: albumNameController,
+                                      decoration: InputDecoration(
+                                        border: new OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(25),
+                                          ),
+                                        ),
+                                        fillColor: Colors.red,
+                                        labelText: 'Album Name',
+                                      ),),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: (){
+
+                                          Navigator.pop(context);
+                                          Navigator.push(context, new MaterialPageRoute(
+                                              builder: (context) => UploadPhoto(refUrl: email+'/'+albumNameController.text.replaceAll(' ', '_'))
+                                          ));},
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                                  ),
+                                );
+                              },
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                      top: 0,
+                                      child: Image.asset('assets/newalbum.png'),width:MediaQuery.of(context).size.width *0.4 ),
+                                ],
+                              )
+                          );
                           } else {
                             final files = snapshot.data!;
 
@@ -132,7 +179,7 @@ class _PhotoPageState extends State<PhotoPage> {
 
                                                           Navigator.pop(context);
                                                           Navigator.push(context, new MaterialPageRoute(
-                                                            builder: (context) => UploadPhoto(refUrl: 'ccaian3@gmail.com/'+albumNameController.text.replaceAll(' ', '_'))
+                                                            builder: (context) => UploadPhoto(refUrl: email+'/'+albumNameController.text.replaceAll(' ', '_'))
                                                         ));},
                                                         child: const Text('OK'),
                                                       ),
@@ -211,6 +258,22 @@ class _PhotoPageState extends State<PhotoPage> {
       ],
     ),
   );
+
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    bool isAdmin = false;
+
+    setState(() {
+      isAdmin = prefs.getBool('admin')!;
+      if (isAdmin)
+        email = prefs.getString('parentemail');
+      else
+        email = prefs.getString('email');
+
+    });
+    print(email);
+  }
 
 
   Widget buildHeader(int length) => ListTile(

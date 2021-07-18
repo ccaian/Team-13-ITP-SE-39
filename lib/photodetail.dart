@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,11 @@ import 'package:growth_app/api/firebase_api.dart';
 class PhotoDetail extends StatefulWidget {
 
   final String url;
+  final int index;
   const PhotoDetail({
     Key? key,
     required this.url,
+    required this.index,
   }) : super(key: key);
 
 
@@ -23,6 +26,8 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  late CollectionReference photos;
+  var email;
   late String imageUrl = "";
   late String user = "Miranda";
   @override
