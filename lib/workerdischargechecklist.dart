@@ -168,10 +168,10 @@ class _WorkerDischargeCheckListPageState extends State<WorkerDischargeCheckListP
                   Expanded(child: Column(
                     children: [
                       Text('\nProgress \n', style: TextStyle(
-                          fontSize: 20,fontWeight: FontWeight.bold, color: Colors.white
+                          fontSize: 25,fontWeight: FontWeight.bold, color: Colors.white
                       ),),
                       Text('Percentage of \ncompletion', style: TextStyle(
-                          fontSize: 12, color: Colors.white
+                          fontSize: 16, color: Colors.white
                       ),),
                     ],
                   ),
