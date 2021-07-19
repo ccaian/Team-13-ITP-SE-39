@@ -248,6 +248,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
         description = descriptionController.text;
         name = nameController.text;
         addPhotoToFirestore(name,description,downloadUrl);
+        Navigator.pop(context);
       } else {
         print('No Path Received');
       }
