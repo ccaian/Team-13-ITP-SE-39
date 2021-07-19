@@ -135,6 +135,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         onTap: () async{
           final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
           sharedPreferences.setString('Fam',litems[index]);
+          sharedPreferences.setString('parentemail',parentEmailList[index]);
           sharedPreferences.setString('ChildNRIC',title);
           sharedPreferences.setString('ChildName',babyTitle);
 

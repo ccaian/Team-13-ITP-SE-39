@@ -33,8 +33,9 @@ class _ScoreHistoryState extends State<ScoreHistory> {
   @override
 
   Widget build(BuildContext context) {
-
-    CollectionReference scores = FirebaseFirestore.instance
+    print("testing");
+    print(email);
+      CollectionReference scores = FirebaseFirestore.instance
         .collection('wellbeingscore').doc(email).collection('scores');
     return Material(
       child: Container(
@@ -119,7 +120,7 @@ class _ScoreHistoryState extends State<ScoreHistory> {
       if (isAdmin)
         email = prefs.getString('parentemail');
       else
-        email = prefs.getString('email                  ');
+        email = prefs.getString('email');
 
     });
     print(email);

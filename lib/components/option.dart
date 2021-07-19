@@ -10,6 +10,7 @@ class Option extends StatelessWidget {
   final String text;
   final int index;
   final VoidCallback press;
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SurveyController>(
