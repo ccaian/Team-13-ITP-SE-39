@@ -175,7 +175,7 @@ class _ChangePINPageState extends State<ChangePINPage> {
       print("Successfully changed Admin PIN");
 
       // user is a parent and this is the first login
-      Navigator.of(context).pushReplacementNamed('/setting');
+      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
           msg: "PIN does not match",

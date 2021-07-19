@@ -249,9 +249,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
       'height': _heightControl.text,
       'head': _headControl.text
     });
-    await Navigator.pushReplacement(context, new MaterialPageRoute(
-        builder: (context) => new GrowthPage()
-    ));
+
     Navigator.pop(context);
     setState(() {});
   }

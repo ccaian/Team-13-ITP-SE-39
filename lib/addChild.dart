@@ -87,6 +87,13 @@ class _AddChildPageState extends State<AddChild> {
                             labelText: 'Name',
                           ),
                           controller: _nameControl,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return 'Enter Name';
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                       ),
                       Padding(
@@ -102,6 +109,13 @@ class _AddChildPageState extends State<AddChild> {
                             labelText: 'NRIC',
                           ),
                           controller: _nricControl,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return 'Enter NRIC';
+                            } else {
+                              return null;
+                            }
+                          },
                         ),
                       ),
                       new Column(
@@ -155,6 +169,9 @@ class _AddChildPageState extends State<AddChild> {
                                     ),
                                   ),
                                   onPressed: () async {
+                                    if(!_addchildKey.currentState!.validate()){
+                                      return;
+                                    }
                                       print('Submit');
                                       getPrefAddChild(name, nric);
                                       Navigator.push(context, new MaterialPageRoute(
