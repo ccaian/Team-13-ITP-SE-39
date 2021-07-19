@@ -35,6 +35,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
 
   late CollectionReference photos;
   var email;
+  var nric;
   String selectedimageurl = "";
   late Future<List<FirebaseFile>> futureFiles;
 
@@ -42,7 +43,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
   void initState() {
     super.initState();
     //futurePaths = FirebaseApi.listWeek('ccaian3@gmail.com/');
-    getEmail();
+    getNRIC();
     futureFiles = FirebaseApi.listAll(widget.refUrl+"/");
     //futureFiles = FirebaseApi.listAll('ccaian3@gmail.com/week_1/');
   }
@@ -51,7 +52,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
   Widget build(BuildContext context) {
 
     String week = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
-    photos = FirebaseFirestore.instance.collection('photos').doc(email).collection(week);
+    photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(week);
     return Scaffold(
       body: Container(
         color: Color(0xff4C52A8),
@@ -236,6 +237,15 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
 
     ],
   );
+  getNRIC() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    setState(() {
+      nric = prefs.getString('ChildNRIC');
+
+    });
+  }
   getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
