@@ -37,6 +37,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
 
     SurveyController _surveyController = Get.put(SurveyController());
     _surveyController.resetSurvey();
+    _surveyController.setContext(context);
     print(_surveyController.questions.length);
     return Scaffold(
 
@@ -47,7 +48,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
           child: Stack(
               children: <Widget>[
                 Positioned(
-                  top: MediaQuery.of(context).size.height * 0.12,
+                  top: MediaQuery.of(context).size.height * 0.1,
                   left: MediaQuery.of(context).size.width * 0.1,
                   child: Text(
                       "Wellbeing Survey",
@@ -58,7 +59,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                   )
                 )),
                 Positioned(
-                    top: MediaQuery.of(context).size.height * 0.17,
+                    top: MediaQuery.of(context).size.height * 0.15,
                     left: MediaQuery.of(context).size.width * 0.1,
                     child: Obx(() => Text(
                         "Question ${_surveyController.questionNumber.value} / ${_surveyController.questions.length}",
@@ -85,14 +86,23 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                             ),
                             child: Stack(
                               children: [
-                                LayoutBuilder(
-                                  builder: (context, constraints) => Container(
-                                    width: MediaQuery.of(context).size.width * 0.2,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xfffddd5c),
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                  ),
+                                GetBuilder<SurveyController>(
+                                  init: SurveyController(),
+                                  builder: (controller){
+
+                                    return LayoutBuilder(
+                                      builder: (context, constraints) => Container(
+                                        width: constraints.maxWidth * controller.length,
+                                        decoration: BoxDecoration(
+                                          color: Color(0xfffddd5c),
+                                          borderRadius: BorderRadius.circular(25),
+                                        ),
+                                      ),
+                                    );
+                                  },
+
+
+
                                 )
                               ],
                             ),
@@ -114,41 +124,13 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                         Row(
                           children: [
 
+
                             Container(
-                              margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.05, MediaQuery.of(context).size.width*0.05, 0),
+                              margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.08, 0, 0),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.redAccent,
-                                  minimumSize: Size(50, 50),
-                                  shape: shape,
-                                ),
-                                child: new Text(
-                                  "Finish Survey",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  if (_surveyController.isFinished){
-
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (context) => WellbeingScore()));
-                                  }
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.05, 0, 0),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.white,
-                                  minimumSize: Size(50, 50),
+                                  minimumSize: Size(250, 50),
                                   shape: shape,
                                 ),
                                 child: new Text(
@@ -157,7 +139,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                                   style: TextStyle(
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.normal,
-                                    color: Colors.grey[800],
+                                    color: Colors.white,
                                   ),
                                 ),
                                 onPressed: ()  {

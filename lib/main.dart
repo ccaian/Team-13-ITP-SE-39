@@ -37,7 +37,7 @@ class AdminLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      initialRoute: '/adminHome',
+      initialRoute: '/selectFamily',
       onGenerateRoute: RouteGenerator.generateRoute,
       home: LandingPage()
     );
@@ -50,7 +50,7 @@ class ParentLogin extends StatelessWidget {
       title: 'Growth App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Roboto'),
-      initialRoute: '/parentHome',
+      initialRoute: '/selectChild',
       onGenerateRoute: RouteGenerator.generateRoute,
       home: LandingPage()
     );

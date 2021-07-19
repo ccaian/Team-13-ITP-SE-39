@@ -19,6 +19,7 @@ List<String> checkList = [];
 class _WorkerDischargeCheckListPageState extends State<WorkerDischargeCheckListPage> {
   void initState(){
     super.initState();
+    clearCheckList();
     loadPref();
 
   }
@@ -201,6 +202,7 @@ class _WorkerDischargeCheckListPageState extends State<WorkerDischargeCheckListP
   }
 
   getCheckListData(nric)  {
+    double tempProg =0;
     print('in Data upload nric:'+ nric);
     FirebaseDatabase.instance
         .reference()
@@ -221,11 +223,13 @@ class _WorkerDischargeCheckListPageState extends State<WorkerDischargeCheckListP
         checkList.add(value['checklist7']);
         checkList.add(value['checklist8']);
         checkList.add(value['checklist9']);
+        tempProg = value['progress'];
       });
       print('child List:');
       print(checkList);
       setState(() {
         checkList = checkList;
+        progress = tempProg;
       });
 
       getCheckListState();
@@ -321,6 +325,12 @@ class _WorkerDischargeCheckListPageState extends State<WorkerDischargeCheckListP
       //Your stuff
       setState(() {}); //refresh
 
+  }
+
+  clearCheckList(){
+    setState(() {
+      checkList = [];
+    });
   }
 
 

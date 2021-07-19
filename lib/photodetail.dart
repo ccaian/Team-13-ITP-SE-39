@@ -1,17 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:growth_app/model/photo.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:growth_app/api/firebase_api.dart';
 
 class PhotoDetail extends StatefulWidget {
 
-  final String url;
+  final Photo photo;
   const PhotoDetail({
     Key? key,
-    required this.url,
+    required this.photo,
   }) : super(key: key);
 
 
@@ -23,11 +25,10 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  late String imageUrl = "";
-  late String user = "Miranda";
+  late CollectionReference photos;
+  var email;
   @override
   void initState() {
-    imageUrl = widget.url;
   }
 
   @override
@@ -78,7 +79,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                                 top: MediaQuery.of(context).size.height*0.025,
                                 left: MediaQuery.of(context).size.width*0.08,
                                 child: Text(
-                                    user,
+                                    widget.photo.name,
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
@@ -89,13 +90,25 @@ class _PhotoDetailState extends State<PhotoDetail> {
                             Positioned(
                                 top: MediaQuery.of(context).size.width*0.12,
                                 left: MediaQuery.of(context).size.width*0.05,
-                                child:  Image(image: new NetworkImage(imageUrl), width: MediaQuery.of(context).size.width*0.9),
+                                child:  Image(image: new NetworkImage(widget.photo.filename), width: MediaQuery.of(context).size.width*0.9),
                             height: MediaQuery.of(context).size.height*0.3,)
                           ])
                     ),
                     Positioned(
-
                         top: MediaQuery.of(context).size.height*0.4,
+                        left: MediaQuery.of(context).size.width*0.1,
+                        child: Text(
+                            widget.photo.description,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.grey[800],
+                            )
+                        )
+
+                    ),
+                    Positioned(
+
+                        top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.1,
                       child: Container(
                         child: Icon(Icons.download_sharp,color: Color(0xff9397ca)),
@@ -112,7 +125,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
                     Positioned(
 
-                        top: MediaQuery.of(context).size.height*0.4,
+                        top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.3,
                         child: Container(
                           child: Icon(Icons.edit,color: Color(0xff9397ca)),
@@ -129,7 +142,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
                     Positioned(
 
-                        top: MediaQuery.of(context).size.height*0.4,
+                        top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.5,
                         child: Container(
                           child: Icon(Icons.delete,color: Color(0xff9397ca)),
@@ -146,7 +159,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
                     Positioned(
 
-                        top: MediaQuery.of(context).size.height*0.4,
+                        top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.7,
                         child: InkWell(
                           onTap: ()async {
@@ -156,7 +169,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                             try {
                               // Saved with this method.
                               var imageId =
-                              await ImageDownloader.downloadImage(imageUrl);
+                              await ImageDownloader.downloadImage(widget.photo.filename);
                               if (imageId == null) {
                                 return;
                               }

@@ -10,9 +10,11 @@ import 'package:growth_app/nav.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/photodetail.dart';
 import 'package:growth_app/uploadphoto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api/firebase_api.dart';
 import 'model/firebase_file.dart';
+import 'model/photo.dart';
 
 
 class PhotoAlbum extends StatefulWidget {
@@ -30,6 +32,9 @@ class PhotoAlbum extends StatefulWidget {
 
 class _PhotoAlbumState extends State<PhotoAlbum> {
 
+
+  late CollectionReference photos;
+  var email;
   String selectedimageurl = "";
   late Future<List<FirebaseFile>> futureFiles;
 
@@ -37,15 +42,16 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
   void initState() {
     super.initState();
     //futurePaths = FirebaseApi.listWeek('ccaian3@gmail.com/');
-    
+    getEmail();
     futureFiles = FirebaseApi.listAll(widget.refUrl+"/");
     //futureFiles = FirebaseApi.listAll('ccaian3@gmail.com/week_1/');
   }
 
   @override
   Widget build(BuildContext context) {
-    
+
     String week = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
+    photos = FirebaseFirestore.instance.collection('photos').doc(email).collection(week);
     return Scaffold(
       body: Container(
         color: Color(0xff4C52A8),
@@ -86,7 +92,56 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
-                      child:FutureBuilder<List<FirebaseFile>>(
+                      child:StreamBuilder(
+                        stream: photos
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+                          switch (snapshot.connectionState){
+                            case ConnectionState.waiting:
+
+                              return Center(child: CircularProgressIndicator());
+                            default:
+                              if (snapshot.hasError){
+                                return Center(child: Text('Some error occurred!'));
+
+                              }
+                              else{
+                                print("testing");
+                                List photolist = snapshot.data!.docs;
+                                List<Photo> _photos = photolist.map(
+                                      (photo) => Photo(
+                                      date: photo.get('date'),
+                                      description: photo.get('description'),
+                                      filename: photo.get('filename'),
+                                      name: photo.get('name')),
+                                )
+                                    .toList();
+
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(0.0,20.0,0.0,0.0),
+
+                                  child: GridView.builder(
+                                    itemCount: _photos.length,
+                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: 1,
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 20.0,
+                                      mainAxisSpacing: 20.0,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return buildFile(context, _photos[index]);
+                                    },
+                                  ),
+                                );
+                              }
+                          }
+
+                        }
+                      ),
+
+
+                      /*FutureBuilder<List<FirebaseFile>>(
                         future: futureFiles,
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
@@ -105,7 +160,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                                   children: [
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(0,0.0,0,0),
+                                        padding: const EdgeInsets.fromLTRB(0,20.0,0,0),
                                         child: GridView.builder(
                                           itemCount: files.length,
                                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -127,7 +182,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                           }
                         },
                       ),
-
+                        */
                     )
                 ),
                   Positioned(
@@ -153,12 +208,12 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
     );
   }
 
-  Widget buildFile(BuildContext context, FirebaseFile file, int index) => Stack(
+  Widget buildFile(BuildContext context, Photo photo) => Stack(
     children: [
       InkWell(
         onTap: () {
           Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => PhotoDetail(url:file.url)
+              builder: (context) => PhotoDetail(photo: photo)
           ));
         },
         child: ClipRRect(
@@ -166,7 +221,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
           child: AspectRatio(
             aspectRatio: 1,
             child: Image.network(
-                file.url,
+                photo.filename,
                 fit: BoxFit.fill
             ),
           ),
@@ -181,6 +236,22 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
 
     ],
   );
+  getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    bool isAdmin = false;
+
+    setState(() {
+      isAdmin = prefs.getBool('admin')!;
+      if (isAdmin)
+        email = prefs.getString('parentemail');
+      else
+        email = prefs.getString('email');
+
+    });
+    print(email);
+  }
+
 
   Widget buildHeader(int length) => ListTile(
     tileColor: Colors.blue,

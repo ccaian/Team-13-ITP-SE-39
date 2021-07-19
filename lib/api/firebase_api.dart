@@ -15,6 +15,8 @@ class FirebaseApi {
 
   //get a list of the FIRST images in each week
   static Future<List<FirebaseFile>> listWeek(String path) async {
+    print("path here");
+    print(path);
     final ref = FirebaseStorage.instance.ref(path);
     final result = await ref.listAll();
     late Future<List<FirebaseFile>> futureList;
