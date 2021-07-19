@@ -119,7 +119,7 @@ class _ScoreHistoryState extends State<ScoreHistory> {
       if (isAdmin)
         email = prefs.getString('parentemail');
       else
-        email = prefs.getString('email                  ');
+        email = prefs.getString('email');
 
     });
     print(email);
