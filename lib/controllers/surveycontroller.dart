@@ -53,6 +53,8 @@ with SingleGetTickerProviderMixin{
     _totalScore = 0;
     _selectedAns = 0;
     _isAnswered = false;
+    _length = 0;
+    update();
 
   }
   @override
