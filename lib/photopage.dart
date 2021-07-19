@@ -41,8 +41,10 @@ class _PhotoPageState extends State<PhotoPage> {
   @override
   Widget build(BuildContext context) {
 
-    FirebaseApi.listWeek(email+'/');
-    futureFiles = FirebaseApi.listWeek(email+'/');
+    if (email!=null){
+      FirebaseApi.listWeek(email+'/');
+      futureFiles = FirebaseApi.listWeek(email+'/');
+    }
     return Container(
       color: Color(0xff4C52A8),
       width: double.infinity,
@@ -200,6 +202,7 @@ class _PhotoPageState extends State<PhotoPage> {
                                         }
                                         else{
                                           final file = files[index-1];
+                                          print(file.url);
                                           return buildFile(context, file, index-1);
 
                                         }
@@ -266,8 +269,8 @@ class _PhotoPageState extends State<PhotoPage> {
 
     setState(() {
       isAdmin = prefs.getBool('admin')!;
-      if (isAdmin)
-        email = prefs.getString('parentemail');
+      if (isAdmin){
+        email = prefs.getString('parentemail');}
       else
         email = prefs.getString('email');
 

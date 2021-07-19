@@ -10,6 +10,8 @@ import 'package:growth_app/wellbeingscore.dart';
 class SurveyController extends GetxController
 with SingleGetTickerProviderMixin{
 
+  late double _length = 0.0;
+  double get length => this._length;
 
   late PageController _pageController;
   PageController get pageController => this._pageController;
@@ -33,12 +35,18 @@ with SingleGetTickerProviderMixin{
   late int _selectedAns;
   int get selectedAns => this._selectedAns;
 
+  late BuildContext _context;
+  BuildContext get context => this._context;
+
   bool _isFinished = false;
   bool get isFinished => this._isFinished;
 
   int _totalScore = 0;
   int get totalScore => this._totalScore;
 
+  void setContext(BuildContext context){
+    _context = context;
+  }
   void resetSurvey(){
     _questionNumber.value = 1;
     _isFinished = false;
@@ -67,7 +75,8 @@ with SingleGetTickerProviderMixin{
     print(_totalScore);
     _isAnswered = false;
     nextQuestion();
-
+    _length = length + 0.1;
+    update();
   }
 
   void nextQuestion() {
@@ -81,9 +90,8 @@ with SingleGetTickerProviderMixin{
 
       _isFinished = true;
 
-
-      _pageController.nextPage(
-          duration: Duration(milliseconds: 250), curve: Curves.ease);
+      Navigator.pop(context);
+      Navigator.of(context).pushNamed('/wellbeingscore');
 
 
     }

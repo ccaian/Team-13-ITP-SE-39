@@ -11,6 +11,7 @@ import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
 import 'package:growth_app/setting.dart';
 import 'package:growth_app/userprofile.dart';
+import 'package:growth_app/wellbeingscore.dart';
 import 'package:growth_app/workerselfamily.dart';
 
 class RouteGenerator {
@@ -42,6 +43,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SettingPage());
       case '/dischargeCheckList':
         return MaterialPageRoute(builder: (_) => DischargeCheckListPage());
+      case '/wellbeingscore':
+        return MaterialPageRoute(builder: (_) => WellbeingScore());
       default:
         return _errorRoute();
     }

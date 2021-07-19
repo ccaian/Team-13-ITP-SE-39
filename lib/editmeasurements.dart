@@ -16,12 +16,13 @@ class EditMeasurements extends StatefulWidget {
 }
 
 class _EditMeasurementsPageState extends State<EditMeasurements> {
-  late TextEditingController _dateControl, _weightControl, _heightControl, _headControl;
+  late TextEditingController _weekControl, _dateControl, _weightControl, _heightControl, _headControl;
   late DatabaseReference _growthRef;
 
   @override
   void initState() {
     super.initState();
+    _weekControl = TextEditingController();
     _dateControl = TextEditingController();
     _weightControl = TextEditingController();
     _heightControl = TextEditingController();
@@ -30,6 +31,7 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
     getGrowthDetail();
   }
 
+  String week = '';
   String date = '';
   double weight = 0;
   double height = 0;
@@ -81,8 +83,30 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
                     child: Column(children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.fromLTRB(40.0,50.0,40.0,20.0),
-                        child: DateTimeField(
-                          controller: _dateControl,
+                        // child: DateTimeField(
+                        //   controller: _dateControl,
+                        //   decoration: InputDecoration(
+                        //     fillColor: Colors.grey,
+                        //     border: new OutlineInputBorder(
+                        //       borderRadius: const BorderRadius.all(
+                        //         const Radius.circular(25),
+                        //       ),
+                        //     ),
+                        //     labelText: 'Date',
+                        //   ),
+                        //   format: format,
+                        //   onShowPicker: (context, currentValue) {
+                        //     return showDatePicker(
+                        //         context: context,
+                        //         firstDate: DateTime(1900),
+                        //         initialDate: currentValue ?? DateTime.now(),
+                        //         lastDate: DateTime(2100));
+                        //   },
+                        //   onChanged: (val) {
+                        //     setState(() => date);
+                        //   },
+                        // ),
+                        child: TextFormField(
                           decoration: InputDecoration(
                             fillColor: Colors.grey,
                             border: new OutlineInputBorder(
@@ -90,19 +114,13 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
                                 const Radius.circular(25),
                               ),
                             ),
-                            labelText: 'Date',
+                            labelText: 'Week #',
                           ),
-                          format: format,
-                          onShowPicker: (context, currentValue) {
-                            return showDatePicker(
-                                context: context,
-                                firstDate: DateTime(1900),
-                                initialDate: currentValue ?? DateTime.now(),
-                                lastDate: DateTime(2100));
-                          },
+                          validator: (val) => val!.isEmpty ? 'Enter week number' : null,
                           onChanged: (val) {
-                            setState(() => date);
+                            setState(() => week = val);
                           },
+                          controller: _weekControl,
                         ),
                       ),
                       Padding(
@@ -198,7 +216,7 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
                                       SharedPreferences prefs = await SharedPreferences.getInstance();
                                       var nric = prefs.getString('ChildNRIC');
 
-                                      editData(nric, date, weight, height, head);
+                                      editData(nric, week, weight, height, head);
                                     }
                                     else {
                                       Fluttertoast.showToast(
@@ -231,7 +249,8 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
     DataSnapshot snapshot = await _growthRef.child(widget.growthKey).once();
 
     Map growth = snapshot.value;
-    _dateControl.text = growth['name'];
+    _weekControl.text = growth['week'];
+    //_dateControl.text = growth['date'];
     _weightControl.text = growth['weight'];
     _heightControl.text = growth['height'];
     _headControl.text = growth['head'];
@@ -239,14 +258,16 @@ class _EditMeasurementsPageState extends State<EditMeasurements> {
     //setState(() {});
   }
 
-  void editData(nric, date, weight, height, head) async{
-    date = _dateControl.text;
+  void editData(nric, week, weight, height, head) async{
+    week = _weekControl.text;
+    //date = _dateControl.text;
     weight = _weightControl.text;
     height = _heightControl.text;
     head = _headControl.text;
 
     Map<String, String> growth = {
       //'date': date,
+      'week': week,
       'weight':  weight,
       'height': height,
       'head': head,

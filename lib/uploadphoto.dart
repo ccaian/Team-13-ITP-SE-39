@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'api/firebase_api.dart';
 import 'model/firebase_file.dart';
@@ -148,7 +149,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
                               shape: shape,
                             ),
                             child: new Text(
-                              "Choose Photo",
+                              "Upload Photo",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14.0,
@@ -162,30 +163,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
 
                           ),
                       ),
-                      Positioned(
-                        top: maxLines * 24.0 + 130.0,
-                        left: MediaQuery.of(context).size.width * 0.15,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.grey[400],
-                            minimumSize: Size(MediaQuery.of(context).size.width * 0.7,50),
-                            shape: shape,
-                          ),
-                          child: new Text(
-                            "Upload",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
-                            ),
 
-                          ),
-                          onPressed: () => uploadImage(),
-
-
-                        ),
-                      )
 
                     ],
                   )
@@ -205,14 +183,14 @@ class _UploadPhotoState extends State<UploadPhoto> {
     getEmail();
   }
 
-  addPhotoToFirestore(String name, String description){
+  addPhotoToFirestore(String name, String description,String filename){
 
     DateTime now = new DateTime.now();
     photos.add({
-      'index': photos.snapshots().length,
       'name': name,
       'description': description,
-      'date' : now.toString()
+      'date' : now.toString(),
+      'filename': filename
     });
 
   }
@@ -233,6 +211,13 @@ class _UploadPhotoState extends State<UploadPhoto> {
   }
 
   getImage() async {
+
+    if (nameController.text.isEmpty || descriptionController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Please enter the name and description"),
+      ));
+      return;
+    }
     final _storage = FirebaseStorage.instance;
     final _picker = ImagePicker();
     PickedFile image;
@@ -246,25 +231,23 @@ class _UploadPhotoState extends State<UploadPhoto> {
       //Select Image
       image = (await _picker.getImage(source: ImageSource.gallery))!;
       var file = File(image.path);
+      var uuid = Uuid();
+      String filename = uuid.v1();
 
       if (image != null){
         //Upload to Firebase
         String name = 'default';
         String description = 'default';
-        if (nameController.text!=''){
-          description = descriptionController.text;
-          name = nameController.text;
-          addPhotoToFirestore(name,description);
-        }
 
         var snapshot = await _storage.ref()
-            .child(widget.refUrl+'/'+name)
+            .child(widget.refUrl+'/'+filename)
             .putFile(file);
         var downloadUrl = await snapshot.ref.getDownloadURL();
-
-        setState(() {
-          imageUrl = downloadUrl;
-        });
+        print("DOWNLOAD URL");
+        print(downloadUrl);
+        description = descriptionController.text;
+        name = nameController.text;
+        addPhotoToFirestore(name,description,downloadUrl);
       } else {
         print('No Path Received');
       }
@@ -274,10 +257,5 @@ class _UploadPhotoState extends State<UploadPhoto> {
     }
 
   }
-  uploadImage(){
-
-    Navigator.pop(context);
-  }
-
 
 }
