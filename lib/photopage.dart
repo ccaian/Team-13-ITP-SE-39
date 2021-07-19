@@ -25,6 +25,7 @@ class PhotoPage extends StatefulWidget {
 class _PhotoPageState extends State<PhotoPage> {
 
   late CollectionReference photos;
+  var nric;
   var email;
   final albumNameController = TextEditingController();
 
@@ -32,7 +33,7 @@ class _PhotoPageState extends State<PhotoPage> {
 
   @override
   void initState() {
-    getEmail();
+    getNRIC();
     super.initState();
     //futurePaths = FirebaseApi.listWeek('ccaian3@gmail.com/');
 
@@ -41,9 +42,9 @@ class _PhotoPageState extends State<PhotoPage> {
   @override
   Widget build(BuildContext context) {
 
-    if (email!=null){
-      FirebaseApi.listWeek(email+'/');
-      futureFiles = FirebaseApi.listWeek(email+'/');
+    if (nric!=null){
+      FirebaseApi.listWeek(nric+'/');
+      futureFiles = FirebaseApi.listWeek(nric+'/');
     }
     return Container(
       color: Color(0xff4C52A8),
@@ -117,7 +118,7 @@ class _PhotoPageState extends State<PhotoPage> {
 
                                           Navigator.pop(context);
                                           Navigator.push(context, new MaterialPageRoute(
-                                              builder: (context) => UploadPhoto(refUrl: email+'/'+albumNameController.text.replaceAll(' ', '_'))
+                                              builder: (context) => UploadPhoto(refUrl: nric+'/'+albumNameController.text.replaceAll(' ', '_'))
                                           ));},
                                         child: const Text('OK'),
                                       ),
@@ -262,6 +263,15 @@ class _PhotoPageState extends State<PhotoPage> {
     ),
   );
 
+  getNRIC() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    setState(() {
+      nric = prefs.getString('ChildNRIC');
+
+    });
+  }
   getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
@@ -270,9 +280,9 @@ class _PhotoPageState extends State<PhotoPage> {
     setState(() {
       isAdmin = prefs.getBool('admin')!;
       if (isAdmin){
-        email = prefs.getString('parentemail');}
+        email = prefs.getString('ChildNRIC');}
       else
-        email = prefs.getString('email');
+        email = prefs.getString('ChildNRIC');
 
     });
     print(email);
