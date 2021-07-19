@@ -37,14 +37,15 @@ class PdfGrowthApi {
 
   static Widget buildGrowth(Growth growthFile) {
     final headers = [
-      'Date',
+      'Week',
       'Weight',
       'Height',
       'Head',
     ];
     final data = growthFile.items.map((item) {
       return [
-        item.date,
+        //item.date,
+        item.week,
         item.weight + " kg",
         item.height + " cm",
         item.head + " cm",

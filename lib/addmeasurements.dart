@@ -20,7 +20,8 @@ class AddMeasurements extends StatefulWidget {
 
 class _AddMeasurementsPageState extends State<AddMeasurements> {
 
-  String date = '';
+  String week = '';
+  //String date = '';
   double weight = 0;
   double height = 0;
   double head = 0;
@@ -29,7 +30,8 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
   final format = DateFormat("dd-MM-yyyy");
 
   var _growthRef = FirebaseDatabase.instance.reference().child('growth');
-  TextEditingController _dateControl = TextEditingController();
+  TextEditingController _weekControl = TextEditingController();
+  //TextEditingController _dateControl = TextEditingController();
   TextEditingController _weightControl = TextEditingController();
   TextEditingController _heightControl = TextEditingController();
   TextEditingController _headControl = TextEditingController();
@@ -77,7 +79,30 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                   child: Column(children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(40.0,50.0,40.0,20.0),
-                      child: DateTimeField(
+                      // child: DateTimeField(
+                      //   decoration: InputDecoration(
+                      //     fillColor: Colors.grey,
+                      //     border: new OutlineInputBorder(
+                      //       borderRadius: const BorderRadius.all(
+                      //         const Radius.circular(25),
+                      //       ),
+                      //     ),
+                      //     labelText: 'Date',
+                      //   ),
+                      //   format: format,
+                      //   onShowPicker: (context, currentValue) {
+                      //   return showDatePicker(
+                      //   context: context,
+                      //   firstDate: DateTime(1900),
+                      //   initialDate: currentValue ?? DateTime.now(),
+                      //   lastDate: DateTime(2100));
+                      //   },
+                      //   onChanged: (val) {
+                      //     setState(() => date);
+                      //   },
+                      //   controller: _dateControl,
+                      // ),
+                      child: TextFormField(
                         decoration: InputDecoration(
                           fillColor: Colors.grey,
                           border: new OutlineInputBorder(
@@ -85,20 +110,13 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                               const Radius.circular(25),
                             ),
                           ),
-                          labelText: 'Date',
+                          labelText: 'Week #',
                         ),
-                        format: format,
-                        onShowPicker: (context, currentValue) {
-                        return showDatePicker(
-                        context: context,
-                        firstDate: DateTime(1900),
-                        initialDate: currentValue ?? DateTime.now(),
-                        lastDate: DateTime(2100));
-                        },
+                        validator: (val) => val!.isEmpty ? 'Enter week number' : null,
                         onChanged: (val) {
-                          setState(() => date);
+                          setState(() => week = val);
                         },
-                        controller: _dateControl,
+                        controller: _weekControl,
                       ),
                     ),
                     Padding(
@@ -194,7 +212,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                     var nric = prefs.getString('ChildNRIC');
 
-                                    addData(nric, date, weight, height, head);
+                                    addData(nric, week, weight, height, head);
                                   }
                                   else {
                                     Fluttertoast.showToast(
@@ -223,10 +241,10 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
     );
   }
 
-  void addData(nric, date, weight, height, head) async{
+  void addData(nric, week, weight, height, head) async{
     _growthRef.push().set({
       'nric': nric,
-      'date': _dateControl.text,
+      'week': _weekControl.text,
       'weight': _weightControl.text,
       'height': _heightControl.text,
       'head': _headControl.text

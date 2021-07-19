@@ -24,8 +24,8 @@ class _GrowthPageState extends State<GrowthPage> {
   List<GrowthItem> growthItems = [];
 
   var nric;
-  var name;
-  var date;
+  var week;
+  //var date;
   var weight;
   var height;
   var head;
@@ -55,7 +55,7 @@ class _GrowthPageState extends State<GrowthPage> {
               Positioned(
                   top: 80,
                   left: 30,
-                  child: Text(childName.toString(),
+                  child: Text("Growth Parameter \nFor " + childName.toString(),
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
@@ -184,7 +184,7 @@ class _GrowthPageState extends State<GrowthPage> {
             children: [
               SizedBox(width: 30),
               Text(
-                growth['date'],
+                growth['week'],
                 style: TextStyle(
                     fontSize: 20,
                     color: Colors.black,
@@ -346,7 +346,8 @@ class _GrowthPageState extends State<GrowthPage> {
           items.add(
             GrowthItem(
               key: key,
-              date: values['date'],
+              week: values['week'],
+              //date: values['date'],
               weight: values['weight'],
               height: values['height'],
               head: values['head'],
@@ -372,14 +373,16 @@ class Growth {
 
 class GrowthItem {
   final String key;
-  final String date;
+  final String week;
+  //final String date;
   final String weight;
   final String height;
   final String head;
 
   const GrowthItem({
     required this.key,
-    required this.date,
+    required this.week,
+    //required this.date,
     required this.weight,
     required this.height,
     required this.head,
