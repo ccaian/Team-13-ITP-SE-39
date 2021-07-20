@@ -306,9 +306,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         userKey = tempKey;
         progress = tempProg;
       });
-      if(snapshot.value != null){
-        getCheckListState();
-      }
+      getCheckListState();
     });
   }
 
@@ -322,7 +320,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     bool check7 = false;
     bool check8 = false;
     bool check9 = false;
-    print('PRINT CHECKLIST: ' + checkList[0]);
+    print("In get checkListstate: ");
+    print('$checkList');
     if(checkList[0]=='true'){
       check1 = true;
     } else {
