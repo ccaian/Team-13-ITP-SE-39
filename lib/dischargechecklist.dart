@@ -15,6 +15,8 @@ var _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
 String?  childnric = "";
 List<String> checkList = [];
 List<String> checkListSaved = [];
+bool admin = false;
+var isEnabled = false;
 var userKey;
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
@@ -116,7 +118,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       value: List[key],
                                       activeColor: Colors.deepPurple[400],
                                       checkColor: Colors.white,
-                                      onChanged: (value) {
+                                      onChanged: isEnabled ? null: (value) {
                                         setState(() {
                                           List[key] = value as bool;
                                           if(value == true){
@@ -150,6 +152,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       minimumSize: Size(50, 50),
                                       shape: shape,
                                     ),
+
                                     child: new Text(
                                       "Save",
                                       textAlign: TextAlign.center,
@@ -159,7 +162,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    onPressed: () async {
+                                    onPressed: isEnabled ? null: () async {
                                       checkList =[];
                                       int i = 0;
                                       List.forEach((index, value) {
@@ -415,8 +418,24 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     setState(() {
       childnric = sharedPreferences.getString('ChildNRIC');
       getCheckListData(sharedPreferences.getString('ChildNRIC'));
+      admin = sharedPreferences.getBool('admin')!;
+      if (sharedPreferences.getBool('admin') == true){
+        isEnabled = true;
+      }
     });
-    print('In Load Pref');
+    print('In Load Pref'+ admin.toString());
+  }
+
+  enableElevatedButton() {
+    setState(() {
+      isEnabled = true;
+    });
+  }
+
+  disableElevatedButton() {
+    setState(() {
+      isEnabled = true;
+    });
   }
 
   clearCheckList(){
