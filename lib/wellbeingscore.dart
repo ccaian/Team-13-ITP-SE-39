@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:growth_app/controllers/surveycontroller.dart';
 import 'package:growth_app/model/survey_score.dart';
 import 'package:growth_app/scorehistory.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,7 +49,7 @@ class _WellbeingScoreState extends State<WellbeingScore> {
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         child: Stack(
           children: [
             Positioned(

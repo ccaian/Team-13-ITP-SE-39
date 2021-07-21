@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milestoneguidance.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/route_generator.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:growth_app/login.dart';
 
@@ -110,7 +111,7 @@ class LandingPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(80.0, 20.0, 80.0, 0.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.redAccent,
+                      primary: secondaryTheme,
                       minimumSize: Size(50, 50),
                       shape: shape,
                     ),
@@ -155,7 +156,7 @@ class LandingPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
               child: IconButton(
                 icon: const Icon(Icons.announcement_rounded),
-                color: Colors.indigo[500],
+                color: mainTheme,
                 tooltip: 'Increase volume by 10',
                 onPressed: () {
                   Navigator.of(context).pushNamed('/milestoneGuideline');

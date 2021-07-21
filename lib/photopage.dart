@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/photoalbumpage.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/uploadphoto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,7 +48,7 @@ class _PhotoPageState extends State<PhotoPage> {
       futureFiles = FirebaseApi.listWeek(nric+'/');
     }
     return Container(
-      color: Color(0xff4C52A8),
+      color: mainTheme,
       width: double.infinity,
       height: double.infinity,
       child: Stack(

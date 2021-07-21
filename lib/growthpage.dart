@@ -5,6 +5,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/addmeasurements.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api/pdf_api.dart';
 import 'api/pdf_growth_api.dart';
@@ -47,7 +48,7 @@ class _GrowthPageState extends State<GrowthPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         body: Container(
-          color: Color(0xff4C52A8),
+          color: mainTheme,
           width: double.infinity,
           height: double.infinity,
           child: Stack(
@@ -143,7 +144,7 @@ class _GrowthPageState extends State<GrowthPage> {
                 child: FloatingActionButton(
                   heroTag: "add",
                   child: Icon(Icons.add),
-                  backgroundColor: Color(0xff4C52A8),
+                  backgroundColor: mainTheme,
                   onPressed: () async {
                     Navigator.push(
                         context,
@@ -158,7 +159,7 @@ class _GrowthPageState extends State<GrowthPage> {
                 child: FloatingActionButton(
                   heroTag: "download",
                   child: Icon(Icons.download),
-                  backgroundColor: Color(0xff4C52A8),
+                  backgroundColor: mainTheme,
                   onPressed: () async {
                     //growthFile = Growth(items: growthItems);
                     growthFile = Growth(items: [
@@ -281,7 +282,7 @@ class _GrowthPageState extends State<GrowthPage> {
                   children: [
                     Icon(
                       Icons.delete,
-                      color: Colors.red[700],
+                      color: secondaryTheme,
                     ),
                     SizedBox(
                       width: 6,
@@ -289,7 +290,7 @@ class _GrowthPageState extends State<GrowthPage> {
                     Text('Delete',
                         style: TextStyle(
                             fontSize: 16,
-                            color: Colors.red[700],
+                            color: secondaryTheme,
                             fontWeight: FontWeight.w600)),
                   ],
                 ),

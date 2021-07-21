@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -47,7 +48,7 @@ class _WorkerForumState extends State<WorkerForum> {
     );
     return Material(
       child: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -143,7 +144,7 @@ class _WorkerForumState extends State<WorkerForum> {
       return FloatingActionButton(
         // isExtended: true,
         child: Icon(Icons.add),
-        backgroundColor: Color(0xff4C52A8),
+        backgroundColor: mainTheme,
         onPressed: ()  {
           showDialog<String>(
             context: context,
@@ -169,7 +170,7 @@ class _WorkerForumState extends State<WorkerForum> {
                                 const Radius.circular(25),
                               ),
                             ),
-                            fillColor: Colors.red,
+                            fillColor: secondaryTheme,
                             labelText: 'Title',
                           ),
                         ),
@@ -189,7 +190,7 @@ class _WorkerForumState extends State<WorkerForum> {
                                 const Radius.circular(25),
                               ),
                             ),
-                            fillColor: Colors.red,
+                            fillColor: secondaryTheme,
                             labelText: 'Description',
                           ),
                         ),

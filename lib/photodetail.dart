@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/model/photo.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:growth_app/api/firebase_api.dart';
 
@@ -35,7 +36,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(

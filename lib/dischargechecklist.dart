@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/navparent.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -195,7 +196,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                 width: 350,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: Color(0xff4C52A8),
+                  color: mainTheme,
                   borderRadius: BorderRadius.circular(15)
                   ),
                 child: Row(

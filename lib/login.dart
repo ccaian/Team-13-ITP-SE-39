@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.fromLTRB(80.0, 0, 80.0, 0.0),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.redAccent,
+                            primary: secondaryTheme,
                             minimumSize: Size(50, 50),
                             shape: shape,
                           ),
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: secondaryTheme,
             textColor: Colors.white,
             fontSize: 16.0);
       } else if (e.code == 'wrong-password') {
@@ -183,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: secondaryTheme,
             textColor: Colors.white,
             fontSize: 16.0);
       }
@@ -235,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
+          backgroundColor: secondaryTheme,
           textColor: Colors.white,
           fontSize: 16.0);
     }

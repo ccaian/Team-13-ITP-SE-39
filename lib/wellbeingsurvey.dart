@@ -9,6 +9,7 @@ import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/model/survey_question.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/scorehistory.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/wellbeingscore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,7 +43,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
     return Scaffold(
 
       body: Container(
-          color: Color(0xff4C52A8),
+          color: mainTheme,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Stack(
@@ -129,7 +130,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                               margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width*0.08, 0, 0),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.redAccent,
+                                  primary: secondaryTheme,
                                   minimumSize: Size(250, 50),
                                   shape: shape,
                                 ),

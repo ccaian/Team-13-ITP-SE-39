@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/login.dart';
+import 'package:growth_app/theme/colors.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -133,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 0.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.redAccent,
+                      primary: secondaryTheme,
                       minimumSize: Size(50, 50),
                       shape: shape,
                     ),
@@ -160,7 +161,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.CENTER,
                               timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
+                              backgroundColor: secondaryTheme,
                               textColor: Colors.white,
                               fontSize: 16.0);
                         }
@@ -187,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: secondaryTheme,
             textColor: Colors.white,
             fontSize: 16.0);
       } else if (e.code == 'email-already-in-use') {
@@ -196,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: secondaryTheme,
             textColor: Colors.white,
             fontSize: 16.0);
       }
