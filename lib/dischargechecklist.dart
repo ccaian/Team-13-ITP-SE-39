@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/navparent.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,7 +62,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xff4C52A8),
+      color: mainTheme,
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -116,7 +117,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                         color: Colors.grey[700],
                                       )),
                                       value: List[key],
-                                      activeColor: Colors.deepPurple[400],
+                                      activeColor: mainTheme,
                                       checkColor: Colors.white,
                                       onChanged: isEnabled ? null: (value) {
                                         setState(() {
@@ -148,7 +149,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                   padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      primary: Colors.redAccent,
+                                      primary: secondaryTheme,
                                       minimumSize: Size(50, 50),
                                       shape: shape,
                                     ),
@@ -198,7 +199,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                 width: 350,
                 height: 200,
                 decoration: BoxDecoration(
-                  color: Color(0xff4C52A8),
+                  color: mainTheme,
                   borderRadius: BorderRadius.circular(15)
                   ),
                 child: Row(
@@ -269,9 +270,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
           print('update checklist');
           updateCheckList(result, nric);
         }
-
-
-
 
     });
   }

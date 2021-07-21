@@ -215,7 +215,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
       InkWell(
         onTap: () {
           Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => PhotoDetail(photo: photo)
+              builder: (context) => PhotoDetail(photo: photo, photos: photos,)
           ));
         },
         child: ClipRRect(

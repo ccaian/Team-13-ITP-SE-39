@@ -223,7 +223,9 @@ class _UploadPhotoState extends State<UploadPhoto> {
   }
 
   getImage() async {
-
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Uploading please wait..."),
+    ));
     if (nameController.text.isEmpty || descriptionController.text.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Please enter the name and description"),
