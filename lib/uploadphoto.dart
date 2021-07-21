@@ -47,6 +47,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
   @override
   Widget build(BuildContext context) {
     print("refurl");
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     String title = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
     photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(title);
 

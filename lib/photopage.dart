@@ -43,10 +43,12 @@ class _PhotoPageState extends State<PhotoPage> {
   @override
   Widget build(BuildContext context) {
 
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     if (nric!=null){
       FirebaseApi.listWeek(nric+'/');
       futureFiles = FirebaseApi.listWeek(nric+'/');
     }
+
     return Container(
       color: mainTheme,
       width: double.infinity,

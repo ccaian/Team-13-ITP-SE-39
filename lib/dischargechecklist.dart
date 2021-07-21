@@ -59,130 +59,132 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xff4C52A8),
-      width: double.infinity,
-      height: double.infinity,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-              top: 80,
-              left: 30,
-              child: Text(
-                  "Discharge Checklist",
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.bold,
+    return Material(
+      child: Container(
+        color: mainTheme,
+        width: double.infinity,
+        height: double.infinity,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+                top: 80,
+                left: 30,
+                child: Text(
+                    "Discharge Checklist",
+                    style: TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    )
+                )
+            ),
+            Positioned(
+              bottom: 0,
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                  )
-              )
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.8,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                    borderRadius: BorderRadius.only(
 
-                      topRight: Radius.circular(25.0),
-                      topLeft: Radius.circular(25.0)),
-                ),
-                child: Scaffold(
-                  body: Container(
-                    child: Column(
-                      children: <Widget>[
-                        buildcircleProgressbar(),
-                        Expanded(
-                          child : ListView(
-                            children: List.keys.map((String key) {
-                              return new  SizedBox(
-                                  width: 400,
-                                  child: Center(
-                                  child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-                              child: Container(
-                              decoration: BoxDecoration(
-                              color: Color(0xfff2f2f2),
-                              borderRadius: BorderRadius.circular(25),
-                              ),
-                                  child: Center(
-                                    child: CheckboxListTile(
-                                      title: new Text(key, style: TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[700],
-                                      )),
-                                      value: List[key],
-                                      activeColor: Colors.deepPurple[400],
-                                      checkColor: Colors.white,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          List[key] = value as bool;
-                                          if(value == true){
-                                            progress = progress + 100/List.length;
-                                          }else{
-                                            progress = progress - 100/List.length;
-                                          }if(progress > 100){
-                                            progress = 100;
-                                          }if(progress < 0){
-                                            progress = 0;
-                                          }
-                                        });
-                                      },
-                                    ),
-                                  )
-                              )
-                                  )
-                                  )
-                              ); //BoxDecoration
-
-                            }).toList(),
-                          ),),
-                        new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                            Widget>[
-                          Expanded(
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.redAccent,
-                                      minimumSize: Size(50, 50),
-                                      shape: shape,
-                                    ),
-                                    child: new Text(
-                                      "Save",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      checkList =[];
-                                      int i = 0;
-                                      List.forEach((index, value) {
-                                        print(childnric.toString() + " - " + value.toString());
-                                        i++;
-                                        checkList.add(value.toString());
-                                      }
-                                      );
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => NavParent()
-                                      ));
-                                      addCheckListData(checkList, childnric);
-                                    },
-                                  )))
-                        ]),
-                      ],
-                    ),
-                  )
-                     )
+                        topRight: Radius.circular(25.0),
+                        topLeft: Radius.circular(25.0)),
                   ),
-                ),
-        ],
+                  child: Scaffold(
+                    body: Container(
+                      child: Column(
+                        children: <Widget>[
+                          buildcircleProgressbar(),
+                          Expanded(
+                            child : ListView(
+                              children: List.keys.map((String key) {
+                                return new  SizedBox(
+                                    width: 400,
+                                    child: Center(
+                                    child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+                                child: Container(
+                                decoration: BoxDecoration(
+                                color: Color(0xfff2f2f2),
+                                borderRadius: BorderRadius.circular(25),
+                                ),
+                                    child: Center(
+                                      child: CheckboxListTile(
+                                        title: new Text(key, style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[700],
+                                        )),
+                                        value: List[key],
+                                        activeColor: mainTheme,
+                                        checkColor: Colors.white,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            List[key] = value as bool;
+                                            if(value == true){
+                                              progress = progress + 100/List.length;
+                                            }else{
+                                              progress = progress - 100/List.length;
+                                            }if(progress > 100){
+                                              progress = 100;
+                                            }if(progress < 0){
+                                              progress = 0;
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    )
+                                )
+                                    )
+                                    )
+                                ); //BoxDecoration
+
+                              }).toList(),
+                            ),),
+                          new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                              Widget>[
+                            Expanded(
+                                child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: secondaryTheme,
+                                        minimumSize: Size(50, 50),
+                                        shape: shape,
+                                      ),
+                                      child: new Text(
+                                        "Save",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        checkList =[];
+                                        int i = 0;
+                                        List.forEach((index, value) {
+                                          print(childnric.toString() + " - " + value.toString());
+                                          i++;
+                                          checkList.add(value.toString());
+                                        }
+                                        );
+                                        Navigator.push(context, new MaterialPageRoute(
+                                            builder: (context) => NavParent()
+                                        ));
+                                        addCheckListData(checkList, childnric);
+                                      },
+                                    )))
+                          ]),
+                        ],
+                      ),
+                    )
+                       )
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }

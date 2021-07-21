@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/scorehistory.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
 import 'package:growth_app/workerdischargechecklist.dart';
 import 'package:growth_app/workerforum.dart';
@@ -30,7 +31,7 @@ class _WorkerHomeState extends State<WorkerHome> {
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Material(
       child: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -68,7 +69,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                           width: MediaQuery.of(context).size.width * 0.9,
                           height: MediaQuery.of(context).size.height * 0.3,
                           decoration: BoxDecoration(
-                            color: Color(0xff4C52A8),
+                            color: mainTheme,
                             borderRadius: const BorderRadius.all(
                               const Radius.circular(25),
                             ),
@@ -94,7 +95,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                         left: MediaQuery.of(context).size.width * 0.10,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.redAccent,
+                            primary: secondaryTheme,
                             minimumSize: Size(200, 50),
                             shape: shape,
                           ),
@@ -153,7 +154,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                   InkWell(
                                     onTap: () {
                                       Navigator.of(context)
-                                          .pushNamed("/wellbeingscore");
+                                          .pushNamed("/scorehistory");
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width *

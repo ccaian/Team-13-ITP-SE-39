@@ -36,6 +36,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
   @override
   Widget build(BuildContext context) {
 
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     SurveyController _surveyController = Get.put(SurveyController());
     _surveyController.resetSurvey();
     _surveyController.setContext(context);

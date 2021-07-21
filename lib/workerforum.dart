@@ -43,6 +43,7 @@ class _ForumState extends State<Forum> {
   Widget build(BuildContext context) {
 
 
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
     );
