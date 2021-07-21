@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed("/register");
+                  Navigator.of(context).pushNamed("/register");
                 },
               ),
               Padding(
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed("/resetPassword");
+                    Navigator.of(context).pushNamed("/resetPassword");
                   },
                 ),
               )
@@ -216,14 +216,14 @@ class _LoginPageState extends State<LoginPage> {
 
           if (prefs.getBool('admin') == true) {
             // user is a healthcare worker
-            Navigator.of(context).pushNamed('/selectFamily');
+            Navigator.of(context).pushReplacementNamed('/selectFamily');
           } else {
             // user is a parent and not first login
-            Navigator.of(context).pushNamed('/selectChild');
+            Navigator.of(context).pushReplacementNamed('/selectChild');
           }
         } else {
           // user is a parent and this is the first login
-          Navigator.of(context).pushNamed('/profileSetup');
+          Navigator.of(context).pushReplacementNamed('/profileSetup');
         }
       });
     } else {

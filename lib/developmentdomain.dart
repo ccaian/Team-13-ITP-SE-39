@@ -15,7 +15,7 @@ class DevelopmentDomainPage extends StatefulWidget {
 class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   final _formKey = GlobalKey<FormState>();
 
-  bool isAdmin = false;
+  bool _isAdmin = false;
   String _title = '';
   String _description = '';
 
@@ -73,9 +73,11 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return Center(child: CircularProgressIndicator());
                       List devDomainList = snapshot.data!.docs;
+
                       List<DevelopmentDomain> _records = devDomainList
                           .map(
                             (devDomainPost) => DevelopmentDomain(
+
                                 title: devDomainPost['title'],
                                 description: devDomainPost['description']),
                           )
@@ -87,100 +89,110 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                         itemBuilder: (context, index) {
                           return DevelopmentDomainCard(
                             developmentDomainRecord: _records[index],
+                            isAdmin: _isAdmin,
                           );
                         },
                       );
                     },
                   )),
             ),
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: FloatingActionButton(
-                heroTag: "add",
-                child: Icon(Icons.add),
-                backgroundColor: mainTheme,
-                onPressed: () async {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Enter new Development Domain'),
-                          content: Stack(
-                            overflow: Overflow.visible,
-                            children: <Widget>[
-                              Form(
-                                key: _formKey,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
+            !_isAdmin
+                ? const SizedBox.shrink()
+                : Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: FloatingActionButton(
+                      heroTag: "add",
+                      child: Icon(Icons.add),
+                      backgroundColor: mainTheme,
+                      onPressed: () async {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title:
+                                    const Text('Enter new Development Domain'),
+                                content: Stack(
+                                  overflow: Overflow.visible,
                                   children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          border: new OutlineInputBorder(
-                                            borderRadius: const BorderRadius.all(
-                                              const Radius.circular(25),
+                                    Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: InputDecoration(
+                                                border: new OutlineInputBorder(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    const Radius.circular(25),
+                                                  ),
+                                                ),
+                                                fillColor: secondaryTheme,
+                                                labelText: 'Title',
+                                              ),
+                                              validator: (val) => val!.isEmpty
+                                                  ? 'Enter a Title'
+                                                  : null,
+                                              onChanged: (val) {
+                                                setState(() => _title = val);
+                                              },
+                                              controller: _titleController,
                                             ),
                                           ),
-                                          fillColor: secondaryTheme,
-                                          labelText: 'Title',
-                                        ),
-                                        validator: (val) =>
-                                            val!.isEmpty ? 'Enter a Title' : null,
-                                        onChanged: (val) {
-                                          setState(() => _title = val);
-                                        },
-                                        controller: _titleController,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextFormField(
-                                        decoration: InputDecoration(
-                                          border: new OutlineInputBorder(
-                                            borderRadius: const BorderRadius.all(
-                                              const Radius.circular(25),
+                                          Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: TextFormField(
+                                              decoration: InputDecoration(
+                                                border: new OutlineInputBorder(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    const Radius.circular(25),
+                                                  ),
+                                                ),
+                                                fillColor: secondaryTheme,
+                                                labelText: 'Description',
+                                              ),
+                                              validator: (val) => val!.isEmpty
+                                                  ? 'Enter a description'
+                                                  : null,
+                                              onChanged: (val) {
+                                                setState(
+                                                    () => _description = val);
+                                              },
+                                              controller:
+                                                  _descriptionController,
                                             ),
                                           ),
-                                          fillColor: secondaryTheme,
-                                          labelText: 'Description',
-                                        ),
-                                        validator: (val) => val!.isEmpty
-                                            ? 'Enter a description'
-                                            : null,
-                                        onChanged: (val) {
-                                          setState(() => _description = val);
-                                        },
-                                        controller: _descriptionController,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          primary: mainTheme,
-                                          minimumSize: Size(200, 50),
-                                          //shape: shape,
-                                        ),
-                                        child: Text("Submit"),
-                                        onPressed: () async {
-                                          if (_formKey.currentState!.validate()) {
-                                            _addData();
-                                          }
-                                        },
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: mainTheme,
+                                                minimumSize: Size(200, 50),
+                                                //shape: shape,
+                                              ),
+                                              child: Text("Submit"),
+                                              onPressed: () async {
+                                                if (_formKey.currentState!
+                                                    .validate()) {
+                                                  _addData();
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      });
-                },
-              ),
-            ),
+                              );
+                            });
+                      },
+                    ),
+                  ),
           ],
         ),
       ),
@@ -190,7 +202,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   Future<void> _getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      isAdmin = prefs.getBool('admin')!;
+      _isAdmin = prefs.getBool('admin')!;
     });
   }
 

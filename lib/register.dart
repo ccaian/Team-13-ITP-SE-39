@@ -167,7 +167,23 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       }
                     },
-                  )))
+                  ))),
+        ]),
+        new Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+          TextButton(
+            child: new Text(
+              "Have an Account? Login",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.normal,
+                color: Colors.grey[700],
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed("/login");
+            },
+          ),
         ]),
       ]),
     )));
@@ -217,8 +233,7 @@ void verificationDialog(BuildContext context) {
         ElevatedButton(
             child: Text('Ok'),
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              Navigator.of(context).pushNamed("/login");
             }),
       ]);
 

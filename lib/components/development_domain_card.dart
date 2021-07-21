@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:growth_app/model/development_domain.dart';
 
 class DevelopmentDomainCard extends StatelessWidget {
+  final isAdmin;
+
   const DevelopmentDomainCard({
     Key? key,
     required this.developmentDomainRecord,
+    required this.isAdmin,
   }) : super(key: key);
 
   final DevelopmentDomain developmentDomainRecord;
@@ -44,48 +47,52 @@ class DevelopmentDomainCard extends StatelessWidget {
             width: 0,
             height: 40,
           ),
-          GestureDetector(
-            onTap: () {},
-            child: Row(
-              children: [
-                Icon(
-                  Icons.edit,
-                  color: Theme.of(context).primaryColor,
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                Text('Update',
-                    style: TextStyle(
-                        fontSize: 16,
+          !isAdmin
+              ? const SizedBox.shrink()
+              : GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.edit,
                         color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600)),
-              ],
-            ),
-          ),
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Text('Update',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ),
           SizedBox(
             width: 20,
             height: 40,
           ),
-          GestureDetector(
-            onTap: () {},
-            child: Row(
-              children: [
-                Icon(
-                  Icons.delete,
-                  color: Colors.red[700],
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-                Text('Delete',
-                    style: TextStyle(
-                        fontSize: 16,
+          !isAdmin
+              ? const SizedBox.shrink()
+              : GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete,
                         color: Colors.red[700],
-                        fontWeight: FontWeight.w600)),
-              ],
-            ),
-          ),
+                      ),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Text('Delete',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.red[700],
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ),
         ]),
 
         // decoration: BoxDecoration(
