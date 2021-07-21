@@ -124,7 +124,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                           }else{
                                             progress = progress - 100/List.length;
                                           }if(progress > 100){
-                                            progress = 100;
+                                            progress = 100.0;
                                           }if(progress < 0){
                                             progress = 0;
                                           }
@@ -297,7 +297,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         checkList.add(value['checklist7']);
         checkList.add(value['checklist8']);
         checkList.add(value['checklist9']);
-        tempProg = value['progress'];
+        tempProg = value['progress'].toDouble();
       });
       print('child List:');
       print(checkList);
