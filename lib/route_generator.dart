@@ -7,6 +7,7 @@ import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
 import 'package:growth_app/milestoneguidance.dart';
 import 'package:growth_app/parentselchild.dart';
+import 'package:growth_app/photopage.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
@@ -54,6 +55,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => DevelopmentDomainPage());
       case '/forum':
         return MaterialPageRoute(builder: (_) => Forum());
+      case '/photopage':
+        return MaterialPageRoute(builder: (_) => PhotoPage());
       default:
         return _errorRoute();
     }
