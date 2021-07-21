@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List<String> litems = [];
   List userData = [];
   List babyData = [];
+  List userKeyList = [];
   List listTileChild = [];
+  Map keyMap = Map<String, String>();
   List testList = [];
   List<String> childParentEmailList = [];
   List parentEmailList = [];
@@ -28,6 +31,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   String selectedChildNRIC ='';
   TextEditingController _searchControl = TextEditingController();
+
+  final _userRef = FirebaseDatabase.instance.reference().child('user');
   @override
   void initState(){
     makeList();
@@ -142,6 +147,23 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           litems[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+        IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: () {
+          //   _onDeleteItemPressed(index);
+          deleteUser(parentEmailList[items]);
+          print("deleted User:" + parentEmailList[items]);
+          setState(() {
+            litems.removeAt(items);
+            litems.join(', ');
+          });
+        }
+        )
+          ]
+        ),
         children: [
       for(var i = 0; i < babyNRICList.length; i++)
         newTile(babyNRICList[i], items)
@@ -216,6 +238,27 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       getChildParentEmail();
   }
 
+  makeKeyList(){
+    FirebaseDatabase.instance
+        .reference()
+        .child("user")
+        .orderByChild("email")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      childMap.forEach((key, value) {
+        if(value['admin']==false){
+          keyMap[value['email'].toString()] = key;
+        }
+
+      });
+      setState(() {
+        keyMap = keyMap;
+      });
+    });
+  }
+
   getChildParentEmail(){
     List<String> tempList = [];
     List temp = [];
@@ -282,6 +325,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         listOfChildrenNRIC = tempList;
       });
     });
+    makeKeyList();
   }
 
  String getBabyName( String babyNRIC) {
@@ -320,4 +364,18 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     }
     print("in search: " + newList.toString());
   }
+
+  void deleteUser(String email) async {
+    var tempKey;
+    keyMap.forEach((key, value) {
+      if(email == key){
+        tempKey =value;
+        print('tempkey: '+ tempKey);
+      }
+    });
+      await _userRef.child(tempKey).remove().then((_) {
+        print('Transaction  committed.');
+      });
+    }
+
 }
