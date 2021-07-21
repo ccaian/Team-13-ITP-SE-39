@@ -15,7 +15,6 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool isAdmin = false;
-  var email;
   String _title = '';
   String _description = '';
 
@@ -32,8 +31,6 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Container(
       color: Color(0xff4C52A8),
       width: double.infinity,
@@ -43,7 +40,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
           Positioned(
               top: 80,
               left: 30,
-              child: Text("Developement Domain",
+              child: Text("Development Domain",
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
@@ -82,6 +79,8 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                         )
                         .toList();
                     return ListView.builder(
+                      padding:
+                          const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 60.0),
                       itemCount: snapshot.data!.size,
                       itemBuilder: (context, index) {
                         return DevelopmentDomainCard(
@@ -189,13 +188,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isAdmin = prefs.getBool('admin')!;
-      if (isAdmin == false) {
-        email = prefs.getString('email');
-      } else {
-        email = prefs.getString('parentemail');
-      }
     });
-    await Future.delayed(Duration(seconds: 2));
   }
 
   void _addData() {
