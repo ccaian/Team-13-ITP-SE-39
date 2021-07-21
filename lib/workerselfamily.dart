@@ -16,8 +16,10 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List<String> litems = [];
   List userData = [];
   List babyData = [];
+  List listTileChild = [];
+  List testList = [];
   List<String> childParentEmailList = [];
-  List<String> parentEmailList = [];
+  List parentEmailList = [];
   List<String> listOfChildrenNRIC = [];
   List<String> babyNameList = [];
 
@@ -89,9 +91,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                       padding: const EdgeInsets.all(8),
                                       itemCount: litems.length,
                                       itemBuilder: (BuildContext ctxt, int index) {
-                                        List testList = [];
                                         testList = validateChildren(parentEmailList[index]);
-                                        print("print data: " + babyData[index].toString());
+                                        print("in code print data: " + babyData[index].toString());
                                         return new GestureDetector(
                                           //You need to make my child interactive
 
@@ -129,7 +130,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   Widget buildText(int items, List babyNRICList) {
     String parentEmail = parentEmailList[items].toString();
-    print("in BuildText: " + parentEmail);
+    print("in BuildText Email: " + parentEmail);
 
 
     return Card(
@@ -149,7 +150,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
  List validateChildren(String parentEmail) {
     List listOfChildrenEmail =[];
-    for(var i = 0; i < childParentEmailList.length; i++){
+    for(var i = 0; i < babyData.length; i++){
       if(parentEmail == babyData[i]["parent"]){
         print('in validate children: '+ parentEmail +' child email '+ babyData[i]["parent"]);
         listOfChildrenEmail.add(babyData[i]["nric"].toString());
@@ -294,18 +295,26 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   searchBarList(search){
-    List<String> newList = [];
+    List newList = [];
+    List <String> tempList = [];
     setState(() {
       litems =[];
+      testList =[];
+      parentEmailList =[];
     });
     for(var i =0; i < userData.length; i++){
       if(search == userData[i]["firstName"].toString()){
         setState(() {
           litems.add(userData[i]["firstName"].toString() + ' ' + userData[i]["lastName"].toString());
+          parentEmailList.add(userData[i]["email"]);
+          newList = validateChildren(userData[i]["email"]);
+          print("in search loop: " + userData[i]["email"]);
         });
+
       }else if (search == ''){
         makeList();
       }
     }
+    print("in search: " + newList.toString());
   }
 }
