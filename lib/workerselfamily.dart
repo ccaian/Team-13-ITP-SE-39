@@ -303,7 +303,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       parentEmailList =[];
     });
     for(var i =0; i < userData.length; i++){
-      if(search == userData[i]["firstName"].toString()){
+      if(search.toUpperCase() == userData[i]["firstName"].toString().toUpperCase()){
         setState(() {
           litems.add(userData[i]["firstName"].toString() + ' ' + userData[i]["lastName"].toString());
           parentEmailList.add(userData[i]["email"]);
