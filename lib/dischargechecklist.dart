@@ -12,7 +12,6 @@ class DischargeCheckListPage extends StatefulWidget {
   @override
   _DischargeCheckListPageState createState() => _DischargeCheckListPageState();
 }
-var _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
 String?  childnric = "";
 List<String> checkList = [];
 List<String> checkListSaved = [];
