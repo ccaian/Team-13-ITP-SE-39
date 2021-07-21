@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/navparent.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/workerhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,7 +37,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
 
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xff4C52A8),
+      color: mainTheme,
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -97,7 +98,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
             right: 20,
             child: FloatingActionButton(
               child: Icon(Icons.add),
-              backgroundColor: Color(0xff4C52A8),
+              backgroundColor: mainTheme,
               onPressed: () async {
                 Navigator.push(
                     context,

@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/dischargechecklist.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
 import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
@@ -31,7 +32,7 @@ class _ParentHomeState extends State<ParentHome> {
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Container(
-      color: Color(0xff4C52A8),
+      color: mainTheme,
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -69,7 +70,7 @@ class _ParentHomeState extends State<ParentHome> {
                         width: MediaQuery.of(context).size.width * 0.9,
                         height: MediaQuery.of(context).size.height * 0.25,
                         decoration: BoxDecoration(
-                          color: Color(0xff4C52A8),
+                          color: mainTheme,
                           borderRadius: const BorderRadius.all(
                             const Radius.circular(25),
                           ),
@@ -85,7 +86,7 @@ class _ParentHomeState extends State<ParentHome> {
                       left: MediaQuery.of(context).size.width * 0.10,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.redAccent,
+                          primary: secondaryTheme,
                           minimumSize: Size(200, 50),
                           shape: shape,
                         ),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/workerhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -303,7 +304,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       parentEmailList =[];
     });
     for(var i =0; i < userData.length; i++){
-      if(search == userData[i]["firstName"].toString()){
+      if(search.toUpperCase() == userData[i]["firstName"].toString().toUpperCase()){
         setState(() {
           litems.add(userData[i]["firstName"].toString() + ' ' + userData[i]["lastName"].toString());
           parentEmailList.add(userData[i]["email"]);

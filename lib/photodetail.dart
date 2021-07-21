@@ -5,15 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/model/photo.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:growth_app/api/firebase_api.dart';
 
 class PhotoDetail extends StatefulWidget {
 
   final Photo photo;
+  final CollectionReference photos;
   const PhotoDetail({
     Key? key,
     required this.photo,
+    required this.photos,
   }) : super(key: key);
 
 
@@ -25,7 +28,6 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
-  late CollectionReference photos;
   var email;
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -111,7 +113,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                         top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.1,
                       child: Container(
-                        child: Icon(Icons.download_sharp,color: Color(0xff9397ca)),
+                        child: Icon(Icons.share,color: Color(0xff9397ca)),
                         height: MediaQuery.of(context).size.width*0.18,
                         width: MediaQuery.of(context).size.width*0.18,
                         decoration: BoxDecoration(
@@ -145,7 +147,24 @@ class _PhotoDetailState extends State<PhotoDetail> {
                         top: MediaQuery.of(context).size.height*0.52,
                         left: MediaQuery.of(context).size.width*0.5,
                         child: Container(
-                          child: Icon(Icons.delete,color: Color(0xff9397ca)),
+                          child: InkWell(
+                              onTap:(){
+                               widget.photos.where("filename", isEqualTo: widget.photo.filename)
+                                   .get().then((value) => {
+                                    value.docs.forEach((element) {
+                                        print(element.id);
+                                        widget.photos.doc(element.id).delete().then((value){
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text("Photo Deleted!"),
+                                        ));
+                                        Navigator.of(context)
+                                            .pushNamed("/photopage");
+                                        Navigator.pop(context);
+                                        });
+                                    })
+                               });
+                              },
+                              child: Icon(Icons.delete,color: Color(0xff9397ca))),
                           height: MediaQuery.of(context).size.width*0.18,
                           width: MediaQuery.of(context).size.width*0.18,
                           decoration: BoxDecoration(
@@ -194,7 +213,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                           child: Container(
                             height: MediaQuery.of(context).size.width*0.18,
                             width: MediaQuery.of(context).size.width*0.18,
-                            child: Icon(Icons.share,color: Color(0xff9397ca)),
+                            child: Icon(Icons.download_sharp,color: Color(0xff9397ca)),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Color(0xff9397ca),width: 2),
                                 color: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileSetUpPage extends StatefulWidget {
@@ -106,7 +107,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
                   padding: const EdgeInsets.fromLTRB(80.0, 20.0, 80.0, 0.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.redAccent,
+                      primary: secondaryTheme,
                       minimumSize: Size(50, 50),
                       shape: shape,
                     ),

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/growthpage.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,7 +41,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
   Widget build(BuildContext context) {
     return new Scaffold(
         body: Container(
-          color: Color(0xff4C52A8),
+          color: mainTheme,
           width: double.infinity,
           height: double.infinity,
       child: Stack(
@@ -192,7 +193,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                               padding: const EdgeInsets.fromLTRB(80.0,20.0,80.0,0.0),
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.deepPurple,
+                                  primary: mainTheme,
                                   minimumSize: Size(50,50),
                                   //shape: shape,
                                 ),
@@ -220,7 +221,7 @@ class _AddMeasurementsPageState extends State<AddMeasurements> {
                                         toastLength: Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.CENTER,
                                         timeInSecForIosWeb: 1,
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: secondaryTheme,
                                         textColor: Colors.white,
                                         fontSize: 16.0
                                     );

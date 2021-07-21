@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,13 +47,14 @@ class _UploadPhotoState extends State<UploadPhoto> {
   @override
   Widget build(BuildContext context) {
     print("refurl");
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     String title = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
     photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(title);
 
     final maxLines = 7;
     return Scaffold(
       body: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -145,7 +147,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
                         left: MediaQuery.of(context).size.width * 0.15,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Color(0xff4C52A8),
+                              primary: mainTheme,
                               minimumSize: Size(MediaQuery.of(context).size.width * 0.7,50),
                               shape: shape,
                             ),
@@ -221,7 +223,9 @@ class _UploadPhotoState extends State<UploadPhoto> {
   }
 
   getImage() async {
-
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Uploading please wait..."),
+    ));
     if (nameController.text.isEmpty || descriptionController.text.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Please enter the name and description"),

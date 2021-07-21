@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/nav.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/photodetail.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/uploadphoto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,7 +56,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
     photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(week);
     return Scaffold(
       body: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
@@ -192,7 +193,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                     child: FloatingActionButton(
                       // isExtended: true,
                       child: Icon(Icons.add),
-                      backgroundColor: Color(0xff4C52A8),
+                      backgroundColor: mainTheme,
                       onPressed: () {
                         Navigator.push(context, new MaterialPageRoute(
                             builder: (context) => UploadPhoto(refUrl: widget.refUrl)
@@ -214,7 +215,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
       InkWell(
         onTap: () {
           Navigator.push(context, new MaterialPageRoute(
-              builder: (context) => PhotoDetail(photo: photo)
+              builder: (context) => PhotoDetail(photo: photo, photos: photos,)
           ));
         },
         child: ClipRRect(

@@ -5,6 +5,7 @@ import 'package:growth_app/milkpage.dart';
 import 'package:growth_app/parenthome.dart';
 import 'package:growth_app/photopage.dart';
 import 'package:growth_app/setting.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/workerhome.dart';
 
 import 'growthpage.dart';
@@ -61,7 +62,7 @@ class _NavParentState extends State<NavParent> {
             title: Text('Settings'),
           ),
         ],
-        selectedItemColor: Colors.indigo[500],
+        selectedItemColor: mainTheme,
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: _onItemTap,

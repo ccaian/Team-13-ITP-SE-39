@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/theme/colors.dart';
 
 
 
@@ -67,7 +68,7 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
               height: MediaQuery.of(context).size.height * 0.2,
               decoration: BoxDecoration(
 
-                color: Color(0xff4C52A8),
+                color: mainTheme,
 
                 borderRadius: const BorderRadius.all(
                   const Radius.circular(25),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/model/development_domain.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/development_domain_card.dart';
 import 'components/milk_card.dart';
@@ -98,7 +99,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
               child: FloatingActionButton(
                 heroTag: "add",
                 child: Icon(Icons.add),
-                backgroundColor: Color(0xff4C52A8),
+                backgroundColor: mainTheme,
                 onPressed: () async {
                   showDialog(
                       context: context,
@@ -122,7 +123,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                                               const Radius.circular(25),
                                             ),
                                           ),
-                                          fillColor: Colors.red,
+                                          fillColor: secondaryTheme,
                                           labelText: 'Title',
                                         ),
                                         validator: (val) =>
@@ -142,7 +143,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                                               const Radius.circular(25),
                                             ),
                                           ),
-                                          fillColor: Colors.red,
+                                          fillColor: secondaryTheme,
                                           labelText: 'Description',
                                         ),
                                         validator: (val) => val!.isEmpty
@@ -158,7 +159,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary: Colors.deepPurple,
+                                          primary: mainTheme,
                                           minimumSize: Size(200, 50),
                                           //shape: shape,
                                         ),

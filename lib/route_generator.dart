@@ -11,6 +11,7 @@ import 'package:growth_app/photopage.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
+import 'package:growth_app/scorehistory.dart';
 import 'package:growth_app/setting.dart';
 import 'package:growth_app/userprofile.dart';
 import 'package:growth_app/wellbeingscore.dart';
@@ -57,6 +58,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Forum());
       case '/photopage':
         return MaterialPageRoute(builder: (_) => PhotoPage());
+      case '/scorehistory':
+        return MaterialPageRoute(builder: (_) => ScoreHistory());
       default:
         return _errorRoute();
     }
