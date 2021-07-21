@@ -94,7 +94,7 @@ class _ParentHomeState extends State<ParentHome> {
                   Positioned(
                       top: MediaQuery.of(context).size.height * 0.3,
                       left: MediaQuery.of(context).size.width * 0.05,
-
+                      child:SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
                           Row(
@@ -225,7 +225,7 @@ class _ParentHomeState extends State<ParentHome> {
                                 ),
                               ])
                         ],
-                      )),
+                      ))),
                 ])),
           )
         ],
