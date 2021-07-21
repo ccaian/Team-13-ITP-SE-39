@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/dischargechecklist.dart';
+import 'package:growth_app/main.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/theme/colors.dart';
@@ -21,6 +22,11 @@ class _ParentHomeState extends State<ParentHome> {
   String? temp = "";
   String? temp2 = "";
   String babyName = "";
+  String? famName = "";
+  String? childName = "";
+  bool admin = false;
+  final shape =
+  RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
 
   @override
   void initState() {
@@ -29,8 +35,6 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Widget build(BuildContext context) {
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Container(
       color: mainTheme,
       width: double.infinity,
@@ -40,12 +44,8 @@ class _ParentHomeState extends State<ParentHome> {
           Positioned(
               top: 80,
               left: 30,
-              child: Text("Welcome!\n" + userName!,
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ))),
+              child: welcomeText()
+          ),
           Positioned(
             top: 40,
             right: -10,
@@ -82,27 +82,15 @@ class _ParentHomeState extends State<ParentHome> {
                     child: buildText(context),
                   ),
                   Positioned(
+                      top: MediaQuery.of(context).size.width * 0.28,
+                      left: MediaQuery.of(context).size.width * 0.11,
+                      child: adminManagingText()
+                  ),
+                  Positioned(
                       top: MediaQuery.of(context).size.width * 0.38,
                       left: MediaQuery.of(context).size.width * 0.10,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: secondaryTheme,
-                          minimumSize: Size(200, 50),
-                          shape: shape,
-                        ),
-                        child: new Text(
-                          "Change Baby",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {
-                          _navigateAndDisplaySelection(context);
-                        },
-                      )),
+                      child: selectButton()
+                  ),
                   Positioned(
                       top: MediaQuery.of(context).size.height * 0.3,
                       left: MediaQuery.of(context).size.width * 0.05,
@@ -144,8 +132,7 @@ class _ParentHomeState extends State<ParentHome> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        "/wellbeingsurvey");
+                                    wellbeingRouting();
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -247,16 +234,8 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Widget buildText(BuildContext context) =>
-      Text("Currently Managing\n" + babyName,
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ));
+      mainText();
 
-  void _navigateAndDisplaySelection(BuildContext context) async {
-    Navigator.of(context).pushNamed("/selectChild");
-  }
 
   Future loadPagePref() async {
     List newList = [];
@@ -280,7 +259,115 @@ class _ParentHomeState extends State<ParentHome> {
       setState(() {
         userName = newList[0].toString();
         babyName = temp2!;
+        admin = sharedPreferences.getBool('admin')!;
+        famName = sharedPreferences.getString('Fam');
+        childName = sharedPreferences.getString('ChildName');
       });
     });
+  }
+
+  welcomeText(){
+    if(admin){
+      return new Text("Welcome!\n Admin" ,
+          style: TextStyle(
+            fontSize: 26.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    } else{
+      return new Text("Welcome!\n" + userName!,
+          style: TextStyle(
+            fontSize: 26.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }
+  }
+
+  selectButton(){
+    if(admin){
+      return new ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: secondaryTheme,
+          minimumSize: Size(200, 50),
+          shape: shape,
+        ),
+        child: new Text(
+          "Change Family",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.normal,
+            color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed("/selectFamily");
+        },
+      );
+    }else{
+      return new ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: secondaryTheme,
+          minimumSize: Size(200, 50),
+          shape: shape,
+        ),
+        child: new Text(
+          "Change Baby",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.normal,
+            color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed("/selectChild");
+        },
+      );
+    }
+  }
+
+  mainText(){
+    if(admin){
+      return new Text("Currently Managing\n" + famName! + " Family",
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }else{
+      return new Text("Currently Managing\n" + babyName,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }
+  }
+
+  adminManagingText(){
+    if (admin){
+      return new Text(
+          "Currently Monitoring Child: \n" +
+              childName.toString(),
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Colors.white,
+          ));
+    }else{
+      return new Text("");
+    }
+
+  }
+
+  wellbeingRouting(){
+    if (admin){
+      Navigator.of(context).pushNamed(
+          "/scorehistory");
+    }else{
+      Navigator.of(context).pushNamed(
+          "/wellbeingsurvey");
+    }
   }
 }

@@ -133,7 +133,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => NavParent())).then((value) => setState( () {} ));;
+                      builder: (context) => NavParent())).then((value) => setState( () {} ));
             },
           )
     );
