@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:growth_app/adminpin.dart';
 import 'package:growth_app/changepassword.dart';
+import 'package:growth_app/developmentdomain.dart';
 import 'package:growth_app/dischargechecklist.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
@@ -12,6 +13,8 @@ import 'package:growth_app/resetpassword.dart';
 import 'package:growth_app/setting.dart';
 import 'package:growth_app/userprofile.dart';
 import 'package:growth_app/wellbeingscore.dart';
+import 'package:growth_app/wellbeingsurvey.dart';
+import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
 
 class RouteGenerator {
@@ -43,8 +46,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SettingPage());
       case '/dischargeCheckList':
         return MaterialPageRoute(builder: (_) => DischargeCheckListPage());
+      case '/wellbeingsurvey':
+        return MaterialPageRoute(builder: (_) => WellbeingSurvey());
       case '/wellbeingscore':
         return MaterialPageRoute(builder: (_) => WellbeingScore());
+      case '/developmentDomain':
+        return MaterialPageRoute(builder: (_) => DevelopmentDomainPage());
+      case '/forum':
+        return MaterialPageRoute(builder: (_) => Forum());
       default:
         return _errorRoute();
     }
