@@ -15,12 +15,12 @@ import 'components/forum_card.dart';
 import 'controllers/forumcontroller.dart';
 import 'model/forum_post.dart';
 
-class WorkerForum extends StatefulWidget {
+class Forum extends StatefulWidget {
   @override
-  _WorkerForumState createState() => _WorkerForumState();
+  _ForumState createState() => _ForumState();
 
 }
-class _WorkerForumState extends State<WorkerForum> {
+class _ForumState extends State<Forum> {
   var email;
 
   String title = '';

@@ -1,41 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
-import 'package:growth_app/nav.dart';
+import 'package:growth_app/model/development_domain.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'components/development_domain_card.dart';
 import 'components/milk_card.dart';
 
-
-class MilkPage extends StatefulWidget {
-
+class DevelopmentDomainPage extends StatefulWidget {
   @override
-  _MilkPageState createState() => _MilkPageState();
+  _DevelopmentDomainPageState createState() => _DevelopmentDomainPageState();
 }
 
-class _MilkPageState extends State<MilkPage> {
-
+class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   final _formKey = GlobalKey<FormState>();
-  late CollectionReference milk, records;
 
   bool isAdmin = false;
   var email;
-  String weekNo = '';
-  String leftBreast = '';
-  String rightBreast = '';
-  String totalVolume = '';
+  String _title = '';
+  String _description = '';
 
-  // double leftBreast = 0;
-  // double rightBreast = 0;
-  // double totalVolume = 0;
-
-  final firestoreInstance = FirebaseFirestore.instance;
-  final _weekNoController = TextEditingController();
-  final _leftBreastController = TextEditingController();
-  final _rightBreastController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _domainPost =
+      FirebaseFirestore.instance.collection('developmentdomain');
 
   @override
   void initState() {
@@ -45,7 +32,8 @@ class _MilkPageState extends State<MilkPage> {
 
   @override
   Widget build(BuildContext context) {
-    records = firestoreInstance.collection('milk').doc(email).collection('records');
+    final shape =
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Container(
       color: Color(0xff4C52A8),
       width: double.infinity,
@@ -55,15 +43,12 @@ class _MilkPageState extends State<MilkPage> {
           Positioned(
               top: 80,
               left: 30,
-              child: Text(
-                  "Milk Volume\nRecord",
+              child: Text("Developement Domain",
                   style: TextStyle(
                     fontSize: 26.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                  )
-              )
-          ),
+                  ))),
           Positioned(
             top: 40,
             right: -10,
@@ -77,34 +62,35 @@ class _MilkPageState extends State<MilkPage> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-
                       topRight: Radius.circular(25.0),
                       topLeft: Radius.circular(25.0)),
                 ),
-                child: StreamBuilder (
-                  stream: records.orderBy('weekNo', descending: true).snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData) return new Text("There are no records.");
-                    if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
-                    List milkList = snapshot.data!.docs;
-                    List<MilkRecord> _records = milkList.map(
-                          (milk) => MilkRecord(
-                            weekNo: milk['weekNo'],
-                            leftBreast: milk['leftBreast'],
-                            rightBreast: milk['rightBreast'],
-                            totalVolume: milk['totalVolume'],
-                          ),
-                    ).toList();
+                child: StreamBuilder(
+                  stream: _domainPost.snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData)
+                      return new Text("There are no records.");
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      return Center(child: CircularProgressIndicator());
+                    List devDomainList = snapshot.data!.docs;
+                    List<DevelopmentDomain> _records = devDomainList
+                        .map(
+                          (devDomainPost) => DevelopmentDomain(
+                              title: devDomainPost['title'],
+                              description: devDomainPost['description']),
+                        )
+                        .toList();
                     return ListView.builder(
                       itemCount: snapshot.data!.size,
-                      itemBuilder: (context, index){
-                        return MilkCard(milkRecord: _records[index],);
+                      itemBuilder: (context, index) {
+                        return DevelopmentDomainCard(
+                          developmentDomainRecord: _records[index],
+                        );
                       },
                     );
                   },
-
-              )
-            ),
+                )),
           ),
           Positioned(
             bottom: 20,
@@ -118,7 +104,7 @@ class _MilkPageState extends State<MilkPage> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Enter Breast Milk Volume'),
+                        title: const Text('Enter new Development Domain'),
                         content: Stack(
                           overflow: Overflow.visible,
                           children: <Widget>[
@@ -137,13 +123,14 @@ class _MilkPageState extends State<MilkPage> {
                                           ),
                                         ),
                                         fillColor: Colors.red,
-                                        labelText: 'Week #',
+                                        labelText: 'Title',
                                       ),
-                                      validator: (val) => val!.isEmpty ? 'Enter week' : null,
+                                      validator: (val) =>
+                                          val!.isEmpty ? 'Enter a Title' : null,
                                       onChanged: (val) {
-                                        setState(() => weekNo = val);
+                                        setState(() => _title = val);
                                       },
-                                      controller: _weekNoController..text = 'Week ',
+                                      controller: _titleController,
                                     ),
                                   ),
                                   Padding(
@@ -156,38 +143,15 @@ class _MilkPageState extends State<MilkPage> {
                                           ),
                                         ),
                                         fillColor: Colors.red,
-                                        labelText: 'Left Breast Milk Volume (ml)',
+                                        labelText: 'Description',
                                       ),
-                                      inputFormatters: <TextInputFormatter>[
-                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                      ],
-                                      validator: (val) => val!.isEmpty ? 'Enter left breast milk volume in ml' : null,
+                                      validator: (val) => val!.isEmpty
+                                          ? 'Enter a description'
+                                          : null,
                                       onChanged: (val) {
-                                        setState(() => leftBreast = val);
+                                        setState(() => _description = val);
                                       },
-                                      controller: _leftBreastController,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(25),
-                                          ),
-                                        ),
-                                        fillColor: Colors.red,
-                                        labelText: 'Right Breast Milk Volume (ml)',
-                                      ),
-                                      inputFormatters: <TextInputFormatter>[
-                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                      ],
-                                      validator: (val) => val!.isEmpty ? 'Enter right breast milk volume in ml' : null,
-                                      onChanged: (val) {
-                                        setState(() => rightBreast = val);
-                                      },
-                                      controller: _rightBreastController,
+                                      controller: _descriptionController,
                                     ),
                                   ),
                                   Padding(
@@ -195,7 +159,7 @@ class _MilkPageState extends State<MilkPage> {
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         primary: Colors.deepPurple,
-                                        minimumSize: Size(200,50),
+                                        minimumSize: Size(200, 50),
                                         //shape: shape,
                                       ),
                                       child: Text("Submit"),
@@ -221,14 +185,13 @@ class _MilkPageState extends State<MilkPage> {
     );
   }
 
-  Future<void> _getData() async{
+  Future<void> _getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isAdmin = prefs.getBool('admin')!;
       if (isAdmin == false) {
         email = prefs.getString('email');
-      }
-      else {
+      } else {
         email = prefs.getString('parentemail');
       }
     });
@@ -236,34 +199,17 @@ class _MilkPageState extends State<MilkPage> {
   }
 
   void _addData() {
-    milk = firestoreInstance.collection('milk').doc(email).collection('records');
-
-    var left = double.parse(_leftBreastController.text);
-    var right = double.parse(_rightBreastController.text);
-    totalVolume = (left + right).toString();
-
-    milk.add(
-        {
-          "weekNo" : _weekNoController.text,
-          "leftBreast" : _leftBreastController.text,
-          "rightBreast" : _rightBreastController.text,
-          "totalVolume" : totalVolume
-        }).then((_){
+    _domainPost.add({
+      "title": _titleController.text,
+      "description": _descriptionController.text,
+    }).then((_) {
       print("success!");
     });
+
     Navigator.pop(context);
     setState(() {
-      _leftBreastController.clear();
-      _rightBreastController.clear();
+      _titleController.clear();
+      _descriptionController.clear();
     });
   }
-}
-
-class MilkRecord {
-  final String weekNo;
-  final String leftBreast;
-  final String rightBreast;
-  final String totalVolume;
-
-  MilkRecord({required this.weekNo, required this.leftBreast,required this.rightBreast, required this.totalVolume});
 }
