@@ -132,8 +132,7 @@ class _ParentHomeState extends State<ParentHome> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        "/wellbeingsurvey");
+                                    wellbeingRouting();
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -268,7 +267,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   welcomeText(){
-    if(admin == true){
+    if(admin){
       return new Text("Welcome!\n Admin" ,
           style: TextStyle(
             fontSize: 26.0,
@@ -286,7 +285,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   selectButton(){
-    if(admin == true){
+    if(admin){
       return new ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: secondaryTheme,
@@ -330,7 +329,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   mainText(){
-    if(admin == true){
+    if(admin){
       return new Text("Currently Managing\n" + famName! + " Family",
           style: TextStyle(
             fontSize: 22.0,
@@ -360,5 +359,15 @@ class _ParentHomeState extends State<ParentHome> {
       return new Text("");
     }
 
+  }
+
+  wellbeingRouting(){
+    if (admin){
+      Navigator.of(context).pushNamed(
+          "/scorehistory");
+    }else{
+      Navigator.of(context).pushNamed(
+          "/wellbeingsurvey");
+    }
   }
 }
