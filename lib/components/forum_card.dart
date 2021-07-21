@@ -55,7 +55,7 @@ class ForumCard extends StatelessWidget {
                       top: MediaQuery.of(context).size.width * 0.11,
                       left: MediaQuery.of(context).size.width * 0.2,
                       child: Text(
-                          'Posted: '+forumPost.date,
+                          'Posted: '+forumPost.date.substring(0,10),
                           style: TextStyle(
                             fontSize: 16.0,
                             color: Colors.grey[500],

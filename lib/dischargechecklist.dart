@@ -204,10 +204,10 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                     Expanded(child: Column(
                       children: [
                         Text('\nProgress \n', style: TextStyle(
-                          fontSize: 20,fontWeight: FontWeight.bold, color: Colors.white
+                          fontSize: 25,fontWeight: FontWeight.bold, color: Colors.white
                         ),),
                         Text('Percentage of \ncompletion', style: TextStyle(
-                            fontSize: 12, color: Colors.white
+                            fontSize: 16, color: Colors.white
                         ),),
                       ],
                     ),
@@ -306,9 +306,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         userKey = tempKey;
         progress = tempProg;
       });
-      if(snapshot.value != null){
-        getCheckListState();
-      }
+      getCheckListState();
     });
   }
 
@@ -322,7 +320,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     bool check7 = false;
     bool check8 = false;
     bool check9 = false;
-    print('PRINT CHECKLIST: ' + checkList[0]);
+    print("In get checkListstate: ");
+    print('$checkList');
     if(checkList[0]=='true'){
       check1 = true;
     } else {

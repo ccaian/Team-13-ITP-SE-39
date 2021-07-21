@@ -32,6 +32,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
 
   late CollectionReference photos;
   var email;
+  var nric;
   final descriptionController = TextEditingController();
 
   final nameController = TextEditingController();
@@ -46,7 +47,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
   Widget build(BuildContext context) {
     print("refurl");
     String title = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
-    photos = FirebaseFirestore.instance.collection('photos').doc(email).collection(title);
+    photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(title);
 
     final maxLines = 7;
     return Scaffold(
@@ -180,7 +181,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
   @override
   void initState() {
 
-    getEmail();
+    getNRIC();
   }
 
   addPhotoToFirestore(String name, String description,String filename){
@@ -193,6 +194,15 @@ class _UploadPhotoState extends State<UploadPhoto> {
       'filename': filename
     });
 
+  }
+  getNRIC() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+    setState(() {
+      nric = prefs.getString('ChildNRIC');
+
+    });
   }
   getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -248,6 +258,7 @@ class _UploadPhotoState extends State<UploadPhoto> {
         description = descriptionController.text;
         name = nameController.text;
         addPhotoToFirestore(name,description,downloadUrl);
+        Navigator.pop(context);
       } else {
         print('No Path Received');
       }

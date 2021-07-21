@@ -207,9 +207,15 @@ class _ForumState extends State<Forum> {
                 TextButton(
                   onPressed: (){
                     Navigator.pop(context, 'Cancel');
-                    if (titleController.text != '' && descriptionController != '')
-                      print("bumbblebee");
-                    addForumPost(titleController.text, descriptionController.text);
+                    if (titleController.text.isEmpty || descriptionController.text.isEmpty){
+
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Please enter album name or description"),
+                      ));
+                    }else{
+
+                      addForumPost(titleController.text, descriptionController.text);
+                    }
                   },
                   child: const Text('OK'),
                 ),

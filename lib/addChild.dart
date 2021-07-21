@@ -75,7 +75,7 @@ class _AddChildPageState extends State<AddChild> {
                     key: _addchildKey,
                     child: Column(children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(40.0,50.0,40.0,20.0),
+                        padding: const EdgeInsets.fromLTRB(20.0,50.0,20.0,20.0),
                         child: TextFormField(
                           decoration: InputDecoration(
                             fillColor: Colors.grey,
@@ -97,7 +97,7 @@ class _AddChildPageState extends State<AddChild> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(40.0,0.0,40.0,20.0),
+                        padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
                         child: TextFormField(
                           decoration: InputDecoration(
                             fillColor: Colors.grey,
@@ -118,8 +118,18 @@ class _AddChildPageState extends State<AddChild> {
                           },
                         ),
                       ),
+                      Padding(padding: new EdgeInsets.only(left: 10)),
                       new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
+                          Padding(padding: new EdgeInsets.all(10)),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(padding: new EdgeInsets.all(15)),
+                              Text("Gender:" ,textAlign: TextAlign.right, style: TextStyle(fontSize: 18),),
+                            ]
+                          ),
                           ListTile(
                             title: const Text('Male'),
                             leading: Radio<SingingCharacter>(

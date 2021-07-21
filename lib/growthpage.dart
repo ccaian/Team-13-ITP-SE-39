@@ -55,7 +55,8 @@ class _GrowthPageState extends State<GrowthPage> {
               Positioned(
                   top: 80,
                   left: 30,
-                  child: Text("Growth Parameter \nFor " + childName.toString(),
+                  child: Text("Growth Parameter \nFor Child",
+                      //childName.toString()
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
@@ -159,7 +160,30 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Icon(Icons.download),
                   backgroundColor: Color(0xff4C52A8),
                   onPressed: () async {
-                    growthFile = Growth(items: growthItems);
+                    //growthFile = Growth(items: growthItems);
+                    growthFile = Growth(items: [
+                      GrowthItem(
+                        key: nric,
+                        week: 'Week 1',
+                        weight: '10',
+                        height: '20',
+                        head: '30',
+                      ),
+                      GrowthItem(
+                        key: nric,
+                        week: 'Week 2',
+                        weight: '15',
+                        height: '25',
+                        head: '35',
+                      ),
+                      GrowthItem(
+                        key: nric,
+                        week: 'Week 1',
+                        weight: '20',
+                        height: '30',
+                        head: '40',
+                      ),
+                    ]);
                     final pdfFile = await PdfGrowthApi.generate(growthFile);
                     PdfApi.openFile(pdfFile);
                   },
