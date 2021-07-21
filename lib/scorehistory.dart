@@ -34,6 +34,8 @@ class _ScoreHistoryState extends State<ScoreHistory> {
   @override
 
   Widget build(BuildContext context) {
+
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     print("testing");
     print(email);
       CollectionReference scores = FirebaseFirestore.instance
