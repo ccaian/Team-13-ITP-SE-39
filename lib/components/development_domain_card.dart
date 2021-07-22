@@ -40,7 +40,7 @@ class DevelopmentDomainCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14.0,
                         color: Colors.grey[700],
-                      )),
+                      ),),
             ),
           ),
         ]),
@@ -122,7 +122,7 @@ class DevelopmentDomainCard extends StatelessWidget {
 
     var alert = AlertDialog(
       title:
-      const Text('Enter new Development Domain'),
+      Text("Editing \"" + developmentDomainRecord.title+ "\" Development Domain"),
       content: Stack(
         overflow: Overflow.visible,
         children: <Widget>[
@@ -168,6 +168,8 @@ class DevelopmentDomainCard extends StatelessWidget {
                         : null,
                     controller:
                     _descriptionController,
+                    maxLines: 5,
+                    minLines: 3
                   ),
                 ),
                 Row(mainAxisAlignment:
