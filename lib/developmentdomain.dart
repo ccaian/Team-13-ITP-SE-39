@@ -120,31 +120,27 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                border: new OutlineInputBorder(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                    const Radius.circular(25),
-                                                  ),
+                                          TextFormField(
+                                            decoration: InputDecoration(
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(25),
                                                 ),
-                                                fillColor: secondaryTheme,
-                                                labelText: 'Title',
                                               ),
-                                              validator: (val) => val!.isEmpty
-                                                  ? 'Enter a Title'
-                                                  : null,
-                                              onChanged: (val) {
-                                                setState(() => _title = val);
-                                              },
-                                              controller: _titleController,
+                                              fillColor: secondaryTheme,
+                                              labelText: 'Title',
                                             ),
+                                            validator: (val) => val!.isEmpty
+                                                ? 'Enter a Title'
+                                                : null,
+                                            onChanged: (val) {
+                                              setState(() => _title = val);
+                                            },
+                                            controller: _titleController,
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: TextFormField(
+                                          SizedBox(height: 10),
+                                          TextFormField(
                                               decoration: InputDecoration(
                                                 border: new OutlineInputBorder(
                                                   borderRadius:
@@ -164,25 +160,35 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                                               },
                                               controller:
                                                   _descriptionController,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                primary: mainTheme,
-                                                minimumSize: Size(200, 50),
-                                                //shape: shape,
-                                              ),
-                                              child: Text("Submit"),
-                                              onPressed: () async {
-                                                if (_formKey.currentState!
-                                                    .validate()) {
-                                                  _addData();
-                                                }
-                                              },
-                                            ),
-                                          ),
+                                              maxLines: 5,
+                                              minLines: 3),
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: <Widget>[
+                                                ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      primary: secondaryTheme,
+                                                    ),
+                                                    child: Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    }),
+                                                SizedBox(width: 20),
+                                                ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      primary: mainTheme,
+                                                    ),
+                                                    child: Text('Submit'),
+                                                    onPressed: () {
+                                                      if (_formKey.currentState!
+                                                          .validate()) {
+                                                        _addData();
+                                                      }
+                                                    }),
+                                              ]),
                                         ],
                                       ),
                                     ),
