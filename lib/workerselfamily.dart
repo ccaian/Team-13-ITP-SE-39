@@ -190,6 +190,15 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   newTile(String title, int index){
     String babyTitle ='';
     babyTitle = getBabyName(title);
+    if(babyTitle == 'No Children'){
+      return new ListTile(
+        title: Text(
+          babyTitle,
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        onTap: () {},
+      );
+    }else{
       return new ListTile(
         title: Text(
           babyTitle,
@@ -208,6 +217,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                   builder: (context) => NavParent())).then((value) => setState( () {} ));
         },
       );
+    }
+
 
 }
 
