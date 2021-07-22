@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/nav.dart';
+import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'components/milk_card.dart';
@@ -45,9 +46,10 @@ class _MilkPageState extends State<MilkPage> {
 
   @override
   Widget build(BuildContext context) {
-    records = firestoreInstance.collection('milk').doc(email).collection('records');
+    //records = firestoreInstance.collection('milk').doc(email).collection('records');
+    records = firestoreInstance.collection('milk');
     return Container(
-      color: Color(0xff4C52A8),
+      color: mainTheme,
       width: double.infinity,
       height: double.infinity,
       child: Stack(
@@ -84,11 +86,17 @@ class _MilkPageState extends State<MilkPage> {
                 child: StreamBuilder (
                   stream: records.orderBy('weekNo', descending: true).snapshots(),
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData) return new Text("There are no records.");
+                    // if (!snapshot.hasData) return new Center(
+                    //   child: Text(
+                    //     "There is no data",
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // );
                     if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
                     List milkList = snapshot.data!.docs;
                     List<MilkRecord> _records = milkList.map(
                           (milk) => MilkRecord(
+                            id: milk.id,
                             weekNo: milk['weekNo'],
                             leftBreast: milk['leftBreast'],
                             rightBreast: milk['rightBreast'],
@@ -98,7 +106,9 @@ class _MilkPageState extends State<MilkPage> {
                     return ListView.builder(
                       itemCount: snapshot.data!.size,
                       itemBuilder: (context, index){
-                        return MilkCard(milkRecord: _records[index],);
+                        return MilkCard(
+                            milkRecord: _records[index],
+                        );
                       },
                     );
                   },
@@ -112,7 +122,7 @@ class _MilkPageState extends State<MilkPage> {
             child: FloatingActionButton(
               heroTag: "add",
               child: Icon(Icons.add),
-              backgroundColor: Color(0xff4C52A8),
+              backgroundColor: mainTheme,
               onPressed: () async {
                 showDialog(
                     context: context,
@@ -235,8 +245,9 @@ class _MilkPageState extends State<MilkPage> {
     await Future.delayed(Duration(seconds: 2));
   }
 
-  void _addData() {
-    milk = firestoreInstance.collection('milk').doc(email).collection('records');
+  void _addData() async{
+    //milk = firestoreInstance.collection('milk').doc(email).collection('records');
+    milk = firestoreInstance.collection('milk');
 
     var left = double.parse(_leftBreastController.text);
     var right = double.parse(_rightBreastController.text);
@@ -260,10 +271,11 @@ class _MilkPageState extends State<MilkPage> {
 }
 
 class MilkRecord {
+  final String? id;
   final String weekNo;
   final String leftBreast;
   final String rightBreast;
   final String totalVolume;
 
-  MilkRecord({required this.weekNo, required this.leftBreast,required this.rightBreast, required this.totalVolume});
+  MilkRecord({this.id, required this.weekNo, required this.leftBreast,required this.rightBreast, required this.totalVolume});
 }

@@ -282,7 +282,7 @@ class _GrowthPageState extends State<GrowthPage> {
                   children: [
                     Icon(
                       Icons.delete,
-                      color: secondaryTheme,
+                      color: Colors.red,
                     ),
                     SizedBox(
                       width: 6,
@@ -290,7 +290,7 @@ class _GrowthPageState extends State<GrowthPage> {
                     Text('Delete',
                         style: TextStyle(
                             fontSize: 16,
-                            color: secondaryTheme,
+                            color: Colors.red,
                             fontWeight: FontWeight.w600)),
                   ],
                 ),
