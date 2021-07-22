@@ -116,146 +116,146 @@ class DevelopmentDomainCard extends StatelessWidget {
     String _title = '';
     String _description = '';
 
-    var alert = AlertDialog(
-      title: Text("Editing \"" +
-          developmentDomainRecord.title +
-          "\" Development Domain"),
-      content: Stack(
-        overflow: Overflow.visible,
-        children: <Widget>[
-          Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(
-                    border: new OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(25),
-                      ),
-                    ),
-                    fillColor: secondaryTheme,
-                    labelText: 'Title',
-                  ),
-                  validator: (val) => val!.isEmpty ? 'Enter a Title' : null,
-                  controller: _titleController,
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                    decoration: InputDecoration(
-                      border: new OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          const Radius.circular(25),
-                        ),
-                      ),
-                      fillColor: secondaryTheme,
-                      labelText: 'Description',
-                    ),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Enter a description' : null,
-                    controller: _descriptionController,
-                    maxLines: 5,
-                    minLines: 3),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: secondaryTheme,
-                          ),
-                          child: Text('Cancel'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: mainTheme,
-                          ),
-                          child: Text('Submit'),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _updateData(
-                                  developmentDomainRecord.id.toString(),
-                                  _titleController.text,
-                                  _descriptionController.text);
-                              Navigator.of(context, rootNavigator: true).pop();
-                            }
-                          }),
-                    ]),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    //var alert =
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return alert;
+          return AlertDialog(
+            title: Text("Editing \"" +
+                developmentDomainRecord.title +
+                "\" Development Domain"),
+            content: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: new OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              const Radius.circular(25),
+                            ),
+                          ),
+                          fillColor: secondaryTheme,
+                          labelText: 'Title',
+                        ),
+                        validator: (val) => val!.isEmpty ? 'Enter a Title' : null,
+                        controller: _titleController,
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: secondaryTheme,
+                            labelText: 'Description',
+                          ),
+                          validator: (val) =>
+                          val!.isEmpty ? 'Enter a description' : null,
+                          controller: _descriptionController,
+                          maxLines: 5,
+                          minLines: 3),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: secondaryTheme,
+                                ),
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                            SizedBox(width: 20),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: mainTheme,
+                                ),
+                                child: Text('Submit'),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _updateData(
+                                        developmentDomainRecord.id.toString(),
+                                        _titleController.text,
+                                        _descriptionController.text);
+                                    Navigator.of(context, rootNavigator: true).pop();
+                                  }
+                                }),
+                          ]),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
         });
   }
 
   void deleteDialog(BuildContext context) {
     final _pinController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
-    var alert = AlertDialog(
-        title: Text('Delete Post'),
-        content: Text('Are you sure you want to delete?'),
-        actions: <Widget>[
-          Form(
-              key: _formKey,
-              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
-                    child: TextFormField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: const BorderRadius.all(
-                            const Radius.circular(25),
-                          ),
-                        ),
-                        fillColor: secondaryTheme,
-                        labelText: 'Admin PIN',
-                      ),
-                      validator: (val) =>
-                          val!.isEmpty ? 'Enter your Admin PIN' : null,
-                      controller: _pinController,
-                    )),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: secondaryTheme,
-                          ),
-                          child: Text('Cancel'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          }),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: mainTheme,
-                          ),
-                          child: Text('Delete'),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              verifyPIN(developmentDomainRecord.id.toString(),
-                                  _pinController.text, context);
-                            }
-                          }),
-                    ])
-              ]))
-        ]);
+    //var alert =
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return alert;
+          return AlertDialog(
+              title: Text('Delete Post'),
+              content: Text('Are you sure you want to delete?'),
+              actions: <Widget>[
+                Form(
+                    key: _formKey,
+                    child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
+                          child: TextFormField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
+                                  const Radius.circular(25),
+                                ),
+                              ),
+                              fillColor: secondaryTheme,
+                              labelText: 'Admin PIN',
+                            ),
+                            validator: (val) =>
+                            val!.isEmpty ? 'Enter your Admin PIN' : null,
+                            controller: _pinController,
+                          )),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: secondaryTheme,
+                                ),
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                }),
+                            SizedBox(width: 20),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: mainTheme,
+                                ),
+                                child: Text('Delete'),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    verifyPIN(developmentDomainRecord.id.toString(),
+                                        _pinController.text, context);
+                                  }
+                                }),
+                          ])
+                    ]))
+              ]);
         });
   }
 
