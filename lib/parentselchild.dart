@@ -25,6 +25,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
   String name = '';
   String temp ='';
   String username ='';
+  Map keyMap = Map<String, String>();
   DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
 
   @override
@@ -120,6 +121,22 @@ class _ParentSelChildState extends State<ParentSelChild> {
     return Card(
       child:
           ListTile(
+            trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        //   _onDeleteItemPressed(index);
+                        deleteChild(litems[items]);
+                        setState(() {
+                          litems.removeAt(items);
+                          litems.join(', ');
+                        });
+                      }
+                  )
+                ]
+            ),
             title: Text(
               babyTitle,
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
@@ -198,6 +215,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
         babyData = tempList;
       });
     });
+    makeKeyList();
   }
 
   Future getPref() async {
@@ -211,6 +229,25 @@ class _ParentSelChildState extends State<ParentSelChild> {
     makeList();
   }
 
+  makeKeyList(){
+    FirebaseDatabase.instance
+        .reference()
+        .child("child")
+        .orderByChild("nric")
+        .once()
+        .then((DataSnapshot snapshot) {
+      //here i iterate and create the list of objects
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      childMap.forEach((key, value) {
+          keyMap[value['nric'].toString()] = key;
+
+      });
+      setState(() {
+        keyMap = keyMap;
+      });
+    });
+  }
+
   String getBabyName( String babyNRIC) {
     String babyName = '';
     for(var i = 0; i < babyData.length; i++){
@@ -222,6 +259,19 @@ class _ParentSelChildState extends State<ParentSelChild> {
       babyName = 'No Children';
     }
     return babyName;
+  }
+
+  void deleteChild(String nric) async {
+    var tempKey;
+    keyMap.forEach((key, value) {
+      if(nric == key){
+        tempKey =value;
+        print('tempkey: '+ tempKey);
+      }
+    });
+    await reference.child(tempKey).remove().then((_) {
+      print('Transaction  committed.');
+    });
   }
 }
 
