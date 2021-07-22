@@ -387,9 +387,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       await _userRef.child(tempKey).remove().then((_) async {
         print('Transaction  committed.');
       });
-      await FirebaseAuth.instance.currentUser!.delete().then((_) async {
+      /*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
         print('Account Deleted');
-      });
+      });*/
     }
 
 }
