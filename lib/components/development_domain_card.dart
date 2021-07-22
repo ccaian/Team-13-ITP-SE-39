@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/model/development_domain.dart';
+import 'package:growth_app/theme/colors.dart';
 
 class DevelopmentDomainCard extends StatelessWidget {
   final isAdmin;
@@ -50,7 +52,9 @@ class DevelopmentDomainCard extends StatelessWidget {
           !isAdmin
               ? const SizedBox.shrink()
               : GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    updateDialog(context);
+                    },
                   child: Row(
                     children: [
                       Icon(
@@ -75,7 +79,9 @@ class DevelopmentDomainCard extends StatelessWidget {
           !isAdmin
               ? const SizedBox.shrink()
               : GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    deleteDialog(context);
+                  },
                   child: Row(
                     children: [
                       Icon(
@@ -94,14 +100,148 @@ class DevelopmentDomainCard extends StatelessWidget {
                   ),
                 ),
         ]),
-
-        // decoration: BoxDecoration(
-        //   color: Color(0xfff2f2f2),
-        //   borderRadius: const BorderRadius.all(
-        //     const Radius.circular(25),
-        //   ),
-        // ),
       ]),
     ));
   }
+
+
+
+  void _updateData(String key, String title, String description) async {
+    FirebaseFirestore.instance.collection('developmentdomain').doc(key).update({
+      'title': title,
+      'description': description
+    });
+  }
+
+  void updateDialog(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    final _titleController = TextEditingController(text: developmentDomainRecord.title);
+    final _descriptionController = TextEditingController(text: developmentDomainRecord.description);
+    String _title = '';
+    String _description = '';
+
+    var alert = AlertDialog(
+      title:
+      const Text('Enter new Development Domain'),
+      content: Stack(
+        overflow: Overflow.visible,
+        children: <Widget>[
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: new OutlineInputBorder(
+                        borderRadius:
+                        const BorderRadius.all(
+                          const Radius.circular(25),
+                        ),
+                      ),
+                      fillColor: secondaryTheme,
+                      labelText: 'Title',
+                    ),
+                    validator: (val) => val!.isEmpty
+                        ? 'Enter a Title'
+                        : null,
+                    controller: _titleController,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      border: new OutlineInputBorder(
+                        borderRadius:
+                        const BorderRadius.all(
+                          const Radius.circular(25),
+                        ),
+                      ),
+                      fillColor: secondaryTheme,
+                      labelText: 'Description',
+                    ),
+                    validator: (val) => val!.isEmpty
+                        ? 'Enter a description'
+                        : null,
+                    controller:
+                    _descriptionController,
+                  ),
+                ),
+                Row(mainAxisAlignment:
+                MainAxisAlignment.end,
+                  children: <Widget>[
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: secondaryTheme,
+                      ),
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: mainTheme,
+                        ),
+                        child: Text('Submit'),
+                        onPressed: () {
+                          if (_formKey.currentState!
+                              .validate()) {
+                            _updateData(
+                                developmentDomainRecord.id.toString(), _titleController.text, _descriptionController.text
+                            );
+                            Navigator.pop(context);
+                          }
+                        }),
+                ]),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
+  }
+
+  void deleteDialog(BuildContext context) {
+    var alert = AlertDialog(
+        title: Text('Delete Post'),
+        content: Text('Are you sure you want to delete?'),
+        actions: <Widget>[
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: secondaryTheme,
+              ),
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: mainTheme,
+              ),
+              child: Text('Ok'),
+              onPressed: () {
+                FirebaseFirestore.instance.collection('developmentdomain').doc(developmentDomainRecord.id.toString()).delete().then((_) {
+                  print("success!");
+                });
+                Navigator.pop(context);
+              }),
+        ]);
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        });
+  }
 }
+

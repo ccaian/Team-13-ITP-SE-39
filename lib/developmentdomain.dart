@@ -77,7 +77,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                       List<DevelopmentDomain> _records = devDomainList
                           .map(
                             (devDomainPost) => DevelopmentDomain(
-
+                                id: devDomainPost.id,
                                 title: devDomainPost['title'],
                                 description: devDomainPost['description']),
                           )
