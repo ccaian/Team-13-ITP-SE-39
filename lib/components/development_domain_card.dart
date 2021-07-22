@@ -20,6 +20,7 @@ class DevelopmentDomainCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     return Card(
         child: Container(
       padding: EdgeInsets.all(10),
@@ -56,8 +57,8 @@ class DevelopmentDomainCard extends StatelessWidget {
           ),
           !isAdmin
               ? const SizedBox.shrink()
-              : GestureDetector(
-                  onTap: () {
+              : TextButton(
+                  onPressed: () {
                     updateDialog(context);
                   },
                   child: Row(
@@ -83,27 +84,24 @@ class DevelopmentDomainCard extends StatelessWidget {
           ),
           !isAdmin
               ? const SizedBox.shrink()
-              : GestureDetector(
-                  onTap: () {
+              : TextButton(
+                  onPressed: () {
                     deleteDialog(context);
                   },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete,
-                        color: Colors.red[700],
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                      Text('Delete',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.red[700],
-                              fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                ),
+                  child: Row(children: [
+                    Icon(
+                      Icons.delete,
+                      color: Colors.red[700],
+                    ),
+                    SizedBox(
+                      width: 6,
+                    ),
+                    Text('Delete',
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.red[700],
+                            fontWeight: FontWeight.w600)),
+                  ])),
         ]),
       ]),
     ));
@@ -203,7 +201,6 @@ class DevelopmentDomainCard extends StatelessWidget {
   void deleteDialog(BuildContext context) {
     final _pinController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
-
     var alert = AlertDialog(
         title: Text('Delete Post'),
         content: Text('Are you sure you want to delete?'),
@@ -281,6 +278,8 @@ class DevelopmentDomainCard extends StatelessWidget {
           .collection('developmentdomain')
           .doc(key)
           .delete();
+
+      Navigator.of(context).pop();
     } else {
       Fluttertoast.showToast(
           msg: "Invalid Admin PIN",
