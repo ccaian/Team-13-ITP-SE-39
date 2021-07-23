@@ -4,7 +4,7 @@ import 'package:growth_app/home.dart';
 import 'package:growth_app/photopage.dart';
 import 'package:growth_app/setting.dart';
 import 'package:growth_app/theme/colors.dart';
-import 'growthpage.dart';
+import '../growthpage.dart';
 
 class NavParent extends StatefulWidget {
   @override

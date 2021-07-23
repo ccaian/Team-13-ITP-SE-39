@@ -11,7 +11,7 @@ class DischargeCheckListPage extends StatefulWidget {
   @override
   _DischargeCheckListPageState createState() => _DischargeCheckListPageState();
 }
-String?  childnric = "";
+String?  userEmail = "";
 List<String> checkList = [];
 List<String> checkListSaved = [];
 bool admin = false;
@@ -21,7 +21,9 @@ var progressColor = Colors.redAccent;
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
     super.initState();
+    //clear all lists
     clearCheckList();
+    //initiate function loads all saved data from user if exists
     loadPref();
   }
   // text field state
@@ -60,7 +62,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+      child: Container(
       color: mainTheme,
       width: double.infinity,
       height: double.infinity,
@@ -120,7 +123,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       checkColor: Colors.white,
                                       onChanged: isEnabled ? null: (value) {
                                         setState(() {
+                                          //on checkbox state change update progressbar
                                           List[key] = value as bool;
+                                          //progress bar math calculate 1 selected percentage
                                           if(value == true){
                                             progress = progress + 100/List.length;
                                           }else{
@@ -129,6 +134,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                             progress = 100.0;
                                           }if(progress < 0){
                                             progress = 0;
+                                            //progress bar colour. Change to green when 100%
                                           }if(progress < 100){
                                             progressColor = Colors.redAccent;
                                           }
@@ -151,6 +157,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                           Expanded(
                               child: Padding(
                                   padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
+                                  //save button
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       primary: secondaryTheme,
@@ -169,14 +176,14 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                     ),
                                     onPressed: isEnabled ? null: () async {
                                       checkList =[];
-                                      int i = 0;
+                                      //saved checklist state into a list
                                       List.forEach((index, value) {
-                                        i++;
                                         checkList.add(value.toString());
                                       }
                                       );
                                       Navigator.of(context).pushNamed("/homePage");
-                                      addCheckListData(checkList, childnric);
+                                      //send checklist state and user email to save function
+                                      addCheckListData(checkList, userEmail);
                                     },
                                   )))
                         ]),
@@ -188,6 +195,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                 ),
         ],
       ),
+    )
     );
   }
   Widget buildcircleProgressbar(){
@@ -243,17 +251,19 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     );
   }
 
-  addCheckListData(result, nric)  {
+  addCheckListData(result, user_email)  {
+    //save checklist state into firebase
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
-        .orderByChild("userNRIC")
-        .equalTo(nric)
+        .orderByChild("email")
+        .equalTo(user_email)
         .once()
         .then((DataSnapshot snapshot) {
+          //if data doesn't already exists save into new
         if(snapshot.value == null){
           _checklistRef.push().set({
-            'userNRIC' : nric,
+            'email' : user_email,
             'checklist1': result[0],
             'checklist2': result[1],
             'checklist3': result[2],
@@ -265,21 +275,22 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             'checklist9': result[8],
             'progress': progress
           });
+          //if data does exists run update function
         } else{
-          updateCheckList(result, nric);
+          updateCheckList(result, user_email);
         }
 
     });
   }
 
-  getCheckListData(nric)  {
+  getCheckListData(user_email)  {
     var tempKey;
     double tempProg = 0;
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
-        .orderByChild("userNRIC")
-        .equalTo(nric)
+        .orderByChild("email")
+        .equalTo(user_email.toString())
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
@@ -381,9 +392,10 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   }
 
-  updateCheckList(result, nric) {
+  updateCheckList(result, user_email) {
+    //update based on firebase key
     _checklistRef.child(userKey).update(
-        {'userNRIC' : nric,
+        {'email' : user_email,
           'checklist1': result[0],
           'checklist2': result[1],
           'checklist3': result[2],
@@ -402,12 +414,18 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   Future loadPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      childnric = sharedPreferences.getString('ChildNRIC');
-      getCheckListData(sharedPreferences.getString('ChildNRIC'));
       admin = sharedPreferences.getBool('admin')!;
       if (sharedPreferences.getBool('admin') == true){
-        isEnabled = true;
+        //gets parent email details from shared preferences
+        userEmail = sharedPreferences.getString('parentemail');
+        //loads checklist data if previous attempts exists
+        getCheckListData(sharedPreferences.getString('parentemail'));
+        enableElevatedButton();
       }else {
+        //gets user details from shared preferences
+        userEmail = sharedPreferences.getString('email');
+        //loads checklist data if previous attempts exists
+        getCheckListData(sharedPreferences.getString('email'));
         disableElevatedButton();
       }
     });
