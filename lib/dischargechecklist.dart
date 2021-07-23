@@ -60,7 +60,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+      child: Container(
       color: mainTheme,
       width: double.infinity,
       height: double.infinity,
@@ -188,6 +189,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                 ),
         ],
       ),
+    )
     );
   }
   Widget buildcircleProgressbar(){
