@@ -96,10 +96,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
                 child: Icon(Icons.add),
                 backgroundColor: mainTheme,
                 onPressed: () async {
-                  Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                          builder: (context) => AddChild()));
+                  Navigator.of(context).pushNamed("/addChild");
                 },
               ),
             ),

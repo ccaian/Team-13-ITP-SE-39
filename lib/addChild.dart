@@ -185,9 +185,7 @@ class _AddChildPageState extends State<AddChild> {
                                     }
                                       print('Submit');
                                       getPrefAddChild(name, nric);
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => ParentSelChild()
-                                      ));
+                                      Navigator.of(context).pushNamed("/selectChild");
                                   },
                                 )
                             ))
