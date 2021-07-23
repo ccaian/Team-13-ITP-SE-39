@@ -140,7 +140,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           litems[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
-        trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        /*trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
           IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
@@ -151,7 +151,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                   litems.join(', ');
                 });
               })
-        ]),
+        ]),*/
         children: [
           for (var i = 0; i < babyNRICList.length; i++)
             newTile(babyNRICList[i], items)
@@ -349,7 +349,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     }
   }
 
-  void deleteUser(String email) async {
+  /*void deleteUser(String email) async {
     var tempKey;
     keyMap.forEach((key, value) {
       if (email == key) {
@@ -358,8 +358,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     });
     await _userRef.child(tempKey).remove().then((_) async {
     });
-    /*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
+    *//*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
         print('Account Deleted');
-      });*/
-  }
+      });*//*
+  }*/
 }

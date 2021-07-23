@@ -23,6 +23,8 @@ class _ParentSelChildState extends State<ParentSelChild> {
   String username ='';
   Map keyMap = Map<String, String>();
   DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
+  DatabaseReference growth = FirebaseDatabase.instance.reference().child('growth');
+  DatabaseReference checklist = FirebaseDatabase.instance.reference().child('checklist');
 
   @override
   void initState(){
@@ -251,8 +253,42 @@ class _ParentSelChildState extends State<ParentSelChild> {
         tempKey =value;
       }
     });
-    await reference.child(tempKey).remove().then((_) {
+    await reference.child(tempKey).remove();
+    //await growth.child(getGrowthKey(nric)).remove();
+  }
+
+  String getGrowthKey(String nric){
+    String returnKey ='';
+    FirebaseDatabase.instance
+        .reference()
+        .child("growth")
+        .orderByChild("nric")
+        .equalTo(nric)
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      childMap.forEach((key, value) {
+        returnKey = key;
+      });
     });
+    return returnKey;
+  }
+
+  String getCheckListKey(String nric){
+    String returnKey ='';
+    FirebaseDatabase.instance
+        .reference()
+        .child("checklist")
+        .orderByChild("email")
+        .equalTo(nric)
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> childMap = snapshot.value;
+      childMap.forEach((key, value) {
+        returnKey = key;
+      });
+    });
+    return returnKey;
   }
 }
 

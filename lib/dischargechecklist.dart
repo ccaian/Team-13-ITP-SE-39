@@ -11,7 +11,7 @@ class DischargeCheckListPage extends StatefulWidget {
   @override
   _DischargeCheckListPageState createState() => _DischargeCheckListPageState();
 }
-String?  childnric = "";
+String?  userEmail = "";
 List<String> checkList = [];
 List<String> checkListSaved = [];
 bool admin = false;
@@ -176,7 +176,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       }
                                       );
                                       Navigator.of(context).pushNamed("/homePage");
-                                      addCheckListData(checkList, childnric);
+                                      addCheckListData(checkList, userEmail);
                                     },
                                   )))
                         ]),
@@ -243,17 +243,17 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     );
   }
 
-  addCheckListData(result, nric)  {
+  addCheckListData(result, user_email)  {
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
-        .orderByChild("userNRIC")
-        .equalTo(nric)
+        .orderByChild("email")
+        .equalTo(user_email)
         .once()
         .then((DataSnapshot snapshot) {
         if(snapshot.value == null){
           _checklistRef.push().set({
-            'userNRIC' : nric,
+            'email' : user_email,
             'checklist1': result[0],
             'checklist2': result[1],
             'checklist3': result[2],
@@ -266,20 +266,20 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             'progress': progress
           });
         } else{
-          updateCheckList(result, nric);
+          updateCheckList(result, user_email);
         }
 
     });
   }
 
-  getCheckListData(nric)  {
+  getCheckListData(user_email)  {
     var tempKey;
     double tempProg = 0;
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
-        .orderByChild("userNRIC")
-        .equalTo(nric)
+        .orderByChild("email")
+        .equalTo(user_email)
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
@@ -381,9 +381,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   }
 
-  updateCheckList(result, nric) {
+  updateCheckList(result, user_email) {
     _checklistRef.child(userKey).update(
-        {'userNRIC' : nric,
+        {'email' : user_email,
           'checklist1': result[0],
           'checklist2': result[1],
           'checklist3': result[2],
@@ -402,8 +402,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   Future loadPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      childnric = sharedPreferences.getString('ChildNRIC');
-      getCheckListData(sharedPreferences.getString('ChildNRIC'));
+      userEmail = sharedPreferences.getString('email');
+      getCheckListData(sharedPreferences.getString('email'));
       admin = sharedPreferences.getBool('admin')!;
       if (sharedPreferences.getBool('admin') == true){
         isEnabled = true;
