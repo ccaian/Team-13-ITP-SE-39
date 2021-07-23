@@ -414,15 +414,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   Future loadPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      //gets user details from shared preferences
-      userEmail = sharedPreferences.getString('email');
-      //loads checklist data if previous attempts exists
-      getCheckListData(sharedPreferences.getString('email'));
-      admin = sharedPreferences.getBool('admin')!;
-      //disable write and save functions if admin account
       admin = sharedPreferences.getBool('admin')!;
       if (sharedPreferences.getBool('admin') == true){
-        //gets user details from shared preferences
+        //gets parent email details from shared preferences
         userEmail = sharedPreferences.getString('parentemail');
         //loads checklist data if previous attempts exists
         getCheckListData(sharedPreferences.getString('parentemail'));
