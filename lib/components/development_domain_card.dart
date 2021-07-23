@@ -216,41 +216,68 @@ class DevelopmentDomainCard extends StatelessWidget {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: secondaryTheme,
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: new OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              const Radius.circular(25),
+                            ),
                           ),
-                          child: Text('Cancel'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          }),
-                      SizedBox(width: 20),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: mainTheme,
+                          fillColor: secondaryTheme,
+                          labelText: 'Title',
+                        ),
+                        validator: (val) => val!.isEmpty ? 'Enter a Title' : null,
+                        controller: _titleController,
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: secondaryTheme,
+                            labelText: 'Description',
                           ),
-                          child: Text('Submit'),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _updateData(
-                                  developmentDomainRecord.id.toString(),
-                                  _titleController.text,
-                                  _descriptionController.text);
-                              Navigator.of(context, rootNavigator: true).pop();
-                            }
-                          }),
-                    ]),
+                          validator: (val) =>
+                          val!.isEmpty ? 'Enter a description' : null,
+                          controller: _descriptionController,
+                          maxLines: 5,
+                          minLines: 3),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: secondaryTheme,
+                                ),
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                            SizedBox(width: 20),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: mainTheme,
+                                ),
+                                child: Text('Submit'),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _updateData(
+                                        developmentDomainRecord.id.toString(),
+                                        _titleController.text,
+                                        _descriptionController.text);
+                                    Navigator.of(context, rootNavigator: true).pop();
+                                  }
+                                }),
+                          ]),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
+          );
         });
   }
 
@@ -309,10 +336,8 @@ class DevelopmentDomainCard extends StatelessWidget {
                                 child: Text('Delete'),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    verifyPIN(
-                                        developmentDomainRecord.id.toString(),
-                                        _pinController.text,
-                                        context);
+                                    verifyPIN(developmentDomainRecord.id.toString(),
+                                        _pinController.text, context);
                                   }
                                 }),
                           ])

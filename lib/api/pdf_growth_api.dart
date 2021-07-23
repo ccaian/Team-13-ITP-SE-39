@@ -2,9 +2,7 @@ import '../growthpage.dart';
 import 'dart:io';
 import 'pdf_api.dart';
 import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
-import 'package:intl/intl.dart';
 
 class PdfGrowthApi {
   static Future<File> generate(Growth growthFile) async {
@@ -30,8 +28,8 @@ class PdfGrowthApi {
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       SizedBox(height: 0.8 * PdfPageFormat.cm),
-      Text('Baby Name'),
-      SizedBox(height: 0.8 * PdfPageFormat.cm),
+      //Text('Baby Name'),
+      //SizedBox(height: 0.8 * PdfPageFormat.cm),
     ],
   );
 

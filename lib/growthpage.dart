@@ -161,30 +161,30 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Icon(Icons.download),
                   backgroundColor: mainTheme,
                   onPressed: () async {
-                    //growthFile = Growth(items: growthItems);
-                    growthFile = Growth(items: [
-                      GrowthItem(
-                        key: nric,
-                        week: 'Week 1',
-                        weight: '10',
-                        height: '20',
-                        head: '30',
-                      ),
-                      GrowthItem(
-                        key: nric,
-                        week: 'Week 2',
-                        weight: '15',
-                        height: '25',
-                        head: '35',
-                      ),
-                      GrowthItem(
-                        key: nric,
-                        week: 'Week 1',
-                        weight: '20',
-                        height: '30',
-                        head: '40',
-                      ),
-                    ]);
+                    growthFile = Growth(items: growthItems);
+                    // growthFile = Growth(items: [
+                    //   GrowthItem(
+                    //     key: nric,
+                    //     week: 'Week 1',
+                    //     weight: '10',
+                    //     height: '20',
+                    //     head: '30',
+                    //   ),
+                    //   GrowthItem(
+                    //     key: nric,
+                    //     week: 'Week 2',
+                    //     weight: '15',
+                    //     height: '25',
+                    //     head: '35',
+                    //   ),
+                    //   GrowthItem(
+                    //     key: nric,
+                    //     week: 'Week 1',
+                    //     weight: '20',
+                    //     height: '30',
+                    //     head: '40',
+                    //   ),
+                    // ]);
                     final pdfFile = await PdfGrowthApi.generate(growthFile);
                     PdfApi.openFile(pdfFile);
                   },
@@ -282,7 +282,7 @@ class _GrowthPageState extends State<GrowthPage> {
                   children: [
                     Icon(
                       Icons.delete,
-                      color: secondaryTheme,
+                      color: Colors.red,
                     ),
                     SizedBox(
                       width: 6,
@@ -290,7 +290,7 @@ class _GrowthPageState extends State<GrowthPage> {
                     Text('Delete',
                         style: TextStyle(
                             fontSize: 16,
-                            color: secondaryTheme,
+                            color: Colors.red,
                             fontWeight: FontWeight.w600)),
                   ],
                 ),
@@ -332,7 +332,8 @@ class _GrowthPageState extends State<GrowthPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     nric = prefs.getString('ChildNRIC');
 
-    Query _growthQuery = _growthRef.orderByChild('nric').equalTo(nric);
+    //Query _growthQuery = _growthRef.orderByChild('nric').equalTo(nric);
+    Query _growthQuery = _growthRef;
     List<DataRow> rows = [];
     List<GrowthItem> items = [];
 
@@ -341,36 +342,36 @@ class _GrowthPageState extends State<GrowthPage> {
       if (snapShot.value != null) {
         Map<dynamic, dynamic> values = snapShot.value;
         values.forEach((key, values) {
-          growthKey = key;
-          rows.add(
-              DataRow(
-                  cells: [
-                    DataCell(
-                      Text(values['date']),
-                    ),
-                    DataCell(
-                      Text(values['weight'] + " kg"),
-                    ),
-                    DataCell(
-                      Text(values['height'] + " cm"),
-                    ),
-                    DataCell(
-                      Text(values['head'] + " cm"),
-                    ),
-                  ],
-                      onSelectChanged: (val) {
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) => EditMeasurements(
-                                  growthKey: key,
-                                )));
-                      },
-              )
-          );
+          // growthKey = key;
+          // rows.add(
+          //     DataRow(
+          //         cells: [
+          //           DataCell(
+          //             Text(values['date']),
+          //           ),
+          //           DataCell(
+          //             Text(values['weight'] + " kg"),
+          //           ),
+          //           DataCell(
+          //             Text(values['height'] + " cm"),
+          //           ),
+          //           DataCell(
+          //             Text(values['head'] + " cm"),
+          //           ),
+          //         ],
+          //             onSelectChanged: (val) {
+          //               Navigator.push(
+          //                   context,
+          //                   new MaterialPageRoute(
+          //                       builder: (context) => EditMeasurements(
+          //                         growthKey: key,
+          //                       )));
+          //             },
+          //     )
+          // );
           items.add(
             GrowthItem(
-              key: key,
+              //key: key,
               week: values['week'],
               //date: values['date'],
               weight: values['weight'],
@@ -379,8 +380,8 @@ class _GrowthPageState extends State<GrowthPage> {
             ),
           );
           setState(() {
-            print(growthKey);
-            growthList = rows;
+            // print(growthKey);
+            // growthList = rows;
             growthItems = items;
             childName = prefs.getString('ChildName');
           });
@@ -397,7 +398,7 @@ class Growth {
 }
 
 class GrowthItem {
-  final String key;
+  //final String key;
   final String week;
   //final String date;
   final String weight;
@@ -405,7 +406,7 @@ class GrowthItem {
   final String head;
 
   const GrowthItem({
-    required this.key,
+    //required this.key,
     required this.week,
     //required this.date,
     required this.weight,

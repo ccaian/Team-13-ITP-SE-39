@@ -18,6 +18,7 @@ List<String> checkListSaved = [];
 bool admin = false;
 var isEnabled = false;
 var userKey;
+var progressColor = Colors.redAccent;
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
     super.initState();
@@ -129,6 +130,11 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                             progress = 100.0;
                                           }if(progress < 0){
                                             progress = 0;
+                                          }if(progress < 100){
+                                            progressColor = Colors.redAccent;
+                                          }
+                                          if(progress == 100){
+                                            progressColor = Colors.greenAccent;
                                           }
                                         });
                                       },
@@ -218,6 +224,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                     VerticalDivider(width: 1.0),
                     Expanded(child: Center(child: SizedBox(
                       child: CircularPercentIndicator(
+                        progressColor: progressColor,
                         radius: 120.0,
                         lineWidth: 10.0,
                         animation: true,
@@ -418,6 +425,8 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       admin = sharedPreferences.getBool('admin')!;
       if (sharedPreferences.getBool('admin') == true){
         isEnabled = true;
+      }else {
+        disableElevatedButton();
       }
     });
     print('In Load Pref'+ admin.toString());
@@ -431,7 +440,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   disableElevatedButton() {
     setState(() {
-      isEnabled = true;
+      isEnabled = false;
     });
   }
 

@@ -285,7 +285,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   selectButton(){
-    if(admin){
+    if(admin == true){
       return new ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: secondaryTheme,
@@ -329,8 +329,8 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   mainText(){
-    if(admin){
-      return new Text("Currently Managing\n" + famName! + " Family",
+    if(admin == true){
+      return new Text("Currently Managing\n Family of" + famName!,
           style: TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
@@ -347,7 +347,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   adminManagingText(){
-    if (admin){
+    if (admin == true){
       return new Text(
           "Currently Monitoring Child: \n" +
               childName.toString(),
@@ -362,7 +362,7 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   wellbeingRouting(){
-    if (admin){
+    if (admin == true){
       Navigator.of(context).pushNamed(
           "/scorehistory");
     }else{
