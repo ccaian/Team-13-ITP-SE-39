@@ -1,37 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:growth_app/model/development_domain.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/development_domain_card.dart';
-import 'components/milk_card.dart';
 
 class DevelopmentDomainPage extends StatefulWidget {
   @override
   _DevelopmentDomainPageState createState() => _DevelopmentDomainPageState();
 }
 
+///  Development Domain Page State for displaying development domain posts.
 class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
-  final _formKey = GlobalKey<FormState>();
-
+  /// variables
   bool _isAdmin = false;
   String _title = '';
   String _description = '';
-
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _domainPost =
       FirebaseFirestore.instance.collection('developmentdomain');
 
+  /// to ensure certain function is execute before page load for certain data
   @override
   void initState() {
-    _getData();
+    _checkAdmin();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     return Material(
       child: Container(
         color: Color(0xff4C52A8),
@@ -74,6 +73,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
                         return Center(child: CircularProgressIndicator());
                       List devDomainList = snapshot.data!.docs;
 
+                      /// creating a list of DevelopmentDomain Objects
                       List<DevelopmentDomain> _records = devDomainList
                           .map(
                             (devDomainPost) => DevelopmentDomain(
@@ -205,7 +205,10 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
     );
   }
 
-  Future<void> _getData() async {
+  /// Function is for checking whether user type is an admin
+  ///
+  /// Function will use [_isAdmin] variable to true or false based on the database data retrieved
+  void _checkAdmin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _isAdmin = prefs.getBool('admin')!;
@@ -216,8 +219,6 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
     _domainPost.add({
       "title": _titleController.text,
       "description": _descriptionController.text,
-    }).then((_) {
-      print("success!");
     });
 
     Navigator.pop(context);

@@ -8,17 +8,19 @@ class ResetPasswordPage extends StatefulWidget {
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
 
+/// Reset Password Page State for resetting password where required.
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
-  // text field state
-  String email = '';
-  RegExp emailRegExp = new RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
+    /// text field state
+    String email = '';
+
+    /// Email Regex Expression
+    RegExp emailRegExp = new RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+    final _formKey = GlobalKey<FormState>();
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(
@@ -81,8 +83,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            print('pressed reset');
-                            if (verifyEmail(email) == 1) {
+                            if (verifyEmail(email)) {
                               resetPassword(email);
                             } else {
                               Fluttertoast.showToast(
@@ -102,18 +103,24 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         )));
   }
 
-  int verifyEmail(email) {
+  /// Function is for verifying if input email exists
+  ///
+  /// Function will use [email] variable and return true or false based on the verify result
+  bool verifyEmail(email) {
     var verify = FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
 
+    /// if [verify] is not null, account exist
     if (verify != null) {
-      return 1;
+      return true;
     }
-    return 0;
+    return false;
   }
 
-  Future<void> resetPassword(String email) async {
+  /// Function is for verifying if input email exists
+  ///
+  /// Function will send a reset password email to the [email]
+  void resetPassword(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-
     Navigator.of(context).pushReplacementNamed("/login");
   }
 }

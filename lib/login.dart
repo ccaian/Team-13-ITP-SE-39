@@ -1,6 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:growth_app/register.dart';
-import 'package:growth_app/resetpassword.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -12,22 +10,23 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+///  Login Page State for authenticating and verifying user account.
 class _LoginPageState extends State<LoginPage> {
-  // text field state
-  var _email, _password;
-
-  // Email Regex Expression
-  RegExp emailRegExp = new RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-
-  final _formKey = GlobalKey<FormState>();
+  /// Databse reference for User collection
   final _userDbRef = FirebaseDatabase.instance.reference().child("user");
-  var currentUser;
 
   @override
   Widget build(BuildContext context) {
+    /// text field variables
+    var _email, _password;
+
+    /// Email Regex Expression
+    RegExp emailRegExp = new RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+    final _formKey = GlobalKey<FormState>();
+
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(
@@ -116,7 +115,6 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               authenticate(_email, _password);
-                              print('pressed log in');
                             }
                           },
                         )))
@@ -157,15 +155,18 @@ class _LoginPageState extends State<LoginPage> {
         ));
   }
 
+  /// Authenticate Function for authenticating user.
+  ///
+  /// Function will use [email] and [password] params to execute Firebase Auth Function to
+  /// authenticate user account.
   void authenticate(email, password) async {
     try {
+      /// Authenticate user if error is thrown, Toast will run based on error
       UserCredential userAuth = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('email', email);
-
-      currentUser = FirebaseAuth.instance.currentUser;
-      print(currentUser);
 
       userVerification(email);
     } on FirebaseAuthException catch (e) {
@@ -191,43 +192,46 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  /// Verification Function for verifying if user has verify their email.
+  ///
+  /// Function will use [email] params to check Firebase current user
+  /// if email has been verified.
   void userVerification(email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var currentUser = FirebaseAuth.instance.currentUser;
 
-    if (currentUser.emailVerified) {
+    /// check if current user has verify their email
+    if (currentUser!.emailVerified) {
       Query _userQuery = _userDbRef.orderByChild("email").equalTo(email);
-
-      prefs.setString('Session', email);
-
       _userQuery.once().then((DataSnapshot snapShot) {
-        print(snapShot.value);
-
-        // User profile exist in DB => to home page
+        /// User profile exist in DB => to home page
         if (snapShot.value != null) {
           Map<dynamic, dynamic> values = snapShot.value;
           values.forEach((key, values) {
             prefs.setBool('admin', values['admin']);
             prefs.setString('firebaseKey', key);
 
+            /// check if the value 'adminPin' exist
             if (values['adminPin'] != null) {
               prefs.setString('adminPin', values['adminPin']);
             }
           });
 
+          /// check if user is admin or not => to redirect user according to their user type
           if (prefs.getBool('admin') == true) {
-            // user is a healthcare worker
+            /// user is a healthcare worker
             Navigator.of(context).pushReplacementNamed('/selectFamily');
           } else {
-            // user is a parent and not first login
+            /// user is a parent and not first login
             Navigator.of(context).pushReplacementNamed('/selectChild');
           }
         } else {
-          // user is a parent and this is the first login
+          /// user is a parent and this is the first login
           Navigator.of(context).pushReplacementNamed('/profileSetup');
         }
       });
     } else {
-      // clear user if account not verified
+      /// clear user if account not verified
       await prefs.clear();
       await FirebaseAuth.instance.signOut();
 

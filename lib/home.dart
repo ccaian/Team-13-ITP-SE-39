@@ -330,14 +330,14 @@ class _HomePageState extends State<HomePage> {
 
   mainText(){
     if(admin == true){
-      return new Text("Currently Managing\n Family of" + famName!,
+      return new Text("Currently Viewing\nFamily of " + famName!,
           style: TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ));
     }else{
-      return new Text("Currently Managing\n" + babyName,
+      return new Text("Currently Viewing\n" + babyName,
           style: TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
