@@ -10,25 +10,22 @@ class WorkerSelFamily extends StatefulWidget {
 }
 
 class _WorkerSelFamilyState extends State<WorkerSelFamily> {
-  List<String> litems = [];
+  List<String> familyNameList = [];
   List userData = [];
   List babyData = [];
   List userKeyList = [];
   List listTileChild = [];
   Map keyMap = Map<String, String>();
-  List testList = [];
+  List selectedBabyList = [];
   List parentEmailList = [];
-  List<String> listOfChildrenNRIC = [];
   List<String> babyNameList = [];
 
   String selectedChildNRIC = '';
   TextEditingController _searchControl = TextEditingController();
 
-  final _userRef = FirebaseDatabase.instance.reference().child('user');
-
   @override
   void initState() {
-    makeList();
+    generateListOfFamily();
     super.initState();
   }
 
@@ -73,7 +70,16 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                           children: <Widget>[
                             Padding(padding: EdgeInsets.only(top: 10)),
                             TextFormField(
+
                               decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    _searchControl.clear();
+                                    searchBarList(_searchControl.text);
+                                  },
+                                  icon: Icon(Icons.clear),
+
+                                ),
                                 fillColor: Colors.grey,
                                 border: new OutlineInputBorder(
                                   borderRadius: const BorderRadius.all(
@@ -90,10 +96,10 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                             Expanded(
                                 child: new ListView.builder(
                                     padding: const EdgeInsets.all(8),
-                                    itemCount: litems.length,
+                                    itemCount: familyNameList.length,
                                     itemBuilder:
                                         (BuildContext ctxt, int index) {
-                                      testList = validateChildren(
+                                      selectedBabyList = validateChildren(
                                           parentEmailList[index]);
                                       return new GestureDetector(
                                         //You need to make my child interactive
@@ -104,7 +110,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                             new Padding(
                                                 padding:
                                                     new EdgeInsets.all(16.0)),
-                                            buildText(index, testList),
+                                            buildText(index, selectedBabyList),
                                           ],
                                         ),
                                       );
@@ -137,7 +143,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     return Card(
       child: ExpansionTile(
         title: Text(
-          litems[items] + " Family",
+          familyNameList[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
         /*trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -193,7 +199,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         onTap: () async {
           final SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
-          sharedPreferences.setString('Fam', litems[index]);
+          sharedPreferences.setString('Fam', familyNameList[index]);
           sharedPreferences.setString('parentemail', parentEmailList[index]);
           sharedPreferences.setString('ChildNRIC', title);
           sharedPreferences.setString('ChildName', babyTitle);
@@ -204,7 +210,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     }
   }
 
-  makeList() {
+  generateListOfFamily() {
     List<String> newList = [];
     List temp = [];
     FirebaseDatabase.instance
@@ -224,11 +230,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         }
       });
       setState(() {
-        litems = newList;
+        familyNameList = newList;
         userData = temp;
       });
     });
-    getChildParentEmail();
+    getBabyData();
   }
 
   makeKeyList() {
@@ -251,7 +257,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     });
   }
 
-  getChildParentEmail() {
+  getBabyData() {
     List temp = [];
     FirebaseDatabase.instance
         .reference()
@@ -279,7 +285,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         .orderByChild("email")
         .once()
         .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
       List temp = childMap.values.toList();
       childMap.forEach((key, value) {
@@ -289,27 +294,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       });
       setState(() {
         parentEmailList = tempList;
-      });
-    });
-    getChildNRICList();
-  }
-
-  getChildNRICList() {
-    List<String> tempList = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("child")
-        .orderByChild("parent")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
-      childMap.forEach((key, value) {
-        tempList.add(value['nric'].toString());
-      });
-      setState(() {
-        listOfChildrenNRIC = tempList;
       });
     });
     makeKeyList();
@@ -330,21 +314,21 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   searchBarList(search) {
     setState(() {
-      litems = [];
-      testList = [];
+      familyNameList = [];
+      selectedBabyList = [];
       parentEmailList = [];
     });
     for (var i = 0; i < userData.length; i++) {
       if (search.toUpperCase() ==
           userData[i]["firstName"].toString().toUpperCase()) {
         setState(() {
-          litems.add(userData[i]["firstName"].toString() +
+          familyNameList.add(userData[i]["firstName"].toString() +
               ' ' +
               userData[i]["lastName"].toString());
           parentEmailList.add(userData[i]["email"]);
         });
       } else if (search == '') {
-        makeList();
+        generateListOfFamily();
       }
     }
   }
