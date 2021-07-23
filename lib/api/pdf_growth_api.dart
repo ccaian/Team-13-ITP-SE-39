@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 class PdfGrowthApi {
+
   static Future<File> generate(Growth growthFile) async {
     final pdf = Document();
 
@@ -13,7 +14,6 @@ class PdfGrowthApi {
         SizedBox(height: 1 * PdfPageFormat.cm),
         buildTitle(growthFile),
         buildGrowth(growthFile),
-        //Divider(),
       ],
     ));
 
@@ -28,22 +28,20 @@ class PdfGrowthApi {
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       SizedBox(height: 0.8 * PdfPageFormat.cm),
-      //Text('Baby Name'),
-      //SizedBox(height: 0.8 * PdfPageFormat.cm),
     ],
   );
 
   static Widget buildGrowth(Growth growthFile) {
     final headers = [
-      'Week',
-      'Weight',
-      'Height',
-      'Head',
+      'Week No',
+      'Weight (kg)',
+      'Height (cm)',
+      'Head (cm)',
     ];
     final data = growthFile.items.map((item) {
       return [
         //item.date,
-        item.week,
+        "Week " + item.week,
         item.weight + " kg",
         item.height + " cm",
         item.head + " cm",

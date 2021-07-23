@@ -1,15 +1,13 @@
 import 'dart:ui';
-
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:growth_app/addmeasurements.dart';
+import 'package:flutter/services.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api/pdf_api.dart';
 import 'api/pdf_growth_api.dart';
-import 'editmeasurements.dart';
+import 'components/growth_card.dart';
 
 class GrowthPage extends StatefulWidget {
   @override
@@ -17,36 +15,37 @@ class GrowthPage extends StatefulWidget {
 }
 
 class _GrowthPageState extends State<GrowthPage> {
-  late Query _growthRef;
-  late Growth growthFile;
-  DatabaseReference reference = FirebaseDatabase.instance.reference().child('growth');
+  final _formKey = GlobalKey<FormState>();
 
-  List<DataRow> growthList = [];
-  List<GrowthItem> growthItems = [];
-
+  bool isAdmin = false;
   var nric;
-  var week;
-  //var date;
-  var weight;
-  var height;
-  var head;
-  var growthKey;
+  int week = 0;
+  double weight = 0;
+  double height = 0;
+  double head = 0;
 
-  String? childName = "";
+  TextEditingController _weekControl = TextEditingController();
+  TextEditingController _weightControl = TextEditingController();
+  TextEditingController _heightControl = TextEditingController();
+  TextEditingController _headControl = TextEditingController();
 
-  @override
-  List<DataRow> get rows => growthList;
+  final firestoreInstance = FirebaseFirestore.instance;
+  late CollectionReference growth, records;
+
+  late Growth growthFile;
+  List<GrowthRecord> growthRecords = [];
 
   @override
   void initState() {
+    _getData();
     super.initState();
-    _growthRef = FirebaseDatabase.instance.reference().child('growth');
-    retrieveData();
   }
 
   @override
   Widget build(BuildContext context) {
+    records = firestoreInstance.collection('growth').doc(nric).collection('records');
     return new Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           color: mainTheme,
           width: double.infinity,
@@ -56,8 +55,7 @@ class _GrowthPageState extends State<GrowthPage> {
               Positioned(
                   top: 80,
                   left: 30,
-                  child: Text("Growth Parameter \nFor Child",
-                      //childName.toString()
+                  child: Text("Growth\nMeasurements",
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.bold,
@@ -91,48 +89,33 @@ class _GrowthPageState extends State<GrowthPage> {
                       //const SizedBox(height: 100),
                       Padding(
                           padding: const EdgeInsets.fromLTRB(
-                              0.0, 30.0, 0.0, 0.0),
-                          child: FirebaseAnimatedList(
-                              query: _growthRef,
-                              itemBuilder: (BuildContext context, DataSnapshot snapshot, Animation<double> animation, int index) {
-                                Map growth = snapshot.value;
-                                growth['key'] = snapshot.key;
-                                return _buildGrowthItem(growth: growth);
-                              }
+                              0.0, 0.0, 0.0, 0.0),
+                          child: StreamBuilder (
+                            stream: records.orderBy('week', descending: true).snapshots(),
+                            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
+                              List growthList = snapshot.data!.docs;
+                              List<GrowthRecord> _records = growthList.map(
+                                    (growth) => GrowthRecord(
+                                  id: growth.id,
+                                  week: growth['week'],
+                                  weight: growth['weight'],
+                                  height: growth['height'],
+                                  head: growth['head'],
+                                ),
+                              ).toList();
+                              return ListView.builder(
+                                itemCount: snapshot.data!.size,
+                                itemBuilder: (context, index){
+                                  return GrowthCard(
+                                    growthRecord: _records[index],
+                                    isAdmin: isAdmin,
+                                    nric: nric,
+                                  );
+                                },
+                              );
+                            },
                           )
-                          // child: SingleChildScrollView (
-                          //     child: DataTable(
-                          //       showCheckboxColumn: false,
-                          //       columnSpacing: 40.0,
-                          //       columns: const <DataColumn>[
-                          //         DataColumn(
-                          //           label: Text(
-                          //             'Date',
-                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //         DataColumn(
-                          //           label: Text(
-                          //             'Weight',
-                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //         DataColumn(
-                          //           label: Text(
-                          //             'Height',
-                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //         DataColumn(
-                          //           label: Text(
-                          //             'Head',
-                          //             style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //       rows: growthList,
-                          //     )
-                          // )
                       )
                     ],
                   ),
@@ -146,10 +129,147 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Icon(Icons.add),
                   backgroundColor: mainTheme,
                   onPressed: () async {
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => AddMeasurements()));
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Add Growth Measurements'),
+                            content: Stack(
+                              clipBehavior: Clip.none,
+                              children: <Widget>[
+                                Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                            border: new OutlineInputBorder(
+                                              borderRadius: const BorderRadius.all(
+                                                const Radius.circular(25),
+                                              ),
+                                            ),
+                                            fillColor: Colors.red,
+                                            labelText: 'Week No',
+                                            hintText: 'e.g. 10',
+                                          ),
+                                          inputFormatters: <TextInputFormatter>[
+                                            // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                            FilteringTextInputFormatter.digitsOnly,
+                                          ],
+                                          validator: (val) => val!.isEmpty ? 'Enter week number' : null,
+                                          onChanged: (val) {
+                                            setState(() => week = val as int);
+                                          },
+                                          controller: _weekControl,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                            border: new OutlineInputBorder(
+                                              borderRadius: const BorderRadius.all(
+                                                const Radius.circular(25),
+                                              ),
+                                            ),
+                                            fillColor: Colors.red,
+                                            labelText: 'Weight (kg)',
+                                            hintText: 'e.g. 5',
+                                          ),
+                                          inputFormatters: <TextInputFormatter>[
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                          ],
+                                          validator: (val) => val!.isEmpty ? 'Enter weight in kg' : null,
+                                          onChanged: (val) {
+                                            setState(() => weight = val as double);
+                                          },
+                                          controller: _weightControl,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                            border: new OutlineInputBorder(
+                                              borderRadius: const BorderRadius.all(
+                                                const Radius.circular(25),
+                                              ),
+                                            ),
+                                            fillColor: Colors.red,
+                                            labelText: 'Height (cm)',
+                                            hintText: 'e.g. 50',
+                                          ),
+                                          inputFormatters: <TextInputFormatter>[
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                          ],
+                                          validator: (val) => val!.isEmpty ? 'Enter height in cm' : null,
+                                          onChanged: (val) {
+                                            setState(() => height = val as double);
+                                          },
+                                          controller: _heightControl,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          decoration: InputDecoration(
+                                            border: new OutlineInputBorder(
+                                              borderRadius: const BorderRadius.all(
+                                                const Radius.circular(25),
+                                              ),
+                                            ),
+                                            fillColor: Colors.red,
+                                            labelText: 'Head Circumference (cm)',
+                                            hintText: 'e.g. 30',
+                                          ),
+                                          inputFormatters: <TextInputFormatter>[
+                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                          ],
+                                          validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
+                                          onChanged: (val) {
+                                            setState(() => head = val as double);
+                                          },
+                                          controller: _headControl,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row (
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    primary: secondaryTheme,
+                                                  ),
+                                                  child: Text('Cancel'),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  }),
+                                              SizedBox(width: 20),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  primary: mainTheme,
+                                                ),
+                                                child: Text("Submit"),
+                                                onPressed: () async {
+                                                  if (_formKey.currentState!.validate()) {
+                                                    _addData();
+                                                  }
+                                                },
+                                              ),
+                                            ]
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
                   },
                 ),
               ),
@@ -161,32 +281,7 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Icon(Icons.download),
                   backgroundColor: mainTheme,
                   onPressed: () async {
-                    growthFile = Growth(items: growthItems);
-                    // growthFile = Growth(items: [
-                    //   GrowthItem(
-                    //     key: nric,
-                    //     week: 'Week 1',
-                    //     weight: '10',
-                    //     height: '20',
-                    //     head: '30',
-                    //   ),
-                    //   GrowthItem(
-                    //     key: nric,
-                    //     week: 'Week 2',
-                    //     weight: '15',
-                    //     height: '25',
-                    //     head: '35',
-                    //   ),
-                    //   GrowthItem(
-                    //     key: nric,
-                    //     week: 'Week 1',
-                    //     weight: '20',
-                    //     height: '30',
-                    //     head: '40',
-                    //   ),
-                    // ]);
-                    final pdfFile = await PdfGrowthApi.generate(growthFile);
-                    PdfApi.openFile(pdfFile);
+                    _downloadData();
                   },
                 ),
               ),
@@ -195,222 +290,64 @@ class _GrowthPageState extends State<GrowthPage> {
         ));
   }
 
-  Widget _buildGrowthItem({required Map growth}) {
-    return Container(
-      margin: EdgeInsets.symmetric(),
-      padding: EdgeInsets.all(10),
-      height: 120,
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              SizedBox(width: 30),
-              Text(
-                growth['week'],
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-          Row(
-              children: [
-                SizedBox(width: 30),
-                Text(
-                  "Weight: " + growth['weight'] + "kg, ",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black),
-                ),
-                Text(
-                  "Height: " + growth['height'] + "cm, ",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black),
-                ),
-                Text(
-                  "Head: " + growth['head'] + "cm",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black),
-                ),
-              ]
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(width: 30),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => EditMeasurements(
-                            growthKey: growth['key'],
-                          )));
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text('Edit',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              GestureDetector(
-                onTap: () {
-                  _showDeleteDialog(growth: growth);
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text('Delete',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  _showDeleteDialog({required Map growth}) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Delete Measurement'),
-            content: Text('Are you sure you want to delete?'),
-            actions: [
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('Cancel')),
-              FlatButton(
-                  onPressed: () {
-                    reference
-                        .child(growth['key'])
-                        .remove()
-                        .whenComplete(() => Navigator.pop(context));
-                  },
-                  child: Text('Delete'))
-            ],
-          );
-        });
-  }
-
-  Future<void> retrieveData() async {
+  Future<void> _getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     nric = prefs.getString('ChildNRIC');
+    isAdmin = prefs.getBool('admin')!;
 
-    //Query _growthQuery = _growthRef.orderByChild('nric').equalTo(nric);
-    Query _growthQuery = _growthRef;
-    List<DataRow> rows = [];
-    List<GrowthItem> items = [];
+    await Future.delayed(Duration(seconds: 2));
+  }
 
-    await _growthQuery.once().then((DataSnapshot snapShot) {
+  void _addData() async{
+    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
 
-      if (snapShot.value != null) {
-        Map<dynamic, dynamic> values = snapShot.value;
-        values.forEach((key, values) {
-          // growthKey = key;
-          // rows.add(
-          //     DataRow(
-          //         cells: [
-          //           DataCell(
-          //             Text(values['date']),
-          //           ),
-          //           DataCell(
-          //             Text(values['weight'] + " kg"),
-          //           ),
-          //           DataCell(
-          //             Text(values['height'] + " cm"),
-          //           ),
-          //           DataCell(
-          //             Text(values['head'] + " cm"),
-          //           ),
-          //         ],
-          //             onSelectChanged: (val) {
-          //               Navigator.push(
-          //                   context,
-          //                   new MaterialPageRoute(
-          //                       builder: (context) => EditMeasurements(
-          //                         growthKey: key,
-          //                       )));
-          //             },
-          //     )
-          // );
-          items.add(
-            GrowthItem(
-              //key: key,
-              week: values['week'],
-              //date: values['date'],
-              weight: values['weight'],
-              height: values['height'],
-              head: values['head'],
-            ),
-          );
-          setState(() {
-            // print(growthKey);
-            // growthList = rows;
-            growthItems = items;
-            childName = prefs.getString('ChildName');
-          });
+    growth.add(
+        {
+          "week" : _weekControl.text,
+          "weight" : _weightControl.text,
+          "height" : _heightControl.text,
+          "head" : _headControl.text
         });
-      }
+    Navigator.pop(context);
+    setState(() {
+      _weekControl.clear();
+      _weightControl.clear();
+      _heightControl.clear();
+      _headControl.clear();
     });
+  }
+
+  Future<void> _downloadData() async {
+    var getDocs = await FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').get();
+
+    List growthList = getDocs.docs;
+    List<GrowthRecord> _records = growthList.map(
+          (growth) => GrowthRecord(
+        id: growth.id,
+        week: growth['week'],
+        weight: growth['weight'],
+        height: growth['height'],
+        head: growth['head'],
+      ),
+    ).toList();
+    growthFile = Growth(items: _records);
+    final pdfFile = await PdfGrowthApi.generate(growthFile);
+    PdfApi.openFile(pdfFile);
   }
 }
 
-class Growth {
-  final List<GrowthItem> items;
-
-  Growth({required this.items});
-}
-
-class GrowthItem {
-  //final String key;
+class GrowthRecord {
+  final String? id;
   final String week;
-  //final String date;
   final String weight;
   final String height;
   final String head;
 
-  const GrowthItem({
-    //required this.key,
-    required this.week,
-    //required this.date,
-    required this.weight,
-    required this.height,
-    required this.head,
-  });
+  GrowthRecord({this.id, required this.week, required this.weight,required this.height, required this.head});
+}
+
+class Growth {
+  final List<GrowthRecord> items;
+
+  Growth({required this.items});
 }
