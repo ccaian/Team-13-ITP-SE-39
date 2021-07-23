@@ -18,6 +18,8 @@ import 'package:growth_app/wellbeingscore.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
 import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
+import 'package:growth_app/addChild.dart';
+import 'package:growth_app/nav.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -44,6 +46,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => WorkerSelFamily());
       case '/selectChild':
         return MaterialPageRoute(builder: (_) => ParentSelChild());
+      case '/addChild':
+        return MaterialPageRoute(builder: (_) => AddChild());
       case '/setting':
         return MaterialPageRoute(builder: (_) => SettingPage());
       case '/dischargeCheckList':
@@ -60,6 +64,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => PhotoPage());
       case '/scorehistory':
         return MaterialPageRoute(builder: (_) => ScoreHistory());
+      case '/homePage':
+        return MaterialPageRoute(builder: (_) => Nav());
       default:
         return _errorRoute();
     }

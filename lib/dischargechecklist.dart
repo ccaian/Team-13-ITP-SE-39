@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:growth_app/navparent.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -172,14 +171,11 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       checkList =[];
                                       int i = 0;
                                       List.forEach((index, value) {
-                                        print(childnric.toString() + " - " + value.toString());
                                         i++;
                                         checkList.add(value.toString());
                                       }
                                       );
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => NavParent()
-                                      ));
+                                      Navigator.of(context).pushNamed("/homePage");
                                       addCheckListData(checkList, childnric);
                                     },
                                   )))
@@ -248,7 +244,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   }
 
   addCheckListData(result, nric)  {
-    print('in Data upload');
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
@@ -256,8 +251,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         .equalTo(nric)
         .once()
         .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-        print('Creating data');
         if(snapshot.value == null){
           _checklistRef.push().set({
             'userNRIC' : nric,
@@ -273,7 +266,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             'progress': progress
           });
         } else{
-          print('update checklist');
           updateCheckList(result, nric);
         }
 
@@ -283,7 +275,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   getCheckListData(nric)  {
     var tempKey;
     double tempProg = 0;
-    print('in Data upload nric:'+ nric);
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
@@ -306,8 +297,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         checkList.add(value['checklist9']);
         tempProg = value['progress'].toDouble();
       });
-      print('child List:');
-      print(checkList);
       setState(() {
         checkList = checkList;
         userKey = tempKey;
@@ -327,32 +316,26 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     bool check7 = false;
     bool check8 = false;
     bool check9 = false;
-    print("In get checkListstate: ");
-    print('$checkList');
     if(checkList[0]=='true'){
       check1 = true;
     } else {
       check1 = false;
     }
-    print("check1 " + check1.toString());
     if(checkList[1]=='true'){
       check2 = true;
     } else {
       check2 = false;
     }
-    print("check2 " + check2.toString());
     if(checkList[2]=='true'){
       check3 = true;
     } else {
       check3 = false;
     }
-    print("check3 " + check3.toString());
     if(checkList[3]=='true'){
       check4 = true;
     } else {
       check4 = false;
     }
-    print("check4 " + check4.toString());
     if(checkList[4]=='true'){
       check5 = true;
     } else {
@@ -399,7 +382,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   }
 
   updateCheckList(result, nric) {
-    print("in Update "+result[0].toString());
     _checklistRef.child(userKey).update(
         {'userNRIC' : nric,
           'checklist1': result[0],
@@ -429,7 +411,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         disableElevatedButton();
       }
     });
-    print('In Load Pref'+ admin.toString());
   }
 
   enableElevatedButton() {
