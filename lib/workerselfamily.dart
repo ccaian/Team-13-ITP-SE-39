@@ -87,7 +87,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                               controller: _searchControl,
                               onFieldSubmitted: (val) {
                                 searchBarList(_searchControl.text);
-                                print(_searchControl.text);
                               },
                             ),
                             Expanded(
@@ -98,8 +97,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                         (BuildContext ctxt, int index) {
                                       testList = validateChildren(
                                           parentEmailList[index]);
-                                      print("in code print data: " +
-                                          babyData[index].toString());
                                       return new GestureDetector(
                                         //You need to make my child interactive
 
@@ -138,7 +135,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   Widget buildText(int items, List babyNRICList) {
     String parentEmail = parentEmailList[items].toString();
-    print("in BuildText Email: " + parentEmail);
 
     return Card(
       child: ExpansionTile(
@@ -152,7 +148,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
               onPressed: () {
                 //   _onDeleteItemPressed(index);
                 deleteUser(parentEmailList[items]);
-                print("deleted User:" + parentEmailList[items]);
                 setState(() {
                   litems.removeAt(items);
                   litems.join(', ');
@@ -171,10 +166,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     List listOfChildrenEmail = [];
     for (var i = 0; i < babyData.length; i++) {
       if (parentEmail == babyData[i]["parent"]) {
-        print('in validate children: ' +
-            parentEmail +
-            ' child email ' +
-            babyData[i]["parent"]);
         listOfChildrenEmail.add(babyData[i]["nric"].toString());
       }
     }
@@ -236,7 +227,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           temp.add(value);
         }
       });
-      print(newList);
       setState(() {
         litems = newList;
         userData = temp;
@@ -280,8 +270,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         tempList.add(value['parent'].toString());
         temp.add(value);
       });
-      print('child List:');
-      print(tempList);
       setState(() {
         childParentEmailList = tempList;
         babyData = temp;
@@ -306,8 +294,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           tempList.add(value['email'].toString());
         }
       });
-      print('Parent List:');
-      print(tempList);
       setState(() {
         parentEmailList = tempList;
       });
@@ -366,13 +352,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
               userData[i]["lastName"].toString());
           parentEmailList.add(userData[i]["email"]);
           newList = validateChildren(userData[i]["email"]);
-          print("in search loop: " + userData[i]["email"]);
         });
       } else if (search == '') {
         makeList();
       }
     }
-    print("in search: " + newList.toString());
   }
 
   void deleteUser(String email) async {
@@ -380,11 +364,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     keyMap.forEach((key, value) {
       if (email == key) {
         tempKey = value;
-        print('tempkey: ' + tempKey);
       }
     });
     await _userRef.child(tempKey).remove().then((_) async {
-      print('Transaction  committed.');
     });
     /*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
         print('Account Deleted');

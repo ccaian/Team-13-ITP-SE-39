@@ -28,8 +28,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
   @override
   void initState(){
     getPref();
-    print('post func');
-    print(litems);
     super.initState();
   }
 
@@ -144,7 +142,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
               final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
               sharedPreferences.setString('ChildName',babyTitle);
               sharedPreferences.setString('ChildNRIC',litems[items]);
-              print('GET CHILD NRIC: ' + litems[items]);
 
               Navigator.push(
                   context,
@@ -172,7 +169,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
 
   makeList(){
     List<String> newList = [];
-    print("in makeList" + username);
     FirebaseDatabase.instance
         .reference()
         .child("child")
@@ -186,11 +182,9 @@ class _ParentSelChildState extends State<ParentSelChild> {
       childMap.forEach((key, value) {
         newList.add(value['nric'].toString());
       });
-      print(newList);
       setState(() {
         litems = newList;
       });
-      print(litems);
     });
     getChildList();
   }
@@ -208,8 +202,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
       childMap.forEach((key, value) {
         tempList.add(value);
       });
-      print('child List:');
-      print(tempList);
       setState(() {
         babyData = tempList;
       });
@@ -223,7 +215,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
     setState(() {
       username = temp;
     });
-    print("In getPref "+username);
 
     makeList();
   }
@@ -265,11 +256,9 @@ class _ParentSelChildState extends State<ParentSelChild> {
     keyMap.forEach((key, value) {
       if(nric == key){
         tempKey =value;
-        print('tempkey: '+ tempKey);
       }
     });
     await reference.child(tempKey).remove().then((_) {
-      print('Transaction  committed.');
     });
   }
 }
