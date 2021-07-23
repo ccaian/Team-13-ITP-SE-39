@@ -11,10 +11,7 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-  var email;
-  var firstName;
-  var lastName;
-  var mobileNumber;
+  var firstName, lastName, mobileNumber;
   var userKey;
   var _buttonToggle = true;
   var _editToggle = false;
@@ -221,7 +218,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<void> retrieveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    email = prefs.getString('email');
+    var email = prefs.getString('email');
 
     Query _userQuery = _userRef.orderByChild("email").equalTo(email);
 

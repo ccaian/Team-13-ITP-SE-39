@@ -267,8 +267,8 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   welcomeText(){
-    if(admin){
-      return new Text("Welcome!\n Admin" ,
+    if(admin == true){
+      return new Text("Welcome!\nAdmin" ,
           style: TextStyle(
             fontSize: 26.0,
             fontWeight: FontWeight.bold,
