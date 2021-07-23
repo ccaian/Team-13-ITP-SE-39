@@ -16,19 +16,18 @@ class ChangePINPage extends StatefulWidget {
 class _ChangePINPageState extends State<ChangePINPage> {
   final _userDbRef = FirebaseDatabase.instance.reference().child("user");
 
+  /// text field variables
+  var _oldPIN, _newPIN;
+
+  /// Password Regex Expression
+  RegExp passwordRegExp = new RegExp(
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
+  final _formKey = GlobalKey<FormState>();
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+
   @override
   Widget build(BuildContext context) {
-    /// text field variables
-    var _oldPIN, _newPIN;
-
-    /// Password Regex Expression
-    RegExp passwordRegExp = new RegExp(
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-
-    final _formKey = GlobalKey<FormState>();
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(

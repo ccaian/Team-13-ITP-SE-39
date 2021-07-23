@@ -10,17 +10,17 @@ class ResetPasswordPage extends StatefulWidget {
 
 /// Reset Password Page State for resetting password where required.
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  /// text field state
+  String _email = '';
+
+  /// Email Regex Expression
+  RegExp _emailRegExp = new RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    /// text field state
-    String email = '';
-
-    /// Email Regex Expression
-    RegExp emailRegExp = new RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-    final _formKey = GlobalKey<FormState>();
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(
@@ -51,14 +51,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 validator: (val) {
                   if (val!.isEmpty) {
                     return 'Enter an email address';
-                  } else if (!emailRegExp.hasMatch(val)) {
+                  } else if (!_emailRegExp.hasMatch(val)) {
                     return 'Enter a valid email address';
                   } else {
                     return null;
                   }
                 },
                 onChanged: (val) {
-                  setState(() => email = val.trim());
+                  setState(() => _email = val.trim());
                 },
               ),
             ),
@@ -83,8 +83,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            if (verifyEmail(email)) {
-                              resetPassword(email);
+                            if (verifyEmail(_email)) {
+                              resetPassword(_email);
                             } else {
                               Fluttertoast.showToast(
                                   msg: "Email does not exist.",

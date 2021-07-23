@@ -15,18 +15,17 @@ class _LoginPageState extends State<LoginPage> {
   /// Databse reference for User collection
   final _userDbRef = FirebaseDatabase.instance.reference().child("user");
 
+  /// text field variables
+  var _email, _password;
+
+  /// Email Regex Expression
+  RegExp emailRegExp = new RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    /// text field variables
-    var _email, _password;
-
-    /// Email Regex Expression
-    RegExp emailRegExp = new RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-    final _formKey = GlobalKey<FormState>();
-
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: new SingleChildScrollView(

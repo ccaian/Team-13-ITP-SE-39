@@ -10,20 +10,20 @@ class RegisterPage extends StatefulWidget {
 
 /// Register Page State for registration of new user accounts
 class _RegisterPageState extends State<RegisterPage> {
+  /// text field state
+  var _email, _password, _cfmPassword = '';
+
+  /// Email and Password Regex Expression
+  RegExp _emailRegExp = new RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp _passwordRegExp = new RegExp(
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
+  final _formKey = GlobalKey<FormState>();
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+
   @override
   Widget build(BuildContext context) {
-    /// text field state
-    var email, password, cfmPassword = '';
-
-    /// Email and Password Regex Expression
-    RegExp emailRegExp = new RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    RegExp passwordRegExp = new RegExp(
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-
-    final _formKey = GlobalKey<FormState>();
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
         body: new SingleChildScrollView(
             //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
@@ -55,14 +55,14 @@ class _RegisterPageState extends State<RegisterPage> {
             validator: (val) {
               if (val!.isEmpty) {
                 return 'Enter an email address';
-              } else if (!emailRegExp.hasMatch(val)) {
+              } else if (!_emailRegExp.hasMatch(val)) {
                 return 'Enter a valid email address';
               } else {
                 return null;
               }
             },
             onChanged: (val) {
-              setState(() => email = val.trim());
+              setState(() => _email = val.trim());
             },
           ),
         ),
@@ -82,14 +82,14 @@ class _RegisterPageState extends State<RegisterPage> {
             validator: (val) {
               if (val!.isEmpty) {
                 return 'Enter password';
-              } else if (!passwordRegExp.hasMatch(val)) {
+              } else if (!_passwordRegExp.hasMatch(val)) {
                 return 'Enter a password with at least 8 characters, Lower case, Upper case, alphanumeric and special case letter';
               } else {
                 return null;
               }
             },
             onChanged: (val) {
-              setState(() => password = val.trim());
+              setState(() => _password = val.trim());
             },
           ),
         ),
@@ -107,9 +107,9 @@ class _RegisterPageState extends State<RegisterPage> {
               labelText: 'Confirm Password',
             ),
             validator: (val) =>
-                val != password ? 'Password does not match' : null,
+                val != _password ? 'Password does not match' : null,
             onChanged: (val) {
-              setState(() => cfmPassword = val.trim());
+              setState(() => _cfmPassword = val.trim());
             },
           ),
         ),
@@ -146,8 +146,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (password == cfmPassword) {
-                          writeData(email, password);
+                        if (_password == _cfmPassword) {
+                          writeData(_email, _password);
                         } else {
                           Fluttertoast.showToast(
                               msg: "Passwords does not match",
