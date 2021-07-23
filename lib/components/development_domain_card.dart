@@ -194,8 +194,6 @@ class DevelopmentDomainCard extends StatelessWidget {
                           ]),
                     ],
                   ),
-                  validator: (val) => val!.isEmpty ? 'Enter a Title' : null,
-                  controller: _titleController,
                 ),
                 SizedBox(height: 10),
                 TextFormField(
@@ -274,7 +272,6 @@ class DevelopmentDomainCard extends StatelessWidget {
                           ]),
                     ],
                   ),
-                ),
               ],
             ),
           );

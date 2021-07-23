@@ -12,12 +12,12 @@ import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ParentHome extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _ParentHomeState createState() => _ParentHomeState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _ParentHomeState extends State<ParentHome> {
+class _HomePageState extends State<HomePage> {
   String? userName = "";
   String? temp = "";
   String? temp2 = "";
