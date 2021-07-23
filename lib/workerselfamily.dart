@@ -17,7 +17,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   List listTileChild = [];
   Map keyMap = Map<String, String>();
   List testList = [];
-  List<String> childParentEmailList = [];
   List parentEmailList = [];
   List<String> listOfChildrenNRIC = [];
   List<String> babyNameList = [];
@@ -253,7 +252,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   getChildParentEmail() {
-    List<String> tempList = [];
     List temp = [];
     FirebaseDatabase.instance
         .reference()
@@ -264,11 +262,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       //here i iterate and create the list of objects
       Map<dynamic, dynamic> childMap = snapshot.value;
       childMap.forEach((key, value) {
-        tempList.add(value['parent'].toString());
         temp.add(value);
       });
       setState(() {
-        childParentEmailList = tempList;
         babyData = temp;
       });
     });
@@ -333,8 +329,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   searchBarList(search) {
-    List newList = [];
-    List<String> tempList = [];
     setState(() {
       litems = [];
       testList = [];
@@ -348,7 +342,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
               ' ' +
               userData[i]["lastName"].toString());
           parentEmailList.add(userData[i]["email"]);
-          newList = validateChildren(userData[i]["email"]);
         });
       } else if (search == '') {
         makeList();
