@@ -21,7 +21,9 @@ var progressColor = Colors.redAccent;
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
     super.initState();
+    //clear all lists
     clearCheckList();
+    //initiate function loads all saved data from user if exists
     loadPref();
   }
   // text field state
@@ -121,7 +123,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       checkColor: Colors.white,
                                       onChanged: isEnabled ? null: (value) {
                                         setState(() {
+                                          //on checkbox state change update progressbar
                                           List[key] = value as bool;
+                                          //progress bar math calculate 1 selected percentage
                                           if(value == true){
                                             progress = progress + 100/List.length;
                                           }else{
@@ -130,6 +134,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                             progress = 100.0;
                                           }if(progress < 0){
                                             progress = 0;
+                                            //progress bar colour. Change to green when 100%
                                           }if(progress < 100){
                                             progressColor = Colors.redAccent;
                                           }
@@ -152,6 +157,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                           Expanded(
                               child: Padding(
                                   padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 10.0),
+                                  //save button
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       primary: secondaryTheme,
@@ -170,13 +176,13 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                     ),
                                     onPressed: isEnabled ? null: () async {
                                       checkList =[];
-                                      int i = 0;
+                                      //saved checklist state into a list
                                       List.forEach((index, value) {
-                                        i++;
                                         checkList.add(value.toString());
                                       }
                                       );
                                       Navigator.of(context).pushNamed("/homePage");
+                                      //send checklist state and user email to save function
                                       addCheckListData(checkList, userEmail);
                                     },
                                   )))
@@ -246,6 +252,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   }
 
   addCheckListData(result, user_email)  {
+    //save checklist state into firebase
     FirebaseDatabase.instance
         .reference()
         .child("checklist")
@@ -253,6 +260,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         .equalTo(user_email)
         .once()
         .then((DataSnapshot snapshot) {
+          //if data doesn't already exists save into new
         if(snapshot.value == null){
           _checklistRef.push().set({
             'email' : user_email,
@@ -267,6 +275,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
             'checklist9': result[8],
             'progress': progress
           });
+          //if data does exists run update function
         } else{
           updateCheckList(result, user_email);
         }
@@ -281,7 +290,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         .reference()
         .child("checklist")
         .orderByChild("email")
-        .equalTo(user_email)
+        .equalTo(user_email.toString())
         .once()
         .then((DataSnapshot snapshot) {
       //here i iterate and create the list of objects
@@ -384,6 +393,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   }
 
   updateCheckList(result, user_email) {
+    //update based on firebase key
     _checklistRef.child(userKey).update(
         {'email' : user_email,
           'checklist1': result[0],
@@ -404,12 +414,24 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   Future loadPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
+      //gets user details from shared preferences
       userEmail = sharedPreferences.getString('email');
+      //loads checklist data if previous attempts exists
       getCheckListData(sharedPreferences.getString('email'));
       admin = sharedPreferences.getBool('admin')!;
+      //disable write and save functions if admin account
+      admin = sharedPreferences.getBool('admin')!;
       if (sharedPreferences.getBool('admin') == true){
-        isEnabled = true;
+        //gets user details from shared preferences
+        userEmail = sharedPreferences.getString('parentemail');
+        //loads checklist data if previous attempts exists
+        getCheckListData(sharedPreferences.getString('parentemail'));
+        enableElevatedButton();
       }else {
+        //gets user details from shared preferences
+        userEmail = sharedPreferences.getString('email');
+        //loads checklist data if previous attempts exists
+        getCheckListData(sharedPreferences.getString('email'));
         disableElevatedButton();
       }
     });
