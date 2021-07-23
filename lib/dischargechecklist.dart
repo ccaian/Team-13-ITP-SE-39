@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:growth_app/navparent.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -176,9 +175,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                         checkList.add(value.toString());
                                       }
                                       );
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => NavParent()
-                                      ));
+                                      Navigator.of(context).pushNamed("/homePage");
                                       addCheckListData(checkList, childnric);
                                     },
                                   )))

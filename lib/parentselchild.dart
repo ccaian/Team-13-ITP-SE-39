@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:growth_app/navparent.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -143,10 +142,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
               sharedPreferences.setString('ChildName',babyTitle);
               sharedPreferences.setString('ChildNRIC',litems[items]);
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NavParent())).then((value) => setState( () {} ));
+              Navigator.of(context).pushNamed("/homePage");
             },
           )
     );

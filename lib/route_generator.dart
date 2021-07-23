@@ -19,6 +19,9 @@ import 'package:growth_app/wellbeingsurvey.dart';
 import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
 
+import 'home.dart';
+import 'nav.dart';
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -60,6 +63,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => PhotoPage());
       case '/scorehistory':
         return MaterialPageRoute(builder: (_) => ScoreHistory());
+      case '/homePage':
+        return MaterialPageRoute(builder: (_) => Nav());
       default:
         return _errorRoute();
     }

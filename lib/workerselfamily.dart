@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'navparent.dart';
 
 class WorkerSelFamily extends StatefulWidget {
   @override
@@ -200,9 +199,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           sharedPreferences.setString('ChildNRIC', title);
           sharedPreferences.setString('ChildName', babyTitle);
 
-          Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => NavParent()))
-              .then((value) => setState(() {}));
+          Navigator.of(context).pushNamed("/homePage");
         },
       );
     }
