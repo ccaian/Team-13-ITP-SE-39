@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/login.dart';
 import 'package:growth_app/theme/colors.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -9,22 +8,20 @@ class RegisterPage extends StatefulWidget {
   _RegisterPageState createState() => _RegisterPageState();
 }
 
+/// Register Page State for registration of new user accounts
 class _RegisterPageState extends State<RegisterPage> {
-  // text field state
-  var email, password, cfmPassword = '';
-
-  // Email and Password Regex Expression
-  RegExp emailRegExp = new RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  RegExp passwordRegExp = new RegExp(
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-
-  final _formKey = GlobalKey<FormState>();
-  final auth = FirebaseAuth.instance;
-  late User user;
-
   @override
   Widget build(BuildContext context) {
+    /// text field state
+    var email, password, cfmPassword = '';
+
+    /// Email and Password Regex Expression
+    RegExp emailRegExp = new RegExp(
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    RegExp passwordRegExp = new RegExp(
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
+    final _formKey = GlobalKey<FormState>();
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
@@ -149,11 +146,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        print('pressed register');
-                        print(password);
-                        print(cfmPassword);
                         if (password == cfmPassword) {
-                          print('swee');
                           writeData(email, password);
                         } else {
                           Fluttertoast.showToast(
@@ -189,13 +182,21 @@ class _RegisterPageState extends State<RegisterPage> {
     )));
   }
 
+  /// Function for creating user account in Firebase Auth.
+  ///
+  /// Function will use [email] and [password] params to create a Firebase Auth
+  /// user account.
   void writeData(email, password) async {
     try {
+      /// create user account in Firebase Auth
       UserCredential result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      user = auth.currentUser!;
+
+      /// get the user account that was created and send a email verification
+      User user = FirebaseAuth.instance.currentUser!;
       user.sendEmailVerification();
 
+      /// run the dialog to notify user to verify their email
       verificationDialog(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

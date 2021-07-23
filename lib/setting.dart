@@ -7,13 +7,14 @@ class SettingPage extends StatefulWidget {
   _SettingPageState createState() => _SettingPageState();
 }
 
+/// Setting Page State to display the personal features for each user
 class _SettingPageState extends State<SettingPage> {
-
   var _isAdmin = false;
 
+  /// to ensure certain function is execute before page load for certain data
   @override
   void initState() {
-    checkAdmin();
+    _checkAdmin();
     super.initState();
   }
 
@@ -138,18 +139,23 @@ class _SettingPageState extends State<SettingPage> {
     ));
   }
 
-  void checkAdmin() async {
+  /// Function is for checking whether user type is an admin
+  ///
+  /// Function will use [_isAdmin] variable to true or false based on the database data retrieved
+  void _checkAdmin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _isAdmin = prefs.getBool('admin')!;
     });
   }
 
+  /// Function logs user out of the application and back to home page
   void logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     await FirebaseAuth.instance.signOut();
 
+    /// Pop all navigation pages all in stack until root
     Navigator.popUntil(context, ModalRoute.withName("/"));
   }
 }

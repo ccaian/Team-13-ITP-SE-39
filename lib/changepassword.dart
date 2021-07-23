@@ -1,9 +1,6 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/setting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -13,19 +10,21 @@ class ChangePasswordPage extends StatefulWidget{
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
 }
 
+/// Change Password Page State for changing of password where required.
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
-  // text field state
-  var _oldPassword, _newPassword;
 
-  // Password Regex Expression
-  RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-
-  final _formKey = GlobalKey<FormState>();
   final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    /// text field variables
+    var _oldPassword, _newPassword;
+
+    /// Password Regex Expression
+    RegExp passwordRegExp = new RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+
+    final _formKey = GlobalKey<FormState>();
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
     );
@@ -151,7 +150,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             ),
                             onPressed: () async {
                               if(_formKey.currentState!.validate()){
-                                print('pressed reset');
                                 _reauthenticateUser(_oldPassword, _newPassword);
                               }
                             },
@@ -165,10 +163,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ));
   }
 
+  /// Funtion to verify the current password input matches the password stored in Firebase Auth
+  ///
+  /// Accepts [oldPassword] : the current password stored in firebase,
+  /// [newPassword] : the password to change to
   void _reauthenticateUser(String oldPassword, String newPassword) async {
+    /// Retrieve user email stored in SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userEmail = prefs.getString('email').toString();
 
+    /// verify if old password is valid
     AuthCredential credential = EmailAuthProvider.credential(email: userEmail, password: oldPassword);
 
     await auth.currentUser!.reauthenticateWithCredential(credential).then((_){
@@ -183,14 +187,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           textColor: Colors.white,
           fontSize: 16.0
       );
-      print("Password can't be changed");
     });
   }
 
+  /// Funtion to change the password stored in Firebase Auth
+  ///
+  /// Accepts [password] : the password to change to
   void _changePassword(String password) {
-    //Create an instance of the current user.
+    /// Create an instance of the current user.
     User? user = auth.currentUser;
-    //Pass in the password to updatePassword.
+    /// Pass in the password to updatePassword.
     user!.updatePassword(password).then((_){
       Fluttertoast.showToast(
           msg: "Successfully changed password",
@@ -201,8 +207,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           textColor: Colors.white,
           fontSize: 16.0
       );
-      print("Successfully changed password");
-
       Navigator.pop(context);
     }).catchError((error){
       Fluttertoast.showToast(
@@ -214,7 +218,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           textColor: Colors.white,
           fontSize: 16.0
       );
-      print("Password can't be changed" + error.toString());
     });
   }
 }

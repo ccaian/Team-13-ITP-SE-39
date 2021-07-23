@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/theme/colors.dart';
@@ -10,24 +9,26 @@ class UserProfilePage extends StatefulWidget {
   _UserProfilePageState createState() => _UserProfilePageState();
 }
 
+/// User Profile Page state for users to view and update their personal details.
 class _UserProfilePageState extends State<UserProfilePage> {
-  var firstName, lastName, mobileNumber;
-  var userKey;
+  /// Private Variables
+  var _firstName, _lastName, _mobileNumber, _userKey;
   var _buttonToggle = true;
   var _editToggle = false;
 
+  /// to ensure certain function is execute before page load for certain data
   @override
   void initState() {
     super.initState();
     retrieveData();
   }
 
-  final _auth = FirebaseAuth.instance;
+  /// Firebase reference for user collection
   final _userRef = FirebaseDatabase.instance.reference().child('user');
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
@@ -36,7 +37,6 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Form(
       key: _formKey,
       child: Column(children: <Widget>[
-
         FittedBox(
           child: new Image.asset(
             'assets/loginsplash.png',
@@ -48,7 +48,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         Padding(
           padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
           child: TextFormField(
-            controller: TextEditingController(text: firstName),
+            controller: TextEditingController(text: _firstName),
             enabled: _editToggle,
             decoration: InputDecoration(
               fillColor: Colors.grey,
@@ -61,14 +61,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
             onChanged: (val) {
-              setState(() => firstName = val);
+              setState(() => _firstName = val);
             },
           ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
           child: TextFormField(
-            controller: TextEditingController(text: lastName),
+            controller: TextEditingController(text: _lastName),
             enabled: _editToggle,
             decoration: InputDecoration(
               fillColor: Colors.grey,
@@ -81,14 +81,14 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
             onChanged: (val) {
-              setState(() => lastName = val);
+              setState(() => _lastName = val);
             },
           ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
           child: TextFormField(
-            controller: TextEditingController(text: mobileNumber),
+            controller: TextEditingController(text: _mobileNumber),
             enabled: _editToggle,
             decoration: InputDecoration(
               fillColor: Colors.grey,
@@ -114,7 +114,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               }
             },
             onChanged: (val) {
-              setState(() => mobileNumber = val);
+              setState(() => _mobileNumber = val);
             },
           ),
         ),
@@ -216,7 +216,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
     )));
   }
 
-  Future<void> retrieveData() async {
+  /// Function is for retrieving the user's personal details before page load.
+  void retrieveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var email = prefs.getString('email');
 
@@ -229,24 +230,29 @@ class _UserProfilePageState extends State<UserProfilePage> {
         Map<dynamic, dynamic> values = snapShot.value;
         values.forEach((key, values) {
           setState(() {
-            userKey = key;
-            firstName = values['firstName'];
-            lastName = values['lastName'];
-            mobileNumber = values['mobile'];
+            _userKey = key;
+            _firstName = values['firstName'];
+            _lastName = values['lastName'];
+            _mobileNumber = values['mobile'];
           });
         });
       }
     });
   }
 
+  /// Function is for updating user's personal details.
   updateDetails() {
-    _userRef.child(userKey).update(
-        {'firstName': firstName, 'lastName': lastName, 'mobile': mobileNumber});
+    _userRef.child(_userKey).update({
+      'firstName': _firstName,
+      'lastName': _lastName,
+      'mobile': _mobileNumber
+    });
 
-    User? user = _auth.currentUser;
-    user!.updateDisplayName(firstName + " " + lastName);
+    User? user = FirebaseAuth.instance.currentUser;
+    user!.updateDisplayName(_firstName + " " + _lastName);
   }
 
+  /// Function is for toggling between the fields being editable or not.
   void hideButton() {
     setState(() {
       if (_buttonToggle) {

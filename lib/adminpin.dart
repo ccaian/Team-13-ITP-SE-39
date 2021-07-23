@@ -139,7 +139,6 @@ class _ChangePINPageState extends State<ChangePINPage> {
                                 ),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
-                                    print('pressed reset');
                                     _setNewPIN(_oldPIN, _newPIN);
                                   }
                                 },
@@ -186,7 +185,6 @@ class _ChangePINPageState extends State<ChangePINPage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-      print("Successfully changed Admin PIN");
 
       Navigator.pop(context);
     } else {
@@ -198,7 +196,6 @@ class _ChangePINPageState extends State<ChangePINPage> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-      print("PIN does not match");
     }
   }
 }

@@ -9,15 +9,15 @@ class ProfileSetUpPage extends StatefulWidget {
   _ProfileSetUpPageState createState() => _ProfileSetUpPageState();
 }
 
+/// Profile Set Up Page state is for those first time login user to set up their profile account
 class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
-
-  // text field state
-  var firstName, lastName, mobileNumber;
+  /// text field variables
+  var _firstName, _lastName, _mobileNumber;
   final _userRef = FirebaseDatabase.instance.reference().child('user');
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return new Scaffold(
@@ -48,7 +48,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
             ),
             validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
             onChanged: (val) {
-              setState(() => firstName = val);
+              setState(() => _firstName = val);
             },
           ),
         ),
@@ -66,7 +66,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
             ),
             validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
             onChanged: (val) {
-              setState(() => lastName = val);
+              setState(() => _lastName = val);
             },
           ),
         ),
@@ -97,7 +97,7 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
               }
             },
             onChanged: (val) {
-              setState(() => mobileNumber = val);
+              setState(() => _mobileNumber = val);
             },
           ),
         ),
@@ -131,14 +131,15 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
     )));
   }
 
+  /// Function for create a user document in user collection
   void writeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     _userRef.push().set({
-      'firstName': firstName,
-      'lastName': lastName,
+      'firstName': _firstName,
+      'lastName': _lastName,
       'email': prefs.getString('email'),
-      'mobile': mobileNumber,
+      'mobile': _mobileNumber,
       'admin': false
     });
 
