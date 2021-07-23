@@ -90,6 +90,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                               ),
                               controller: _searchControl,
                               onFieldSubmitted: (val) {
+                                //search function that will repopulate [familyNameList]
+                                // With inputted text from [_searchControl.text]
                                 searchBarList(_searchControl.text);
                               },
                             ),
@@ -99,22 +101,20 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                     itemCount: familyNameList.length,
                                     itemBuilder:
                                         (BuildContext ctxt, int index) {
+                                      //returns a list of all children linked with "parent's email'
                                       selectedBabyList = validateChildren(
                                           parentEmailList[index]);
                                       return new GestureDetector(
-                                        //You need to make my child interactive
-
                                         child: new Column(
                                           children: <Widget>[
-                                            //new Image.network(video[index]),
                                             new Padding(
                                                 padding:
                                                     new EdgeInsets.all(16.0)),
+                                            //builds expanded listview
                                             buildText(index, selectedBabyList),
                                           ],
                                         ),
                                       );
-                                      //new Text(litems[index]);
                                     })),
                             new Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -138,8 +138,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   Widget buildText(int items, List babyNRICList) {
-    String parentEmail = parentEmailList[items].toString();
-
+    //String parentEmail = parentEmailList[items].toString();
     return Card(
       child: ExpansionTile(
         title: Text(
@@ -168,12 +167,15 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   List validateChildren(String parentEmail) {
     List listOfChildrenEmail = [];
+    //searches for children based on user's email address
     for (var i = 0; i < babyData.length; i++) {
       if (parentEmail == babyData[i]["parent"]) {
+        //returns a list of nric for the selected parent
         listOfChildrenEmail.add(babyData[i]["nric"].toString());
       }
     }
     if (listOfChildrenEmail.length == 0) {
+      //if returned list is empty return string 'no children'
       listOfChildrenEmail.add('No Children');
     }
     return listOfChildrenEmail;
@@ -181,7 +183,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   newTile(String title, int index) {
     String babyTitle = '';
+    //convert's nric into the name of baby
     babyTitle = getBabyName(title);
+    // if user has no children disable onPress
     if (babyTitle == 'No Children') {
       return new ListTile(
         title: Text(
@@ -197,6 +201,12 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         onTap: () async {
+          //upon selecting, save selected user data into shared preferences
+          // [parentemail] is selected user's email
+          // ['Fam'] is the family name
+          // save child details into shared preferences
+          // ['ChildNRIC'] is nric of selected child
+          // ['ChildName'] is name of selected child
           final SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString('Fam', familyNameList[index]);
@@ -213,6 +223,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   generateListOfFamily() {
     List<String> newList = [];
     List temp = [];
+    //get data of user save into [userData]
+    //get List of all users excluding admins save into [familyNameList]
     FirebaseDatabase.instance
         .reference()
         .child("user")
@@ -238,6 +250,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   makeKeyList() {
+    //save key linked with user emails into [keyMap]
     FirebaseDatabase.instance
         .reference()
         .child("user")
@@ -258,6 +271,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   getBabyData() {
+    //get and save baby data into list [babyData]
     List temp = [];
     FirebaseDatabase.instance
         .reference()
@@ -278,6 +292,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   getParentEmail() {
+    //get and save list of parent emails into [parentEmailList]
     List<String> tempList = [];
     FirebaseDatabase.instance
         .reference()
@@ -300,6 +315,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   String getBabyName(String babyNRIC) {
+    // converts baby's nric into baby's name
     String babyName = '';
     for (var i = 0; i < babyData.length; i++) {
       if (babyNRIC == babyData[i]["nric"].toString()) {
@@ -313,6 +329,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   searchBarList(search) {
+    //regenerate a [familyNameList] based on searched results
     setState(() {
       familyNameList = [];
       selectedBabyList = [];
@@ -325,9 +342,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           familyNameList.add(userData[i]["firstName"].toString() +
               ' ' +
               userData[i]["lastName"].toString());
+          //regenerate parent's email list to generate listview of parent's children
           parentEmailList.add(userData[i]["email"]);
         });
       } else if (search == '') {
+        //if no search result run default all user display
         generateListOfFamily();
       }
     }
