@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +17,14 @@ class ParentSelChild extends StatefulWidget {
 }
 
 class _ParentSelChildState extends State<ParentSelChild> {
-  List<String> litems = [];
-  List babyData = [];
+  List listOfChildren = [];
   String name = '';
-  String temp ='';
   String username ='';
   Map keyMap = Map<String, String>();
+
+  final _selectChild = FirebaseFirestore.instance.collection('child');
+
+
   DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
   DatabaseReference growth = FirebaseDatabase.instance.reference().child('growth');
   DatabaseReference checklist = FirebaseDatabase.instance.reference().child('checklist');
@@ -72,7 +75,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
                 child: Scaffold(
                     body: new ListView.builder
                       (padding: const EdgeInsets.all(8),
-                        itemCount: litems.length,
+                        itemCount: listOfChildren.length,
                         itemBuilder: (BuildContext ctxt, int index) {
                           return new GestureDetector( //You need to make my child interactive
                             child: new Column(
@@ -112,7 +115,8 @@ class _ParentSelChildState extends State<ParentSelChild> {
 
   Widget buildText(int items) {
     String babyTitle ='';
-    babyTitle = getBabyName(litems[items]);
+    //get baby name form baby nric
+    babyTitle = listOfChildren[items]['name'];
     return Card(
       child:
           ListTile(
@@ -122,12 +126,12 @@ class _ParentSelChildState extends State<ParentSelChild> {
                   IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () {
-                        //   _onDeleteItemPressed(index);
-                        deleteChild(litems[items]);
+                       /* //remove baby from generated list
+                        deleteChild(listOfChildren[items]);
                         setState(() {
-                          litems.removeAt(items);
-                          litems.join(', ');
-                        });
+                          listOfChildren.removeAt(items);
+                          listOfChildren.join(', ');
+                        });*/
                       }
                   )
                 ]
@@ -137,9 +141,12 @@ class _ParentSelChildState extends State<ParentSelChild> {
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
             onTap: () async {
+              // save child details into shared preferences
+              // ['ChildNRIC'] is nric of selected child
+              // ['ChildName'] is name of selected child
               final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
               sharedPreferences.setString('ChildName',babyTitle);
-              sharedPreferences.setString('ChildNRIC',litems[items]);
+              sharedPreferences.setString('ChildNRIC',listOfChildren[items]['nric']);
 
               Navigator.of(context).pushNamed("/homePage");
             },
@@ -148,73 +155,33 @@ class _ParentSelChildState extends State<ParentSelChild> {
   }
 
   Widget addButton(BuildContext context){
+    //add child button
     return  Column(
         children: <Widget>[ TextButton(
           style: TextButton.styleFrom(
             textStyle: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
           ),
           onPressed: () async {
-            Navigator.push(context, new MaterialPageRoute(
-                builder: (context) => AddChild()
-            ));
+            Navigator.of(context).pushNamed("/addChild");
           },
           child: const Text('+'),
         ),
         ]);}
 
-  makeList(){
-    List<String> newList = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("child")
-        .orderByChild("parent")
-        .equalTo(username)
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
-      childMap.forEach((key, value) {
-        newList.add(value['nric'].toString());
-      });
-      setState(() {
-        litems = newList;
-      });
-    });
-    getChildList();
-  }
-
-  getChildList(){
-    List tempList = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("child")
-        .orderByChild("parent")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        tempList.add(value);
-      });
-      setState(() {
-        babyData = tempList;
-      });
-    });
-    makeKeyList();
-  }
-
   Future getPref() async {
+    String temp ='';
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     temp = sharedPreferences.getString('email')!;
     setState(() {
       username = temp;
     });
 
-    makeList();
+    _getChildList();
+    //makeList();
   }
 
   makeKeyList(){
+    //save key linked with child nric into [keyMap]
     FirebaseDatabase.instance
         .reference()
         .child("child")
@@ -233,19 +200,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
     });
   }
 
-  String getBabyName( String babyNRIC) {
-    String babyName = '';
-    for(var i = 0; i < babyData.length; i++){
-      if(babyNRIC == babyData[i]["nric"].toString()){
-        babyName = babyData[i]["name"].toString();
-      }
-    }
-    if(babyName == ''){
-      babyName = 'No Children';
-    }
-    return babyName;
-  }
-
   void deleteChild(String nric) async {
     var tempKey;
     keyMap.forEach((key, value) {
@@ -257,38 +211,16 @@ class _ParentSelChildState extends State<ParentSelChild> {
     //await growth.child(getGrowthKey(nric)).remove();
   }
 
-  String getGrowthKey(String nric){
-    String returnKey ='';
-    FirebaseDatabase.instance
-        .reference()
-        .child("growth")
-        .orderByChild("nric")
-        .equalTo(nric)
-        .once()
-        .then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        returnKey = key;
-      });
-    });
-    return returnKey;
-  }
+  Future<void> _getChildList() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _selectChild.where('parent', isEqualTo: username).get();
 
-  String getCheckListKey(String nric){
-    String returnKey ='';
-    FirebaseDatabase.instance
-        .reference()
-        .child("checklist")
-        .orderByChild("email")
-        .equalTo(nric)
-        .once()
-        .then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        returnKey = key;
-      });
+    // Get data from docs and convert map to List
+    listOfChildren = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    setState(() {
+      listOfChildren = listOfChildren;
     });
-    return returnKey;
   }
 }
 
