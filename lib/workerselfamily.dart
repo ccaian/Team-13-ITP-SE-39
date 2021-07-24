@@ -30,111 +30,114 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   }
 
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: mainTheme,
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-                top: 80,
-                left: 30,
-                child: Text("Select Family",
-                    style: TextStyle(
-                      fontSize: 26.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ))),
-            Positioned(
-              top: 40,
-              right: -10,
-              child: new Image.asset('assets/healthcare.png', width: 140.0),
-            ),
-            Positioned(
-              bottom: 0,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(25.0),
-                            topLeft: Radius.circular(25.0)),
-                      ),
-                      child: Scaffold(
-                          body: Container(
-                        child: Column(
-                          children: <Widget>[
-                            Padding(padding: EdgeInsets.only(top: 10)),
-                            TextFormField(
-
-                              decoration: InputDecoration(
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    _searchControl.clear();
+    return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Material(
+          child: Container(
+            color: mainTheme,
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                    top: 80,
+                    left: 30,
+                    child: Text("Select Family",
+                        style: TextStyle(
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ))),
+                Positioned(
+                  top: 40,
+                  right: -10,
+                  child: new Image.asset('assets/healthcare.png', width: 140.0),
+                ),
+                Positioned(
+                  bottom: 0,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(25.0),
+                                topLeft: Radius.circular(25.0)),
+                          ),
+                          child: Scaffold(
+                              body: Container(
+                            child: Column(
+                              children: <Widget>[
+                                Padding(padding: EdgeInsets.only(top: 10)),
+                                TextFormField(
+                                  decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _searchControl.clear();
+                                        searchBarList(_searchControl.text);
+                                      },
+                                      icon: Icon(Icons.clear),
+                                    ),
+                                    fillColor: Colors.grey,
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(25),
+                                      ),
+                                    ),
+                                    labelText: 'Search',
+                                  ),
+                                  controller: _searchControl,
+                                  onFieldSubmitted: (val) {
                                     searchBarList(_searchControl.text);
                                   },
-                                  icon: Icon(Icons.clear),
+                                ),
+                                Expanded(
+                                    child: new ListView.builder(
+                                        padding: const EdgeInsets.all(8),
+                                        itemCount: familyNameList.length,
+                                        itemBuilder:
+                                            (BuildContext ctxt, int index) {
+                                          selectedBabyList = validateChildren(
+                                              parentEmailList[index]);
+                                          return new GestureDetector(
+                                            //You need to make my child interactive
 
-                                ),
-                                fillColor: Colors.grey,
-                                border: new OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(
-                                    const Radius.circular(25),
-                                  ),
-                                ),
-                                labelText: 'Search',
-                              ),
-                              controller: _searchControl,
-                              onFieldSubmitted: (val) {
-                                searchBarList(_searchControl.text);
-                              },
+                                            child: new Column(
+                                              children: <Widget>[
+                                                //new Image.network(video[index]),
+                                                new Padding(
+                                                    padding: new EdgeInsets.all(
+                                                        16.0)),
+                                                buildText(
+                                                    index, selectedBabyList),
+                                              ],
+                                            ),
+                                          );
+                                          //new Text(litems[index]);
+                                        })),
+                                new Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                          child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            80.0, 0, 80.0, 20.0),
+                                      ))
+                                    ]),
+                              ],
                             ),
-                            Expanded(
-                                child: new ListView.builder(
-                                    padding: const EdgeInsets.all(8),
-                                    itemCount: familyNameList.length,
-                                    itemBuilder:
-                                        (BuildContext ctxt, int index) {
-                                      selectedBabyList = validateChildren(
-                                          parentEmailList[index]);
-                                      return new GestureDetector(
-                                        //You need to make my child interactive
-
-                                        child: new Column(
-                                          children: <Widget>[
-                                            //new Image.network(video[index]),
-                                            new Padding(
-                                                padding:
-                                                    new EdgeInsets.all(16.0)),
-                                            buildText(index, selectedBabyList),
-                                          ],
-                                        ),
-                                      );
-                                      //new Text(litems[index]);
-                                    })),
-                            new Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                      child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        80.0, 0, 80.0, 20.0),
-                                  ))
-                                ]),
-                          ],
-                        ),
-                      ))),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+                          ))),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget buildText(int items, List babyNRICList) {
@@ -333,7 +336,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     }
   }
 
-  /*void deleteUser(String email) async {
+/*void deleteUser(String email) async {
     var tempKey;
     keyMap.forEach((key, value) {
       if (email == key) {
@@ -342,8 +345,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     });
     await _userRef.child(tempKey).remove().then((_) async {
     });
-    *//*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
+    */ /*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
         print('Account Deleted');
-      });*//*
+      });*/ /*
   }*/
 }
