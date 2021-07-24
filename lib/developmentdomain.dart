@@ -20,6 +20,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   final _descriptionController = TextEditingController();
   final _domainPost =
       FirebaseFirestore.instance.collection('developmentdomain');
+  final _formKey = GlobalKey<FormState>();
 
   /// to ensure certain function is execute before page load for certain data
   @override
@@ -30,7 +31,6 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     return Material(
       child: Container(
         color: Color(0xff4C52A8),
@@ -215,6 +215,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
     });
   }
 
+  /// Function for adding new Development Domain Post Data
   void _addData() {
     _domainPost.add({
       "title": _titleController.text,

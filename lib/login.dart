@@ -1,4 +1,4 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +12,8 @@ class LoginPage extends StatefulWidget {
 
 ///  Login Page State for authenticating and verifying user account.
 class _LoginPageState extends State<LoginPage> {
-  /// Databse reference for User collection
-  final _userDbRef = FirebaseDatabase.instance.reference().child("user");
+  /// Firestore reference for User collection
+  final _userReference = FirebaseFirestore.instance.collection('user');
 
   /// text field variables
   var _email, _password;
@@ -201,34 +201,37 @@ class _LoginPageState extends State<LoginPage> {
 
     /// check if current user has verify their email
     if (currentUser!.emailVerified) {
-      Query _userQuery = _userDbRef.orderByChild("email").equalTo(email);
-      _userQuery.once().then((DataSnapshot snapShot) {
-        /// User profile exist in DB => to home page
-        if (snapShot.value != null) {
-          Map<dynamic, dynamic> values = snapShot.value;
-          values.forEach((key, values) {
-            prefs.setBool('admin', values['admin']);
-            prefs.setString('firebaseKey', key);
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+          await _userReference.where('email', isEqualTo: email).get();
+      List user = snapshot.docs;
 
-            /// check if the value 'adminPin' exist
-            if (values['adminPin'] != null) {
-              prefs.setString('adminPin', values['adminPin']);
-            }
-          });
+      /// User profile exist in DB => to home page
+      if (user.isNotEmpty) {
+        user.forEach((element) {
+          prefs.setBool('admin', element['admin']);
+          prefs.setString('firebaseKey', element.id);
+          print(element['admin']);
+          print(element.id);
 
-          /// check if user is admin or not => to redirect user according to their user type
-          if (prefs.getBool('admin') == true) {
-            /// user is a healthcare worker
-            Navigator.of(context).pushReplacementNamed('/selectFamily');
-          } else {
-            /// user is a parent and not first login
-            Navigator.of(context).pushReplacementNamed('/selectChild');
+          /// check if the value 'adminPin' exist
+          if (element['adminPin'] != null) {
+            prefs.setString('adminPin', element['adminPin']);
+            print(element['adminPin']);
           }
+        });
+
+        /// check if user is admin or not => to redirect user according to their user type
+        if (prefs.getBool('admin') == true) {
+          /// user is a healthcare worker
+          Navigator.of(context).pushReplacementNamed('/selectFamily');
         } else {
-          /// user is a parent and this is the first login
-          Navigator.of(context).pushReplacementNamed('/profileSetup');
+          /// user is a parent and not first login
+          Navigator.of(context).pushReplacementNamed('/selectChild');
         }
-      });
+      } else {
+        /// user is a parent and this is the first login
+        Navigator.of(context).pushReplacementNamed('/profileSetup');
+      }
     } else {
       /// clear user if account not verified
       await prefs.clear();
