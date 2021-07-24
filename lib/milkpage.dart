@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'api/pdf_api.dart';
+import 'api/pdf_milk_api.dart';
 import 'components/milk_card.dart';
 
 
@@ -12,12 +14,14 @@ class MilkPage extends StatefulWidget {
   _MilkPageState createState() => _MilkPageState();
 }
 
+///  Milk Page State for adding, displaying, and downloading milk data
 class _MilkPageState extends State<MilkPage> {
   final _formKey = GlobalKey<FormState>();
   late CollectionReference milk, records;
 
   bool isAdmin = false;
   var email;
+  var familyName;
   String title = '';
   String leftBreast = '';
   String rightBreast = '';
@@ -28,6 +32,9 @@ class _MilkPageState extends State<MilkPage> {
   final _titleController = TextEditingController();
   final _leftBreastController = TextEditingController();
   final _rightBreastController = TextEditingController();
+
+  late Milk milkFile;
+  List<MilkRecord> milkRecords = [];
 
   @override
   void initState() {
@@ -86,7 +93,6 @@ class _MilkPageState extends State<MilkPage> {
                             rightBreast: milk['rightBreast'],
                             totalVolume: milk['totalVolume'],
                             timestamp: milk['timestamp'].toDate(),
-                            //email: milk['email'],
                           ),
                     ).toList();
                     return ListView.builder(
@@ -136,7 +142,7 @@ class _MilkPageState extends State<MilkPage> {
                                         fillColor: Colors.red,
                                         labelText: 'Title',
                                       ),
-                                      validator: (val) => val!.isEmpty ? 'Enter title' : null,
+                                      validator: (val) => val!.isEmpty ? 'Enter any title' : null,
                                       onChanged: (val) {
                                         setState(() => title = val);
                                       },
@@ -158,11 +164,11 @@ class _MilkPageState extends State<MilkPage> {
                                       inputFormatters: <TextInputFormatter>[
                                         WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                                       ],
-                                      validator: (val) => val!.isEmpty ? 'Enter left breast milk volume in ml' : null,
+                                      validator: (val) => val!.isEmpty ? 'Enter left volume pumped in ml' : null,
                                       onChanged: (val) {
                                         setState(() => leftBreast = val);
                                       },
-                                      controller: _leftBreastController,
+                                      controller: _leftBreastController..text = '0',
                                     ),
                                   ),
                                   Padding(
@@ -180,11 +186,11 @@ class _MilkPageState extends State<MilkPage> {
                                       inputFormatters: <TextInputFormatter>[
                                         WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                                       ],
-                                      validator: (val) => val!.isEmpty ? 'Enter right breast milk volume in ml' : null,
+                                      validator: (val) => val!.isEmpty ? 'Enter right volume pumped in ml' : null,
                                       onChanged: (val) {
                                         setState(() => rightBreast = val);
                                       },
-                                      controller: _rightBreastController,
+                                      controller: _rightBreastController..text = '0',
                                     ),
                                   ),
                                   Padding(
@@ -225,23 +231,42 @@ class _MilkPageState extends State<MilkPage> {
               },
             ),
           ),
+          Positioned(
+            bottom: 20,
+            right: 90,
+            child: FloatingActionButton(
+              heroTag: "download",
+              child: Icon(Icons.download),
+              backgroundColor: mainTheme,
+              onPressed: () async {
+                _downloadData();
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
+  /// Function for getting shared preferences data
   Future<void> _getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    isAdmin = prefs.getBool('admin')!;
-    if (isAdmin == false) {
-      email = prefs.getString('email');
-    }
-    else {
-      email = prefs.getString('parentemail');
-    }
+    setState(() {
+      isAdmin = prefs.getBool('admin')!;
+      familyName = prefs.getString('Fam');
+      if (isAdmin == false) {
+        email = prefs.getString('email');
+      }
+      else {
+        email = prefs.getString('parentemail');
+      }
+    });
     await Future.delayed(Duration(seconds: 2));
   }
 
+  /// Function for creating Milk record in Firestore
+  ///
+  /// Function will use [title], [leftBreast], [rightBreast], [totalVolume], and [timestamp] params to create a Milk record
   void _addData() async{
     milk = firestoreInstance.collection('milk').doc(email).collection('records');
 
@@ -273,6 +298,26 @@ class _MilkPageState extends State<MilkPage> {
       _rightBreastController.clear();
     });
   }
+
+  /// Function for downloading Milk records PDF file
+  Future<void> _downloadData() async {
+    var getDocs = await FirebaseFirestore.instance.collection('milk').doc(email).collection('records').get();
+
+    List milkList = getDocs.docs;
+    List<MilkRecord> _records = milkList.map(
+          (milk) => MilkRecord(
+        id: milk.id,
+        title: milk['title'],
+        leftBreast: milk['leftBreast'],
+        rightBreast: milk['rightBreast'],
+        totalVolume: milk['totalVolume'],
+        timestamp: milk['timestamp'].toDate(),
+      ),
+    ).toList();
+    milkFile = Milk(items: _records, family: familyName);
+    final pdfFile = await PdfMilkApi.generate(milkFile);
+    PdfApi.openFile(pdfFile);
+  }
 }
 
 class MilkRecord {
@@ -284,4 +329,11 @@ class MilkRecord {
   final DateTime timestamp;
 
   MilkRecord({this.id, required this.title, required this.leftBreast,required this.rightBreast, required this.totalVolume, required this.timestamp});
+}
+
+class Milk {
+  final List<MilkRecord> items;
+  final String family;
+
+  Milk({required this.items, required this.family});
 }

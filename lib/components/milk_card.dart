@@ -8,17 +8,22 @@ import 'package:growth_app/milkpage.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// MilkCard exist to populate the data retrieved from Firestore
+/// for visualisation on the UI with Update and Delete functions for each data
 class MilkCard extends StatelessWidget {
-  final MilkRecord milkRecord;
-  final isAdmin;
-  final email;
-
+  /// [milkRecord] to parse the data for each card for visualisation on the UI
+  /// [isAdmin] parse to identify if this user has admin access or not
+  /// [email] parse to get parent's email address
   const MilkCard({
     Key? key,
     required this.milkRecord,
     required this.isAdmin,
     required this.email,
   }) : super(key: key);
+
+  final MilkRecord milkRecord;
+  final isAdmin;
+  final email;
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +148,9 @@ class MilkCard extends StatelessWidget {
     );
   }
 
+  /// Update Dialog for Milk Volume Pumped Data.
+  ///
+  /// Has [key], [title], [leftBreast], and [rightBreast] fields to parse param to update function.
   void updateDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
@@ -266,21 +274,7 @@ class MilkCard extends StatelessWidget {
         });
   }
 
-  void _updateData(String id, String title, String leftBreast, String rightBreast) async {
-    var left = double.parse(leftBreast);
-    var right = double.parse(rightBreast);
-    var totalVolume = (left + right).toString();
-
-    FirebaseFirestore.instance.collection('milk').doc(email).collection('records').doc(id).update({
-      "title": title,
-      "leftBreast": leftBreast,
-      "rightBreast": rightBreast,
-      "totalVolume": totalVolume,
-      "timestamp": DateTime.now()
-    });
-  }
-
-  /// [Parent's View] Delete Of Milk Volume Pumped Data.
+  /// Dialog to confirm the deletion of Milk Volume Pumped Data. [Parent]
   void _deleteData(BuildContext context) {
     showDialog(
         context: context,
@@ -314,8 +308,9 @@ class MilkCard extends StatelessWidget {
         });
   }
 
-  /// [Admin Only Verification] Delete Of Milk Volume Pumped Data.
-  /// Admin needs to enter the Admin PIN for verification before deletion.
+  /// Dialog to confirm the deletion of Milk Volume Pumped Data. [Admin]
+  ///
+  /// Dialog with a Form to accept Admin Pin for confirmation of deletion.
   void _adminDelete(BuildContext context) async{
     final _formKey = GlobalKey<FormState>();
     final _pinController = TextEditingController();
@@ -378,7 +373,24 @@ class MilkCard extends StatelessWidget {
         });
   }
 
-  /// [Admin Only Verification] Delete Of Milk Volume Pumped Data.
+  /// Update Milk Volume Pumped Data.
+  ///
+  /// Params [key], [title], [leftBreast], [rightBreast], [totalVolume], and [timestamp] to update the database.
+  void _updateData(String id, String title, String leftBreast, String rightBreast) async {
+    var left = double.parse(leftBreast);
+    var right = double.parse(rightBreast);
+    var totalVolume = (left + right).toString();
+
+    FirebaseFirestore.instance.collection('milk').doc(email).collection('records').doc(id).update({
+      "title": title,
+      "leftBreast": leftBreast,
+      "rightBreast": rightBreast,
+      "totalVolume": totalVolume,
+      "timestamp": DateTime.now()
+    });
+  }
+
+  /// Delete Milk Volume Pumped Data. [Admin]
   ///
   /// Accepts [key] : to delete the correct data,
   /// [pin] : to verify with the admin pin stored in SharedPreferences

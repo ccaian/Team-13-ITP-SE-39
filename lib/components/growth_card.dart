@@ -8,17 +8,22 @@ import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../growthpage.dart';
 
+/// GrowthCard exist to populate the data retrieved from Firestore
+/// for visualisation on the UI with Update and Delete functions for each data
 class GrowthCard extends StatelessWidget {
-  final GrowthRecord growthRecord;
-  final isAdmin;
-  final nric;
-
+  /// [growthRecord] to parse the data for each card for visualisation on the UI
+  /// [isAdmin] parse to identify if this user has admin access or not
+  /// [nric] parse to get baby's identification number
   const GrowthCard({
     Key? key,
     required this.growthRecord,
     required this.isAdmin,
     required this.nric,
   }) : super(key: key);
+
+  final GrowthRecord growthRecord;
+  final isAdmin;
+  final nric;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +67,7 @@ class GrowthCard extends StatelessWidget {
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Text(
-                      "Height: " +
+                      "Height/Length: " +
                           growthRecord.height +
                           " cm",
                       style: TextStyle(
@@ -161,6 +166,9 @@ class GrowthCard extends StatelessWidget {
     );
   }
 
+  /// Update Dialog for Growth Measurements Data.
+  ///
+  /// Has [key], [week], [height], [weight], and [head] fields to parse param to update function.
   void updateDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
@@ -235,14 +243,14 @@ class GrowthCard extends StatelessWidget {
                               ),
                             ),
                             fillColor: Colors.red,
-                            labelText: 'Height (cm)',
+                            labelText: 'Height/Length (cm)',
                             hintText: 'e.g. 50',
                           ),
                           inputFormatters: <TextInputFormatter>[
                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           ],
                           validator: (val) => val!.isEmpty
-                              ? 'Enter height in cm'
+                              ? 'Enter height/length in cm'
                               : null,
                           controller: _heightControl,
                         ),
@@ -310,17 +318,7 @@ class GrowthCard extends StatelessWidget {
         });
   }
 
-  void _updateData(String id, String week, String weight, String height, String head) async {
-
-    FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(id).update({
-      "week": week,
-      "weight": weight,
-      "height": height,
-      "head": head,
-    });
-  }
-
-  /// [Parent's View] Delete Of Growth Measurements Data.
+  /// Dialog to confirm the deletion of Growth Measurements Data. [Parent]
   void _deleteData(BuildContext context) {
     showDialog(
         context: context,
@@ -352,8 +350,9 @@ class GrowthCard extends StatelessWidget {
         });
   }
 
-  /// [Admin Only Verification] Delete Of Growth Measurements Data.
-  /// Admin needs to enter the Admin PIN for verification before deletion.
+  /// Dialog to confirm the deletion of Growth Measurements Data. [Admin]
+  ///
+  /// Dialog with a Form to accept Admin Pin for confirmation of deletion.
   void _adminDelete(BuildContext context) async{
     final _formKey = GlobalKey<FormState>();
     final _pinController = TextEditingController();
@@ -416,7 +415,19 @@ class GrowthCard extends StatelessWidget {
         });
   }
 
-  /// [Admin Only Verification] Delete Of Growth Measurements Data.
+  /// Update Growth Measurements Data.
+  ///
+  /// Params [key], [week], [weight], [height], and [head] to update the database.
+  void _updateData(String id, String week, String weight, String height, String head) async {
+    FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(id).update({
+      "week": week,
+      "weight": weight,
+      "height": height,
+      "head": head,
+    });
+  }
+
+  /// Delete Growth Measurements Data. [Admin]
   ///
   /// Accepts [key] : to delete the correct data,
   /// [pin] : to verify with the admin pin stored in SharedPreferences

@@ -14,11 +14,13 @@ class GrowthPage extends StatefulWidget {
   _GrowthPageState createState() => _GrowthPageState();
 }
 
+///  Growth Page State for adding, displaying, and downloading growth data
 class _GrowthPageState extends State<GrowthPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool isAdmin = false;
   var nric;
+  var childName;
   int week = 0;
   double weight = 0;
   double height = 0;
@@ -44,6 +46,7 @@ class _GrowthPageState extends State<GrowthPage> {
   @override
   Widget build(BuildContext context) {
     records = firestoreInstance.collection('growth').doc(nric).collection('records');
+
     return new Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
@@ -86,7 +89,6 @@ class _GrowthPageState extends State<GrowthPage> {
                   ),
                   child: Stack(
                     children: <Widget>[
-                      //const SizedBox(height: 100),
                       Padding(
                           padding: const EdgeInsets.fromLTRB(
                               0.0, 0.0, 0.0, 0.0),
@@ -199,13 +201,13 @@ class _GrowthPageState extends State<GrowthPage> {
                                               ),
                                             ),
                                             fillColor: Colors.red,
-                                            labelText: 'Height (cm)',
+                                            labelText: 'Height/Length (cm)',
                                             hintText: 'e.g. 50',
                                           ),
                                           inputFormatters: <TextInputFormatter>[
                                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                                           ],
-                                          validator: (val) => val!.isEmpty ? 'Enter height in cm' : null,
+                                          validator: (val) => val!.isEmpty ? 'Enter height/length in cm' : null,
                                           onChanged: (val) {
                                             setState(() => height = val as double);
                                           },
@@ -290,14 +292,20 @@ class _GrowthPageState extends State<GrowthPage> {
         ));
   }
 
+  /// Function for getting shared preferences data
   Future<void> _getData() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    nric = prefs.getString('ChildNRIC');
-    isAdmin = prefs.getBool('admin')!;
-
+    setState(() {
+      nric = prefs.getString('ChildNRIC');
+      isAdmin = prefs.getBool('admin')!;
+      childName = prefs.getString('ChildName');
+    });
     await Future.delayed(Duration(seconds: 2));
   }
 
+  /// Function for creating Growth record in Firestore
+  ///
+  /// Function will use [week], [weight], [height], and [head] params to create a Growth record
   void _addData() async{
     growth = firestoreInstance.collection('growth').doc(nric).collection('records');
 
@@ -317,6 +325,7 @@ class _GrowthPageState extends State<GrowthPage> {
     });
   }
 
+  /// Function for downloading Growth records PDF file
   Future<void> _downloadData() async {
     var getDocs = await FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').get();
 
@@ -330,7 +339,7 @@ class _GrowthPageState extends State<GrowthPage> {
         head: growth['head'],
       ),
     ).toList();
-    growthFile = Growth(items: _records);
+    growthFile = Growth(items: _records, name: childName);
     final pdfFile = await PdfGrowthApi.generate(growthFile);
     PdfApi.openFile(pdfFile);
   }
@@ -348,6 +357,7 @@ class GrowthRecord {
 
 class Growth {
   final List<GrowthRecord> items;
+  final String name;
 
-  Growth({required this.items});
+  Growth({required this.items, required this.name});
 }
