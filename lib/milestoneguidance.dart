@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,6 +9,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/theme/colors.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 
@@ -175,12 +179,16 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
 
     print('milestones/'+url);
     String downloadURL = await FirebaseStorage.instance
-        .ref('milestones/'+url)
+        .ref('milestones/'+url+'.pdf')
         .getDownloadURL();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    Dio dio = Dio();
 
-    print("asdf");
     print(downloadURL);
     // Within your widgets:
     // Image.network(downloadURL);
   }
+
+
 }
