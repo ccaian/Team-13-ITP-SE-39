@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:growth_app/dischargechecklist.dart';
+import 'package:growth_app/main.dart';
 import 'package:growth_app/nav.dart';
 import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/theme/colors.dart';
@@ -11,16 +13,23 @@ import 'package:growth_app/forum.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ParentHome extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _ParentHomeState createState() => _ParentHomeState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _ParentHomeState extends State<ParentHome> {
+class _HomePageState extends State<HomePage> {
   String? userName = "";
   String? temp = "";
   String? temp2 = "";
   String babyName = "";
+  String? famName = "";
+  String? childName = "";
+  bool admin = false;
+  final shape =
+  RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+
+  final _selectFamily = FirebaseFirestore.instance.collection('user');
 
   @override
   void initState() {
@@ -29,8 +38,6 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Widget build(BuildContext context) {
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Container(
       color: mainTheme,
       width: double.infinity,
@@ -40,12 +47,8 @@ class _ParentHomeState extends State<ParentHome> {
           Positioned(
               top: 80,
               left: 30,
-              child: Text("Welcome!\n" + userName!,
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ))),
+              child: welcomeText()
+          ),
           Positioned(
             top: 40,
             right: -10,
@@ -82,31 +85,19 @@ class _ParentHomeState extends State<ParentHome> {
                     child: buildText(context),
                   ),
                   Positioned(
+                      top: MediaQuery.of(context).size.width * 0.28,
+                      left: MediaQuery.of(context).size.width * 0.11,
+                      child: adminManagingText()
+                  ),
+                  Positioned(
                       top: MediaQuery.of(context).size.width * 0.38,
                       left: MediaQuery.of(context).size.width * 0.10,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: secondaryTheme,
-                          minimumSize: Size(200, 50),
-                          shape: shape,
-                        ),
-                        child: new Text(
-                          "Change Baby",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {
-                          _navigateAndDisplaySelection(context);
-                        },
-                      )),
+                      child: selectButton()
+                  ),
                   Positioned(
                       top: MediaQuery.of(context).size.height * 0.3,
                       left: MediaQuery.of(context).size.width * 0.05,
-
+                      child:SingleChildScrollView(
                       child: Column(
                         children: <Widget>[
                           Row(
@@ -144,8 +135,7 @@ class _ParentHomeState extends State<ParentHome> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        "/wellbeingsurvey");
+                                    wellbeingRouting();
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width *
@@ -238,7 +228,7 @@ class _ParentHomeState extends State<ParentHome> {
                                 ),
                               ])
                         ],
-                      )),
+                      ))),
                 ])),
           )
         ],
@@ -247,16 +237,8 @@ class _ParentHomeState extends State<ParentHome> {
   }
 
   Widget buildText(BuildContext context) =>
-      Text("Currently Managing\n" + babyName,
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ));
+      mainText();
 
-  void _navigateAndDisplaySelection(BuildContext context) async {
-    Navigator.of(context).pushNamed("/selectChild");
-  }
 
   Future loadPagePref() async {
     List newList = [];
@@ -264,23 +246,121 @@ class _ParentHomeState extends State<ParentHome> {
         await SharedPreferences.getInstance();
     temp = sharedPreferences.getString('email');
     temp2 = sharedPreferences.getString('ChildName');
-    FirebaseDatabase.instance
-        .reference()
-        .child("user")
-        .orderByChild("email")
-        .equalTo(temp)
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      List tempList = childMap.values.toList();
-      childMap.forEach((key, value) {
-        newList.add(value['firstName'].toString());
-      });
+    QuerySnapshot querySnapshot = await _selectFamily.where('email', isEqualTo: temp).get();
+
+    // Get data from docs and convert map to List
+    newList = querySnapshot.docs.map((doc) => doc.data()).toList();
       setState(() {
-        userName = newList[0].toString();
+        userName = newList[0]['firstName'].toString();
         babyName = temp2!;
+        admin = sharedPreferences.getBool('admin')!;
+        famName = sharedPreferences.getString('Fam');
+        childName = sharedPreferences.getString('ChildName');
       });
-    });
+  }
+
+  welcomeText(){
+    if(admin == true){
+      return new Text("Welcome!\nAdmin" ,
+          style: TextStyle(
+            fontSize: 26.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    } else{
+      return new Text("Welcome!\n" + userName!,
+          style: TextStyle(
+            fontSize: 26.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }
+  }
+
+  selectButton(){
+    if(admin == true){
+      return new ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: secondaryTheme,
+          minimumSize: Size(200, 50),
+          shape: shape,
+        ),
+        child: new Text(
+          "Change Family",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.normal,
+            color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed("/selectFamily");
+        },
+      );
+    }else{
+      return new ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: secondaryTheme,
+          minimumSize: Size(200, 50),
+          shape: shape,
+        ),
+        child: new Text(
+          "Change Baby",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.normal,
+            color: Colors.white,
+          ),
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed("/selectChild");
+        },
+      );
+    }
+  }
+
+  mainText(){
+    if(admin == true){
+      return new Text("Currently Viewing\nFamily of " + famName!,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }else{
+      return new Text("Currently Viewing\n" + babyName,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ));
+    }
+  }
+
+  adminManagingText(){
+    if (admin == true){
+      return new Text(
+          "Currently Monitoring Child: \n" +
+              childName.toString(),
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Colors.white,
+          ));
+    }else{
+      return new Text("");
+    }
+
+  }
+
+  wellbeingRouting(){
+    if (admin == true){
+      Navigator.of(context).pushNamed(
+          "/scorehistory");
+    }else{
+      Navigator.of(context).pushNamed(
+          "/wellbeingsurvey");
+    }
   }
 }

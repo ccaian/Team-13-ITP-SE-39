@@ -1,16 +1,8 @@
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:growth_app/growthpage.dart';
-import 'package:growth_app/nav.dart';
-import 'package:growth_app/parentselchild.dart';
 import 'package:growth_app/theme/colors.dart';
-import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -33,6 +25,8 @@ class _AddChildPageState extends State<AddChild> {
   TextEditingController _nameControl = TextEditingController();
   TextEditingController _nricControl = TextEditingController();
   SingingCharacter? _character = SingingCharacter.Male;
+
+  final _addChild = FirebaseFirestore.instance.collection('child');
 
   @override
   Widget build(BuildContext context) {
@@ -185,9 +179,7 @@ class _AddChildPageState extends State<AddChild> {
                                     }
                                       print('Submit');
                                       getPrefAddChild(name, nric);
-                                      Navigator.push(context, new MaterialPageRoute(
-                                          builder: (context) => ParentSelChild()
-                                      ));
+                                      Navigator.of(context).pushNamed("/selectChild");
                                   },
                                 )
                             ))
@@ -204,7 +196,7 @@ class _AddChildPageState extends State<AddChild> {
       ),
     );
   }
-
+/*
   void addChildData(name, nric) {
     _childRef.push().set({
       'name': _nameControl.text,
@@ -212,16 +204,25 @@ class _AddChildPageState extends State<AddChild> {
       'parent': parentEmail,
       'gender' : gender
     });
+  }*/
+
+  void _addChildData() {
+    _addChild.add({
+      'name': _nameControl.text,
+      'nric': _nricControl.text,
+      'parent': parentEmail,
+      'gender': gender
+    });
   }
 
   Future getPrefAddChild(name, nric) async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    temp = sharedPreferences.getString('Session')!;
+    temp = sharedPreferences.getString('email')!;
     setState(() {
       parentEmail = temp;
     });
-    print("In getPref "+parentEmail);
-    addChildData(name, nric);
+    _addChildData();
+    //addChildData(name, nric);
   }
 
 }

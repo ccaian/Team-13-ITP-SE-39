@@ -1,13 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:growth_app/home.dart';
 import 'package:growth_app/milkpage.dart';
 import 'package:growth_app/photopage.dart';
 import 'package:growth_app/setting.dart';
 import 'package:growth_app/theme/colors.dart';
-import 'package:growth_app/userprofile.dart';
-import 'package:growth_app/workerhome.dart';
-
 import 'growthpage.dart';
 
 
@@ -20,7 +16,7 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
   List<Widget> _widgetOptions = <Widget>[
-    WorkerHome(),
+    HomePage(),
     PhotoPage(),
     GrowthPage(),
     MilkPage(),

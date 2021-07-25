@@ -5,8 +5,8 @@ import 'package:growth_app/nav.dart';
 import 'package:growth_app/scorehistory.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
-import 'package:growth_app/workerdischargechecklist.dart';
-import 'package:growth_app/forum.dart';
+import 'package:growth_app/unused/workerdischargechecklist.dart';
+import 'package:growth_app/workerforum.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -115,7 +115,9 @@ class _WorkerHomeState extends State<WorkerHome> {
                     Positioned(
                         top: MediaQuery.of(context).size.height * 0.35,
                         left: MediaQuery.of(context).size.width * 0.05,
-                        child: Column(
+                        child:SingleChildScrollView(
+                            child:
+                        Column(
                           children: <Widget>[
                             Row(
                                 mainAxisAlignment:
@@ -130,7 +132,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                           0.425,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.17,
+                                              0.15,
                                       child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               25.0, 20.0, 0.0, 0.0),
@@ -161,7 +163,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                           0.425,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.17,
+                                              0.15,
                                       child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               25.0, 20.0, 20.0, 20.0),
@@ -201,7 +203,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                           0.425,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.17,
+                                              0.15,
                                       child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               25.0, 20.0, 0.0, 0.0),
@@ -232,7 +234,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                           0.425,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.17,
+                                              0.15,
                                       child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               25.0, 20.0, 20.0, 20.0),
@@ -251,7 +253,7 @@ class _WorkerHomeState extends State<WorkerHome> {
                                   ),
                                 ])
                           ],
-                        )),
+                        ))),
                   ])),
             )
           ],

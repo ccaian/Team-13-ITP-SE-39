@@ -144,8 +144,6 @@ class _PhotoDetailState extends State<PhotoDetail> {
                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                           content: Text("Photo Deleted!"),
                                         ));
-                                        Navigator.of(context)
-                                            .pushNamed("/photopage");
                                         Navigator.pop(context);
                                         });
                                     })
