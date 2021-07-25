@@ -21,15 +21,14 @@ class Forum extends StatefulWidget {
 }
 class _ForumState extends State<Forum> {
   var email;
-
+  bool isAdmin = false;
   String title = '';
   String description = '';
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final databaseReference = FirebaseDatabase.instance.reference().child("forum");
   CollectionReference posts = FirebaseFirestore.instance
-      .collection('forumposts')
-      ;
+      .collection('forumposts');
   @override
   void initState(){
     loadPagePref();
@@ -54,8 +53,23 @@ class _ForumState extends State<Forum> {
         child: Stack(
           children: <Widget>[
             Positioned(
+              top: 70,
+              left: 10,
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              ),
+
+
+
+            ),
+            Positioned(
                 top: 80,
-                left: 30,
+                left: 50,
                 child: Text(
                     "Forum Page",
                     style: TextStyle(
@@ -90,8 +104,7 @@ class _ForumState extends State<Forum> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           child: StreamBuilder(
-                            stream: posts
-                              .snapshots(),
+                            stream: posts.orderBy('date', descending: true).snapshots(),
                             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
                               //if (snapshot.connectionState == ConnectionState.done){
 
@@ -99,7 +112,7 @@ class _ForumState extends State<Forum> {
                               List forumposts = snapshot.data!.docs;
                               List<ForumPost> _posts = forumposts.map(
                                     (forumpost) => ForumPost(
-                                    id: 123,
+                                    id: forumpost.id,
                                     date: forumpost['date'],
                                     author: 'Admin',
                                     title: forumpost['title'],
@@ -110,7 +123,7 @@ class _ForumState extends State<Forum> {
                               return ListView.builder(
                                 itemCount: snapshot.data!.size,
                                 itemBuilder: (context, index){
-                                  return ForumCard(forumPost: _posts[index],);
+                                  return ForumCard(forumPost: _posts[index],isAdmin: isAdmin,);
                                 },
                               );
                               return Text("loading");
@@ -139,8 +152,7 @@ class _ForumState extends State<Forum> {
   }
 
   Widget buildFloatingActionButton(BuildContext context) {
-    print(email);
-    if (email=='darrellerjr@gmail.com'){
+    if (isAdmin){
       return FloatingActionButton(
         // isExtended: true,
         child: Icon(Icons.add),
@@ -258,6 +270,7 @@ class _ForumState extends State<Forum> {
     //Return String
     setState(() {
 
+      isAdmin = prefs.getBool('admin')!;
       email = prefs.getString('email');
     });
     print(email);

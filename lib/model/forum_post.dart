@@ -1,5 +1,5 @@
 class ForumPost {
-  final int id;
+  final String? id;
   final String author;
   final String date;
   final String title;

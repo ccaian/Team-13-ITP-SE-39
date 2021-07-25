@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,9 +35,8 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
       'First week of life',
       'First 1-2 months of life',
       'Your baby is now full term! ',
-      'Developmental milestones & guide',
-      'Discharge checklist',];
-    final numOfChapters = 9;
+      'Developmental milestones & guide'];
+    final numOfChapters = 8;
     final shape = RoundedRectangleBorder(
         borderRadius:  BorderRadius.circular(25)
     );
@@ -113,9 +113,11 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,20.0),
                       child: InkWell(
-                        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => MilestonePage(),
-                        )),
+                        onTap: () {
+                          String name = 'chapter'+(index+1).toString();
+                          print("test");
+                          downloadURLExample(name);
+                        },
                         child: new Container(
 
                           width: MediaQuery.of(context).size.width * 0.7,
@@ -169,5 +171,16 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
       ),
     );
   }
+  Future<void> downloadURLExample(String url) async {
 
+    print('milestones/'+url);
+    String downloadURL = await FirebaseStorage.instance
+        .ref('milestones/'+url)
+        .getDownloadURL();
+
+    print("asdf");
+    print(downloadURL);
+    // Within your widgets:
+    // Image.network(downloadURL);
+  }
 }

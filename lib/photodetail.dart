@@ -26,6 +26,7 @@ class PhotoDetail extends StatefulWidget {
 
 class _PhotoDetailState extends State<PhotoDetail> {
 
+  /****/
   FirebaseAuth auth = FirebaseAuth.instance;
 
   final photoNameEdit = TextEditingController();
@@ -46,8 +47,23 @@ class _PhotoDetailState extends State<PhotoDetail> {
         child: Stack(
           children: <Widget>[
             Positioned(
+              top: 70,
+              left: 10,
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              ),
+
+
+
+            ),
+            Positioned(
                 top: 80,
-                left: 30,
+                left: 50,
                 child: Text(
                     "Photo Detail",
                     style: TextStyle(
@@ -115,9 +131,20 @@ class _PhotoDetailState extends State<PhotoDetail> {
                     Positioned(
 
                         top: MediaQuery.of(context).size.height*0.52,
-                        left: MediaQuery.of(context).size.width*0.3,
+                        left: MediaQuery.of(context).size.width*0.2,
                         child: Container(
-                          child: Icon(Icons.edit,color: Color(0xff9397ca)),
+                          child: InkWell(
+                              onTap:(){
+                                widget.photos.where("filename", isEqualTo: widget.photo.filename)
+                                    .get().then((value) => {
+                                  value.docs.forEach((element) {
+                                    print(element.id);
+
+                                    updateDialog(context,element.id);
+                                  })
+                                });
+                              },
+                              child: Icon(Icons.edit,color: Color(0xff9397ca))),
                           height: MediaQuery.of(context).size.width*0.18,
                           width: MediaQuery.of(context).size.width*0.18,
                           decoration: BoxDecoration(
@@ -132,7 +159,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                     Positioned(
 
                         top: MediaQuery.of(context).size.height*0.52,
-                        left: MediaQuery.of(context).size.width*0.5,
+                        left: MediaQuery.of(context).size.width*0.42,
                         child: Container(
                           child: InkWell(
                               onTap:(){
@@ -164,7 +191,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                     Positioned(
 
                         top: MediaQuery.of(context).size.height*0.52,
-                        left: MediaQuery.of(context).size.width*0.7,
+                        left: MediaQuery.of(context).size.width*0.65,
                         child: InkWell(
                           onTap: ()async {
                             // Navigator.push(context, new MaterialPageRoute(
@@ -217,4 +244,92 @@ class _PhotoDetailState extends State<PhotoDetail> {
     );
   }
 
+  void updateDialog(BuildContext context,String id) {
+
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Edit Photo Post'),
+            content: Container(
+              height: MediaQuery.of(context).size.height* 0.3,
+              width: MediaQuery.of(context).size.width*0.4,
+              child: Column(
+                  children: [
+                    Container(
+
+                      height: MediaQuery.of(context).size.height* 0.1,
+                      width: MediaQuery.of(context).size.width*0.8,
+                      child: TextField(
+                        controller: titleController,
+                        decoration: InputDecoration(
+                          border: new OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              const Radius.circular(25),
+                            ),
+                          ),
+                          fillColor: secondaryTheme,
+                          labelText: 'Title',
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height* 0.2,
+                      width: MediaQuery.of(context).size.width*0.8,
+                      child: TextField(
+                        maxLines: 12,
+                        controller: descriptionController,
+                        decoration: InputDecoration(
+                          border: new OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              const Radius.circular(25),
+                            ),
+                          ),
+                          fillColor: secondaryTheme,
+                          labelText: 'Description',
+                        ),
+                      ),
+                    ),
+
+
+                  ]
+              ),
+            ),
+            actions: [
+
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text('Cancel'),
+              ),
+
+              TextButton(
+                onPressed: (){
+                  if (titleController.text.isEmpty || descriptionController.text.isEmpty){
+
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Please enter photo name or description"),
+                    ));
+                  }else{
+
+                    Navigator.pop(context, 'Cancel');
+                    editPhotoPost(titleController.text, descriptionController.text,id);
+                  }
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
+  editPhotoPost(String title, String description,String id){
+
+    widget.photos.doc(id).update({
+      "name": title,
+      "description": description,
+    });
+
+  }
 }

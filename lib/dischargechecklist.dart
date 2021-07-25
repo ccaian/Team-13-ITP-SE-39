@@ -70,8 +70,23 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       child: Stack(
         children: <Widget>[
           Positioned(
+            top: 70,
+            left: 10,
+            child: IconButton(
+              onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            ),
+            ),
+
+
+
+          ),
+          Positioned(
               top: 80,
-              left: 30,
+              left: 50,
               child: Text(
                   "Discharge Checklist",
                   style: TextStyle(

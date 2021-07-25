@@ -11,9 +11,7 @@ class FirebaseApi {
       Future.wait(refs.map((ref) => ref.getDownloadURL()).toList());
 
 
-
-
-  //get a list of the FIRST images in each week
+  /// firebase API
   static Future<List<FirebaseFile>> listWeek(String path) async {
     print("path here");
     print(path);

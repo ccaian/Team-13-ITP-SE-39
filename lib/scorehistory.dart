@@ -49,6 +49,21 @@ class _ScoreHistoryState extends State<ScoreHistory> {
           children: [
 
             Positioned(
+              top: 35,
+              left: 10,
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              ),
+
+
+
+            ),
+            Positioned(
               top: MediaQuery.of(context).size.height * 0.1,
               child: SizedBox(
 

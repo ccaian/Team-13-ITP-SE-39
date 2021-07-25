@@ -49,9 +49,25 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
           height: MediaQuery.of(context).size.height,
           child: Stack(
               children: <Widget>[
+
+                Positioned(
+                  top: 70,
+                  left: 10,
+                  child: IconButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }, icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  ),
+                  ),
+
+
+
+                ),
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.1,
-                  left: MediaQuery.of(context).size.width * 0.1,
+                  left: MediaQuery.of(context).size.width * 0.13,
                   child: Text(
                       "Wellbeing Survey",
                   style: TextStyle(
