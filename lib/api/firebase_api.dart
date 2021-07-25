@@ -9,7 +9,15 @@ import 'package:path_provider/path_provider.dart';
 class FirebaseApi {
   static Future<List<String>> _getDownloadLinks(List<Reference> refs) =>
       Future.wait(refs.map((ref) => ref.getDownloadURL()).toList());
+  static UploadTask? uploadFile(String destination, File file) {
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
 
+      return ref.putFile(file);
+    } on FirebaseException catch (e) {
+      return null;
+    }
+  }
 
   /// firebase API
   static Future<List<FirebaseFile>> listWeek(String path) async {

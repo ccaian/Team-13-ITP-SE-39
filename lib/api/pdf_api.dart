@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart';
+import 'package:http/http.dart';
 
 /// PdfApi generates a PDF file with the given data
 /// [name] is the generated file name chosen (e.g. growth.pdf, milk.pdf)

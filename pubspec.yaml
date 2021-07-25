@@ -39,8 +39,10 @@ dependencies:
   get: ^4.1.4
   circular_profile_avatar: ^1.0.8
   uuid: ^3.0.4
-  dio: ^4.0.0
-
+  file_picker: ^3.0.3
+  path: ^1.7.0
+  flutter_document_picker: ^4.0.0
+  syncfusion_flutter_pdfviewer: ^19.2.48-beta
   percent_indicator: "^2.1.7+2"
   # open pdf document
   open_file: ^3.1.0

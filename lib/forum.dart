@@ -251,7 +251,6 @@ class _ForumState extends State<Forum> {
   }
 
   void addForumPost(String title, String description){
-    print("chocolate 2");
     DateTime now = new DateTime.now();
     posts.add({
 
