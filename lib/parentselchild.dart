@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'addChild.dart';
 
 
 
@@ -25,11 +24,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
   Map keyMap = Map<String, String>();
 
   final _selectChild = FirebaseFirestore.instance.collection('child');
-
-
-  DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
-  DatabaseReference growth = FirebaseDatabase.instance.reference().child('growth');
-  DatabaseReference checklist = FirebaseDatabase.instance.reference().child('checklist');
 
   @override
   void initState(){
@@ -225,6 +219,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
     });
   }
 
+  //dialog box when deleting a baby
   void _deleteDialog(BuildContext context, int index, String nric) {
     showDialog(
         context: context,

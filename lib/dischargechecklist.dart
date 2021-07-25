@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,8 +22,6 @@ var userKey;
 var progressColor = Colors.redAccent;
 
 final firestoreInstance = FirebaseFirestore.instance;
-final _selectUser = FirebaseFirestore.instance.collection('user');
-final _selectChecklist = FirebaseFirestore.instance.collection('checklist');
 
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
@@ -64,8 +61,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   double progress = 0;
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  final _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
   Color Colour = Color(0xfff2f2f2);
 
   @override
@@ -146,7 +141,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                           }if(progress < 100){
                                             progressColor = Colors.redAccent;
                                           }
-                                          if(progress == 100){
+                                          if(progress >= 100){
                                             progressColor = Colors.greenAccent;
                                           }
                                         });
@@ -261,12 +256,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   addCheckListData(result, user_email)  async {
     var discharge = firestoreInstance.collection('checklist').doc(user_email).collection('result');
-    DocumentReference doc_ref=firestoreInstance.collection('checklist').doc(user_email).collection('result').doc();
-    //var discharge = firestoreInstance.collection('checklist').doc(user_email).collection('results').doc();
-
-    DocumentSnapshot docSnap = await doc_ref.get();
-    var doc_id2 = docSnap.reference.id;
-    print(doc_id2);
     //save checklist state into firebase
     discharge.add({
       'email' : user_email,
@@ -293,9 +282,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
     checkListData = querySnapshot.docs.map((doc) => doc.data()).toList();
     tempKey = querySnapshot.docs.map((doc) => doc.id).toList();
-    print('in get checklist');
       //here i iterate and create the list of objects
-        //tempKey = checkListData.id;
         checkList.add(checkListData[0]['checklist1']);
         checkList.add(checkListData[0]['checklist2']);
         checkList.add(checkListData[0]['checklist3']);
@@ -307,6 +294,9 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
         checkList.add(checkListData[0]['checklist9']);
         tempProg = checkListData[0]['progress'].toDouble();
         userKey = tempKey[0];
+        if(tempProg == 100){
+          progressColor = Colors.greenAccent;
+        }
       setState(() {
         checkList = checkList;
         userKey = tempKey;
@@ -459,7 +449,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       isTrue = querySnapshot.docs.map((doc) => doc.data()).toList();
       if(isTrue.length > 0){
         updateCheckList(userKey[0].toString(),result, user_email);
-        print(userKey[0]);
       }else{
         addCheckListData(result, user_email);
       }
