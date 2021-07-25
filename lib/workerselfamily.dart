@@ -153,18 +153,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           familyNameList[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
-        /*trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                //   _onDeleteItemPressed(index);
-                deleteUser(parentEmailList[items]);
-                setState(() {
-                  litems.removeAt(items);
-                  litems.join(', ');
-                });
-              })
-        ]),*/
         children: [
           for (var i = 0; i < babyNRICList.length; i++)
             newTile(babyNRICList[i], items)
@@ -299,7 +287,16 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           parentEmailList.add(userData[i]["email"]);
         });
       } else if (search == '') {
+        setState(() {
+          familyNameList = [];
+          selectedBabyList = [];
+          parentEmailList = [];
+          userData = [];
+        });
         //if no search result run default all user display
+        _getListOfFamilies().then((value) => _getFamilyNameList());
+        getBabyData();
+
       }
     }
   }
