@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
@@ -29,7 +28,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   @override
   void initState() {
-    _getListOfFamilies().then((value) => _getfamilyNameList());
+    _getListOfFamilies().then((value) => _getFamilyNameList());
     getBabyData();
     super.initState();
   }
@@ -154,18 +153,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           familyNameList[items] + " Family",
           style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
         ),
-        /*trailing: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                //   _onDeleteItemPressed(index);
-                deleteUser(parentEmailList[items]);
-                setState(() {
-                  litems.removeAt(items);
-                  litems.join(', ');
-                });
-              })
-        ]),*/
         children: [
           for (var i = 0; i < babyNRICList.length; i++)
             newTile(babyNRICList[i], items)
@@ -228,11 +215,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       );
     }
   }
-
+  //convert's baby nric into baby name and returns string
  String getBabyName(nric){
-   String babyName= '';
-   print('in get Baby Name');
-   print(nric);
+   String babyName = '';
     for(var i = 0; i < babyData.length; i++){
       if( nric == babyData[i]['nric']){
         babyName = babyData[i]['name'].toString();
@@ -240,10 +225,10 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
         babyName = 'No Children';
       }
     }
-    print(babyName);
     return babyName;
   }
 
+  //get all users excluding admins into list
   Future<void> _getListOfFamilies() async {
     // Get docs from collection reference
     QuerySnapshot querySnapshot = await _selectFamily.where('admin', isEqualTo: false).get();
@@ -254,13 +239,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     setState(() {
       userData = userData;
     });
-    print('in New get fam');
   }
 
-  Future<void> _getfamilyNameList() async{
-    print('in New get fam part 2');
-
-    print(userData);
+  //create list with first and last name
+  //create list with only user emails
+  Future<void> _getFamilyNameList() async{
     for(var i = 0; i < userData.length; i++){
       familyNameList.add(userData[i]['firstName'] + ' ' + userData[i]['lastName']);
       parentEmailList.add(userData[i]["email"]);
@@ -270,28 +253,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       parentEmailList = parentEmailList;
     });
   }
-
-  makeKeyList() {
-    //save key linked with user emails into [keyMap]
-    FirebaseDatabase.instance
-        .reference()
-        .child("user")
-        .orderByChild("email")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        if (value['admin'] == false) {
-          keyMap[value['email'].toString()] = key;
-        }
-      });
-      setState(() {
-        keyMap = keyMap;
-      });
-    });
-  }
-
+  //create list with all baby data
   Future<void> getBabyData() async{
     // Get docs from collection reference
     QuerySnapshot querySnapshot = await _selectChild.get();
@@ -302,7 +264,6 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     setState(() {
       babyData = babyData;
     });
-    print('in New get fam');
   }
 
 
@@ -313,9 +274,11 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
       selectedBabyList = [];
       parentEmailList = [];
     });
+    //search all users with inputted first name
     for (var i = 0; i < userData.length; i++) {
       if (search.toUpperCase() ==
-          userData[i]["firstName"].toString().toUpperCase()) {
+          userData[i]["firstName"].toString().toUpperCase().trim()) {
+        // set listview to just found users
         setState(() {
           familyNameList.add(userData[i]["firstName"].toString() +
               ' ' +
@@ -324,8 +287,16 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           parentEmailList.add(userData[i]["email"]);
         });
       } else if (search == '') {
+        setState(() {
+          familyNameList = [];
+          selectedBabyList = [];
+          parentEmailList = [];
+          userData = [];
+        });
         //if no search result run default all user display
-        //generateListOfFamily();
+        _getListOfFamilies().then((value) => _getFamilyNameList());
+        getBabyData();
+
       }
     }
   }

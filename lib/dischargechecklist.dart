@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,12 +12,17 @@ class DischargeCheckListPage extends StatefulWidget {
   _DischargeCheckListPageState createState() => _DischargeCheckListPageState();
 }
 String?  userEmail = "";
+List checkListData = [];
 List<String> checkList = [];
 List<String> checkListSaved = [];
+List isTrue = [];
 bool admin = false;
 var isEnabled = false;
 var userKey;
 var progressColor = Colors.redAccent;
+
+final firestoreInstance = FirebaseFirestore.instance;
+
 class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   void initState(){
     super.initState();
@@ -56,8 +61,6 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   double progress = 0;
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  final _checklistRef = FirebaseDatabase.instance.reference().child('checklist');
   Color Colour = Color(0xfff2f2f2);
 
   @override
@@ -153,7 +156,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                           }if(progress < 100){
                                             progressColor = Colors.redAccent;
                                           }
-                                          if(progress == 100){
+                                          if(progress >= 100){
                                             progressColor = Colors.greenAccent;
                                           }
                                         });
@@ -198,7 +201,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                                       );
                                       Navigator.of(context).pushNamed("/homePage");
                                       //send checklist state and user email to save function
-                                      addCheckListData(checkList, userEmail);
+                                      checkIfDocExists(checkList, userEmail);
                                     },
                                   )))
                         ]),
@@ -266,70 +269,55 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
     );
   }
 
-  addCheckListData(result, user_email)  {
+  addCheckListData(result, user_email)  async {
+    var discharge = firestoreInstance.collection('checklist').doc(user_email).collection('result');
     //save checklist state into firebase
-    FirebaseDatabase.instance
-        .reference()
-        .child("checklist")
-        .orderByChild("email")
-        .equalTo(user_email)
-        .once()
-        .then((DataSnapshot snapshot) {
-          //if data doesn't already exists save into new
-        if(snapshot.value == null){
-          _checklistRef.push().set({
-            'email' : user_email,
-            'checklist1': result[0],
-            'checklist2': result[1],
-            'checklist3': result[2],
-            'checklist4': result[3],
-            'checklist5': result[4],
-            'checklist6': result[5],
-            'checklist7': result[6],
-            'checklist8': result[7],
-            'checklist9': result[8],
-            'progress': progress
-          });
-          //if data does exists run update function
-        } else{
-          updateCheckList(result, user_email);
-        }
-
+    discharge.add({
+      'email' : user_email,
+      'checklist1': result[0],
+      'checklist2': result[1],
+      'checklist3': result[2],
+      'checklist4': result[3],
+      'checklist5': result[4],
+      'checklist6': result[5],
+      'checklist7': result[6],
+      'checklist8': result[7],
+      'checklist9': result[8],
+      'progress': progress,
+      'id': discharge.doc().id
     });
   }
 
-  getCheckListData(user_email)  {
+  getCheckListData(user_email)  async {
     var tempKey;
     double tempProg = 0;
-    FirebaseDatabase.instance
-        .reference()
-        .child("checklist")
-        .orderByChild("email")
-        .equalTo(user_email.toString())
-        .once()
-        .then((DataSnapshot snapshot) {
+    final _selectChecklist = FirebaseFirestore.instance.collection('checklist');
+
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('checklist').doc(user_email).collection('result').get();
+
+    checkListData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    tempKey = querySnapshot.docs.map((doc) => doc.id).toList();
       //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        tempKey = key;
-        checkList.add(value['checklist1']);
-        checkList.add(value['checklist2']);
-        checkList.add(value['checklist3']);
-        checkList.add(value['checklist4']);
-        checkList.add(value['checklist5']);
-        checkList.add(value['checklist6']);
-        checkList.add(value['checklist7']);
-        checkList.add(value['checklist8']);
-        checkList.add(value['checklist9']);
-        tempProg = value['progress'].toDouble();
-      });
+        checkList.add(checkListData[0]['checklist1']);
+        checkList.add(checkListData[0]['checklist2']);
+        checkList.add(checkListData[0]['checklist3']);
+        checkList.add(checkListData[0]['checklist4']);
+        checkList.add(checkListData[0]['checklist5']);
+        checkList.add(checkListData[0]['checklist6']);
+        checkList.add(checkListData[0]['checklist7']);
+        checkList.add(checkListData[0]['checklist8']);
+        checkList.add(checkListData[0]['checklist9']);
+        tempProg = checkListData[0]['progress'].toDouble();
+        userKey = tempKey[0];
+        if(tempProg == 100){
+          progressColor = Colors.greenAccent;
+        }
       setState(() {
         checkList = checkList;
         userKey = tempKey;
         progress = tempProg;
       });
       getCheckListState();
-    });
   }
 
   getCheckListState() {
@@ -407,21 +395,25 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
 
   }
 
-  updateCheckList(result, user_email) {
+  updateCheckList(key,result, user_email) async {
     //update based on firebase key
-    _checklistRef.child(userKey).update(
-        {'email' : user_email,
-          'checklist1': result[0],
-          'checklist2': result[1],
-          'checklist3': result[2],
-          'checklist4': result[3],
-          'checklist5': result[4],
-          'checklist6': result[5],
-          'checklist7': result[6],
-          'checklist8': result[7],
-          'checklist9': result[8],
-          'progress': progress
-        });
+    FirebaseFirestore.instance
+        .collection('checklist')
+        .doc(userEmail)
+        .collection('result')
+        .doc(key)
+        .update({'email' : user_email,
+      'checklist1': result[0],
+      'checklist2': result[1],
+      'checklist3': result[2],
+      'checklist4': result[3],
+      'checklist5': result[4],
+      'checklist6': result[5],
+      'checklist7': result[6],
+      'checklist8': result[7],
+      'checklist9': result[8],
+      'progress': progress
+    });
 
   }
 
@@ -463,4 +455,21 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       checkList = [];
     });
   }
+
+   checkIfDocExists(result, user_email) async {
+      // Get reference to Firestore collection
+      final _selectChecklist = FirebaseFirestore.instance.collection('checklist').doc(user_email).collection('result');
+
+      QuerySnapshot querySnapshot = await _selectChecklist.where('email', isEqualTo: userEmail).get();
+      isTrue = querySnapshot.docs.map((doc) => doc.data()).toList();
+      if(isTrue.length > 0){
+        updateCheckList(userKey[0].toString(),result, user_email);
+      }else{
+        addCheckListData(result, user_email);
+      }
+
+  }
+
+
+
 }

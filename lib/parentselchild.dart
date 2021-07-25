@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'addChild.dart';
 
 
 
@@ -20,14 +19,11 @@ class _ParentSelChildState extends State<ParentSelChild> {
   List listOfChildren = [];
   String name = '';
   String username ='';
+  List keys = [];
+  List growthKey = [];
   Map keyMap = Map<String, String>();
 
   final _selectChild = FirebaseFirestore.instance.collection('child');
-
-
-  DatabaseReference reference = FirebaseDatabase.instance.reference().child('child');
-  DatabaseReference growth = FirebaseDatabase.instance.reference().child('growth');
-  DatabaseReference checklist = FirebaseDatabase.instance.reference().child('checklist');
 
   @override
   void initState(){
@@ -130,12 +126,9 @@ class _ParentSelChildState extends State<ParentSelChild> {
                   IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () {
-                       /* //remove baby from generated list
-                        deleteChild(listOfChildren[items]);
-                        setState(() {
-                          listOfChildren.removeAt(items);
-                          listOfChildren.join(', ');
-                        });*/
+                        //remove baby from generated list
+                        _deleteDialog(context, items,listOfChildren[items]['nric']);
+
                       }
                   )
                 ]
@@ -184,47 +177,80 @@ class _ParentSelChildState extends State<ParentSelChild> {
     //makeList();
   }
 
-  makeKeyList(){
-    //save key linked with child nric into [keyMap]
-    FirebaseDatabase.instance
-        .reference()
-        .child("child")
-        .orderByChild("nric")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-          keyMap[value['nric'].toString()] = key;
+  void deleteChild(int index, String nric) async {
+    print(nric);
+    _selectChild.doc(keys[index]).delete();
+    for(var i =0; i < growthKey.length; i++){
+      FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(growthKey[i]).delete();
+    }
 
-      });
-      setState(() {
-        keyMap = keyMap;
-      });
-    });
+    FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc().delete();
+
+    keys.removeAt(index);
+    keys.join(', ');
+
+
   }
 
-  void deleteChild(String nric) async {
+  getGrowthId(int index, String nric) async{
     var tempKey;
-    keyMap.forEach((key, value) {
-      if(nric == key){
-        tempKey =value;
-      }
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').get();
+
+    tempKey = querySnapshot.docs.map((doc) => doc.id).toList();
+
+    setState(() {
+      growthKey = tempKey;
     });
-    await reference.child(tempKey).remove();
-    //await growth.child(getGrowthKey(nric)).remove();
+    deleteChild(index, nric);
   }
 
   Future<void> _getChildList() async {
+    var tempKey;
     // Get docs from collection reference
     QuerySnapshot querySnapshot = await _selectChild.where('parent', isEqualTo: username).get();
 
     // Get data from docs and convert map to List
     listOfChildren = querySnapshot.docs.map((doc) => doc.data()).toList();
+    tempKey = querySnapshot.docs.map((doc) => doc.id).toList();
 
     setState(() {
       listOfChildren = listOfChildren;
+      keys = tempKey;
     });
+  }
+
+  //dialog box when deleting a baby
+  void _deleteDialog(BuildContext context, int index, String nric) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Delete Child'),
+              content: Text('Are you sure you want to delete?'),
+              actions: <Widget>[
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: secondaryTheme,
+                    ),
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: mainTheme,
+                    ),
+                    child: Text('Ok'),
+                    onPressed: () {
+                      getGrowthId(index,listOfChildren[index]['nric']);
+                      setState(() {
+                        listOfChildren.removeAt(index);
+                        listOfChildren.join(', ');
+                        Navigator.pop(context);
+                      });
+                    }),
+              ]);
+        });
   }
 }
 
