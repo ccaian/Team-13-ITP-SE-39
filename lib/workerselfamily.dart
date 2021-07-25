@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,57 +24,62 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
   String selectedChildNRIC = '';
   TextEditingController _searchControl = TextEditingController();
 
+  final _selectFamily = FirebaseFirestore.instance.collection('user');
+  final _selectChild = FirebaseFirestore.instance.collection('child');
+
   @override
   void initState() {
-    generateListOfFamily();
+    _getListOfFamilies().then((value) => _getfamilyNameList());
+    getBabyData();
     super.initState();
   }
 
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
-          return false;
-        },
-        child: Material(
-          child: Container(
-            color: mainTheme,
-            width: double.infinity,
-            height: double.infinity,
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                    top: 80,
-                    left: 30,
-                    child: Text("Select Family",
-                        style: TextStyle(
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ))),
-                Positioned(
-                  top: 40,
-                  right: -10,
-                  child: new Image.asset('assets/healthcare.png', width: 140.0),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(25.0),
-                                topLeft: Radius.circular(25.0)),
-                          ),
-                          child: Scaffold(
-                              body: Container(
+      return false;
+    },
+    child: Material(
+      child: Container(
+        color: mainTheme,
+        width: double.infinity,
+        height: double.infinity,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+                top: 80,
+                left: 30,
+                child: Text("Select Family",
+                    style: TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ))),
+            Positioned(
+              top: 40,
+              right: -10,
+              child: new Image.asset('assets/healthcare.png', width: 140.0),
+            ),
+            Positioned(
+              bottom: 0,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(25.0),
+                            topLeft: Radius.circular(25.0)),
+                      ),
+                      child: Scaffold(
+                          body: Container(
                             child: Column(
                               children: <Widget>[
                                 Padding(padding: EdgeInsets.only(top: 10)),
                                 TextFormField(
+
                                   decoration: InputDecoration(
                                     suffixIcon: IconButton(
                                       onPressed: () {
@@ -81,6 +87,7 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                         searchBarList(_searchControl.text);
                                       },
                                       icon: Icon(Icons.clear),
+
                                     ),
                                     fillColor: Colors.grey,
                                     border: new OutlineInputBorder(
@@ -92,6 +99,8 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                   ),
                                   controller: _searchControl,
                                   onFieldSubmitted: (val) {
+                                    //search function that will repopulate [familyNameList]
+                                    // With inputted text from [_searchControl.text]
                                     searchBarList(_searchControl.text);
                                   },
                                 ),
@@ -101,48 +110,44 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
                                         itemCount: familyNameList.length,
                                         itemBuilder:
                                             (BuildContext ctxt, int index) {
+                                          //returns a list of all children linked with "parent's email'
                                           selectedBabyList = validateChildren(
                                               parentEmailList[index]);
                                           return new GestureDetector(
-                                            //You need to make my child interactive
-
                                             child: new Column(
                                               children: <Widget>[
-                                                //new Image.network(video[index]),
                                                 new Padding(
-                                                    padding: new EdgeInsets.all(
-                                                        16.0)),
-                                                buildText(
-                                                    index, selectedBabyList),
+                                                    padding:
+                                                    new EdgeInsets.all(16.0)),
+                                                //builds expanded listview
+                                                buildText(index, selectedBabyList),
                                               ],
                                             ),
                                           );
-                                          //new Text(litems[index]);
                                         })),
                                 new Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Expanded(
                                           child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            80.0, 0, 80.0, 20.0),
-                                      ))
+                                            padding: const EdgeInsets.fromLTRB(
+                                                80.0, 0, 80.0, 20.0),
+                                          ))
                                     ]),
                               ],
                             ),
                           ))),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ));
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    ));
   }
 
   Widget buildText(int items, List babyNRICList) {
-    String parentEmail = parentEmailList[items].toString();
-
+    //String parentEmail = parentEmailList[items].toString();
     return Card(
       child: ExpansionTile(
         title: Text(
@@ -171,12 +176,15 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   List validateChildren(String parentEmail) {
     List listOfChildrenEmail = [];
+    //searches for children based on user's email address
     for (var i = 0; i < babyData.length; i++) {
       if (parentEmail == babyData[i]["parent"]) {
+        //returns a list of nric for the selected parent
         listOfChildrenEmail.add(babyData[i]["nric"].toString());
       }
     }
     if (listOfChildrenEmail.length == 0) {
+      //if returned list is empty return string 'no children'
       listOfChildrenEmail.add('No Children');
     }
     return listOfChildrenEmail;
@@ -184,7 +192,9 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
 
   newTile(String title, int index) {
     String babyTitle = '';
+    //convert's nric into the name of baby
     babyTitle = getBabyName(title);
+    // if user has no children disable onPress
     if (babyTitle == 'No Children') {
       return new ListTile(
         title: Text(
@@ -200,8 +210,14 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
         onTap: () async {
+          //upon selecting, save selected user data into shared preferences
+          // [parentemail] is selected user's email
+          // ['Fam'] is the family name
+          // save child details into shared preferences
+          // ['ChildNRIC'] is nric of selected child
+          // ['ChildName'] is name of selected child
           final SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
+          await SharedPreferences.getInstance();
           sharedPreferences.setString('Fam', familyNameList[index]);
           sharedPreferences.setString('parentemail', parentEmailList[index]);
           sharedPreferences.setString('ChildNRIC', title);
@@ -213,34 +229,50 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     }
   }
 
-  generateListOfFamily() {
-    List<String> newList = [];
-    List temp = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("user")
-        .orderByChild("email")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        if (value['admin'] == false) {
-          newList.add(value['firstName'].toString() +
-              " " +
-              value['lastName'].toString());
-          temp.add(value);
-        }
-      });
-      setState(() {
-        familyNameList = newList;
-        userData = temp;
-      });
+ String getBabyName(nric){
+   String babyName= '';
+   print('in get Baby Name');
+   print(nric);
+    for(var i = 0; i < babyData.length; i++){
+      if( nric == babyData[i]['nric']){
+        babyName = babyData[i]['name'].toString();
+      }else if(nric == 'No Children'){
+        babyName = 'No Children';
+      }
+    }
+    print(babyName);
+    return babyName;
+  }
+
+  Future<void> _getListOfFamilies() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _selectFamily.where('admin', isEqualTo: false).get();
+
+    // Get data from docs and convert map to List
+    userData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    setState(() {
+      userData = userData;
     });
-    getBabyData();
+    print('in New get fam');
+  }
+
+  Future<void> _getfamilyNameList() async{
+    print('in New get fam part 2');
+
+    print(userData);
+    for(var i = 0; i < userData.length; i++){
+      familyNameList.add(userData[i]['firstName'] + ' ' + userData[i]['lastName']);
+      parentEmailList.add(userData[i]["email"]);
+    }
+    setState(() {
+      familyNameList = familyNameList;
+      parentEmailList = parentEmailList;
+    });
   }
 
   makeKeyList() {
+    //save key linked with user emails into [keyMap]
     FirebaseDatabase.instance
         .reference()
         .child("user")
@@ -260,62 +292,22 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
     });
   }
 
-  getBabyData() {
-    List temp = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("child")
-        .orderByChild("parent")
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      childMap.forEach((key, value) {
-        temp.add(value);
-      });
-      setState(() {
-        babyData = temp;
-      });
+  Future<void> getBabyData() async{
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _selectChild.get();
+
+    // Get data from docs and convert map to List
+    babyData = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    setState(() {
+      babyData = babyData;
     });
-    getParentEmail();
+    print('in New get fam');
   }
 
-  getParentEmail() {
-    List<String> tempList = [];
-    FirebaseDatabase.instance
-        .reference()
-        .child("user")
-        .orderByChild("email")
-        .once()
-        .then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      List temp = childMap.values.toList();
-      childMap.forEach((key, value) {
-        if (value['admin'] == false) {
-          tempList.add(value['email'].toString());
-        }
-      });
-      setState(() {
-        parentEmailList = tempList;
-      });
-    });
-    makeKeyList();
-  }
-
-  String getBabyName(String babyNRIC) {
-    String babyName = '';
-    for (var i = 0; i < babyData.length; i++) {
-      if (babyNRIC == babyData[i]["nric"].toString()) {
-        babyName = babyData[i]["name"].toString();
-      }
-    }
-    if (babyName == '') {
-      babyName = 'No Children';
-    }
-    return babyName;
-  }
 
   searchBarList(search) {
+    //regenerate a [familyNameList] based on searched results
     setState(() {
       familyNameList = [];
       selectedBabyList = [];
@@ -328,25 +320,14 @@ class _WorkerSelFamilyState extends State<WorkerSelFamily> {
           familyNameList.add(userData[i]["firstName"].toString() +
               ' ' +
               userData[i]["lastName"].toString());
+          //regenerate parent's email list to generate listview of parent's children
           parentEmailList.add(userData[i]["email"]);
         });
       } else if (search == '') {
-        generateListOfFamily();
+        //if no search result run default all user display
+        //generateListOfFamily();
       }
     }
   }
 
-/*void deleteUser(String email) async {
-    var tempKey;
-    keyMap.forEach((key, value) {
-      if (email == key) {
-        tempKey = value;
-      }
-    });
-    await _userRef.child(tempKey).remove().then((_) async {
-    });
-    */ /*await FirebaseAuth.instance.currentUser!.delete().then((_) async {
-        print('Account Deleted');
-      });*/ /*
-  }*/
 }

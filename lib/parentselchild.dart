@@ -36,7 +36,11 @@ class _ParentSelChildState extends State<ParentSelChild> {
   }
 
   Widget build(BuildContext context) {
-    return Material(
+    return WillPopScope(
+        onWillPop: () async {
+      return false;
+    },
+    child: Material(
       child: Container(
         color: mainTheme,
         width: double.infinity,
@@ -108,7 +112,7 @@ class _ParentSelChildState extends State<ParentSelChild> {
           ],
         ),
       ),
-    );
+    ));
 
 
   }
