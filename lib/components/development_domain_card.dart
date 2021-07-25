@@ -7,6 +7,7 @@ class DevelopmentDomainCard extends StatelessWidget {
     required this.developmentDomainRecord,
   }) : super(key: key);
 
+
   final DevelopmentDomain developmentDomainRecord;
 
   @override

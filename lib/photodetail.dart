@@ -28,6 +28,9 @@ class _PhotoDetailState extends State<PhotoDetail> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
+  final photoNameEdit = TextEditingController();
+
+  final photoDescriptionEdit = TextEditingController();
   var email;
   @override
   void initState() {
@@ -107,22 +110,6 @@ class _PhotoDetailState extends State<PhotoDetail> {
                             )
                         )
 
-                    ),
-                    Positioned(
-
-                        top: MediaQuery.of(context).size.height*0.52,
-                        left: MediaQuery.of(context).size.width*0.1,
-                      child: Container(
-                        child: Icon(Icons.share,color: Color(0xff9397ca)),
-                        height: MediaQuery.of(context).size.width*0.18,
-                        width: MediaQuery.of(context).size.width*0.18,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xff9397ca),width: 2),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width*0.2))
-                        ),
-
-                      )
                     ),
 
                     Positioned(

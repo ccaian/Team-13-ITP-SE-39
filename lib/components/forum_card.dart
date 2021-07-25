@@ -1,7 +1,6 @@
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growth_app/controllers/forumcontroller.dart';
 import 'package:growth_app/milestonepage.dart';
 import 'package:growth_app/model/forum_post.dart';
 import 'package:growth_app/model/survey_question.dart';

@@ -96,7 +96,7 @@ class _WellbeingSurveyState extends State<WellbeingSurvey> {
                                       builder: (context, constraints) => Container(
                                         width: constraints.maxWidth * controller.length,
                                         decoration: BoxDecoration(
-                                          color: Color(0xfffddd5c),
+                                          color: secondaryTheme,
                                           borderRadius: BorderRadius.circular(25),
                                         ),
                                       ),

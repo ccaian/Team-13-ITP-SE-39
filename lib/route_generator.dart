@@ -7,6 +7,7 @@ import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
 import 'package:growth_app/milestoneguidance.dart';
 import 'package:growth_app/parentselchild.dart';
+import 'package:growth_app/photopage.dart';
 import 'package:growth_app/profilesetup.dart';
 import 'package:growth_app/register.dart';
 import 'package:growth_app/resetpassword.dart';
@@ -15,7 +16,7 @@ import 'package:growth_app/setting.dart';
 import 'package:growth_app/userprofile.dart';
 import 'package:growth_app/wellbeingscore.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
-import 'package:growth_app/workerforum.dart';
+import 'package:growth_app/forum.dart';
 import 'package:growth_app/workerselfamily.dart';
 
 class RouteGenerator {
@@ -57,6 +58,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Forum());
       case '/scorehistory':
         return MaterialPageRoute(builder: (_) => ScoreHistory());
+      case '/photopage':
+        return MaterialPageRoute(builder: (_) => PhotoPage());
       default:
         return _errorRoute();
     }

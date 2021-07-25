@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import 'components/forum_card.dart';
-import 'controllers/forumcontroller.dart';
 import 'model/forum_post.dart';
 
 class Forum extends StatefulWidget {
