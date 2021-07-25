@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   bool admin = false;
   final shape =
   RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+
+  final _selectFamily = FirebaseFirestore.instance.collection('user');
 
   @override
   void initState() {
@@ -243,27 +246,17 @@ class _HomePageState extends State<HomePage> {
         await SharedPreferences.getInstance();
     temp = sharedPreferences.getString('email');
     temp2 = sharedPreferences.getString('ChildName');
-    FirebaseDatabase.instance
-        .reference()
-        .child("user")
-        .orderByChild("email")
-        .equalTo(temp)
-        .once()
-        .then((DataSnapshot snapshot) {
-      //here i iterate and create the list of objects
-      Map<dynamic, dynamic> childMap = snapshot.value;
-      List tempList = childMap.values.toList();
-      childMap.forEach((key, value) {
-        newList.add(value['firstName'].toString());
-      });
+    QuerySnapshot querySnapshot = await _selectFamily.where('email', isEqualTo: temp).get();
+
+    // Get data from docs and convert map to List
+    newList = querySnapshot.docs.map((doc) => doc.data()).toList();
       setState(() {
-        userName = newList[0].toString();
+        userName = newList[0]['firstName'].toString();
         babyName = temp2!;
         admin = sharedPreferences.getBool('admin')!;
         famName = sharedPreferences.getString('Fam');
         childName = sharedPreferences.getString('ChildName');
       });
-    });
   }
 
   welcomeText(){
