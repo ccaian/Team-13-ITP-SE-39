@@ -1,52 +1,52 @@
-import '../growthpage.dart';
 import 'dart:io';
+import '../milkpage.dart';
 import 'pdf_api.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-/// PdfGrowthApi builds the Growth file data and format
-class PdfGrowthApi {
+/// PdfMilkApi builds the Milk file data and format
+class PdfMilkApi {
   /// Main function that builds the document
-  /// Receives the data from the Growth page and passes on the data [growthFile] to other functions
-  static Future<File> generate(Growth growthFile) async {
+  /// Receives the data from the Milk page and passes on the data [milkFile] to other functions
+  static Future<File> generate(Milk milkFile) async {
     final pdf = Document();
 
     pdf.addPage(MultiPage(
       build: (context) => [
         SizedBox(height: 1 * PdfPageFormat.cm),
-        buildTitle(growthFile),
-        buildGrowth(growthFile),
+        buildTitle(milkFile),
+        buildMilk(milkFile),
       ],
     ));
 
-    return PdfApi.saveDocument(name: 'growth.pdf', pdf: pdf);
+    return PdfApi.saveDocument(name: 'milk.pdf', pdf: pdf);
   }
   /// Builds the header section of the document
-  static Widget buildTitle(Growth growthFile) => Column(
+  static Widget buildTitle(Milk milkFile) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        'Growth Measurements For ' + growthFile.name,
+        'Milk Volume Pumped For ' + milkFile.family,
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
       SizedBox(height: 0.8 * PdfPageFormat.cm),
     ],
   );
-  /// Builds the body section of the document with the retrieved data from [growthFile]
-  static Widget buildGrowth(Growth growthFile) {
+  /// Builds the body section of the document with the retrieved data from [milkFile]
+  static Widget buildMilk(Milk milkFile) {
     final headers = [
-      'Week No',
-      'Weight (kg)',
-      'Height/Length (cm)',
-      'Head Circumference (cm)',
+      'Title & Timestamp',
+      'Left Volume',
+      'Right Volume',
+      'Total Volume',
     ];
-    /// Map the data from [growthFile] to loop through list into the Table format
-    final data = growthFile.items.map((item) {
+    /// Map the data from [milkFile] to loop through list into the Table format
+    final data = milkFile.items.map((item) {
       return [
-        "Week " + item.week,
-        item.weight + " kg",
-        item.height + " cm",
-        item.head + " cm",
+        item.title + "\n" + item.timestamp.toString(),
+        item.leftBreast + " ml",
+        item.rightBreast + " ml",
+        item.totalVolume + " ml",
       ];
     }).toList();
     /// Returns the table with the data mapped

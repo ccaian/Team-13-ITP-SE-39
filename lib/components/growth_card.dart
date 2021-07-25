@@ -1,29 +1,29 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:growth_app/milkpage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../growthpage.dart';
 
-/// MilkCard exist to populate the data retrieved from Firestore
+/// GrowthCard exist to populate the data retrieved from Firestore
 /// for visualisation on the UI with Update and Delete functions for each data
-class MilkCard extends StatelessWidget {
-  /// [milkRecord] to parse the data for each card for visualisation on the UI
+class GrowthCard extends StatelessWidget {
+  /// [growthRecord] to parse the data for each card for visualisation on the UI
   /// [isAdmin] parse to identify if this user has admin access or not
-  /// [email] parse to get parent's email address
-  const MilkCard({
+  /// [nric] parse to get baby's identification number
+  const GrowthCard({
     Key? key,
-    required this.milkRecord,
+    required this.growthRecord,
     required this.isAdmin,
-    required this.email,
+    required this.nric,
   }) : super(key: key);
 
-  final MilkRecord milkRecord;
+  final GrowthRecord growthRecord;
   final isAdmin;
-  final email;
+  final nric;
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +32,12 @@ class MilkCard extends StatelessWidget {
         new Container(
             margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
             width: MediaQuery.of(context).size.width * 0.85,
-            height: MediaQuery.of(context).size.height * 0.22,
+            height: MediaQuery.of(context).size.height * 0.27,
             child: new Stack(children: [
               Positioned(
                 top: MediaQuery.of(context).size.width * 0.05,
                 left: MediaQuery.of(context).size.width * 0.05,
-                child: Text(milkRecord.title,
+                child: Text("Week " + growthRecord.week,
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -45,27 +45,15 @@ class MilkCard extends StatelessWidget {
                     )),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.06,
+                top: MediaQuery.of(context).size.height * 0.10,
                 left: MediaQuery.of(context).size.width * 0.05,
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: Text(
-                    milkRecord.timestamp.toString(),
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.grey[700],
-                      )),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
-                left: MediaQuery.of(context).size.width * 0.05,
-                child: Container(
-                  height: MediaQuery.of(context).size.width * 0.8,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                      "Total Milk Volume: " + milkRecord.totalVolume + " ml",
+                      "Weight: " +
+                          growthRecord.weight +
+                          " kg",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey[700],
@@ -73,7 +61,37 @@ class MilkCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
+                top: MediaQuery.of(context).size.height * 0.13,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: Container(
+                  height: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Text(
+                      "Height/Length: " +
+                          growthRecord.height +
+                          " cm",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.grey[700],
+                      )),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.16,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: Container(
+                  height: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Text(
+                      "Head Circumference: " + growthRecord.head + " cm",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.grey[700],
+                      )),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.15,
                 left: MediaQuery.of(context).size.width * 0.05,
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.3,
@@ -102,7 +120,7 @@ class MilkCard extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.11,
+                top: MediaQuery.of(context).size.height * 0.15,
                 left: MediaQuery.of(context).size.width * 0.25,
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.3,
@@ -148,23 +166,22 @@ class MilkCard extends StatelessWidget {
     );
   }
 
-  /// Update Dialog for Milk Volume Pumped Data.
+  /// Update Dialog for Growth Measurements Data.
   ///
-  /// Has [key], [title], [leftBreast], and [rightBreast] fields to parse param to update function.
+  /// Has [key], [week], [height], [weight], and [head] fields to parse param to update function.
   void updateDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
-    final _titleController = TextEditingController(text: milkRecord.title);
-    final _leftBreastController =
-        TextEditingController(text: milkRecord.leftBreast);
-    final _rightBreastController =
-        TextEditingController(text: milkRecord.rightBreast);
+    final _weekControl = TextEditingController(text: growthRecord.week);
+    final _weightControl = TextEditingController(text: growthRecord.weight);
+    final _heightControl = TextEditingController(text: growthRecord.height);
+    final _headControl = TextEditingController(text: growthRecord.head);
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Edit Milk Volume Pumped'),
+            title: const Text('Edit Growth Measurements'),
             content: Stack(
               overflow: Overflow.visible,
               children: <Widget>[
@@ -183,11 +200,16 @@ class MilkCard extends StatelessWidget {
                               ),
                             ),
                             fillColor: Colors.red,
-                            labelText: 'Title',
+                            labelText: 'Week No',
+                            hintText: 'e.g. 10',
                           ),
+                          inputFormatters: <TextInputFormatter>[
+                            // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                           validator: (val) =>
-                              val!.isEmpty ? 'Enter title' : null,
-                          controller: _titleController,
+                              val!.isEmpty ? 'Enter week number' : null,
+                          controller: _weekControl,
                         ),
                       ),
                       Padding(
@@ -200,15 +222,15 @@ class MilkCard extends StatelessWidget {
                               ),
                             ),
                             fillColor: Colors.red,
-                            labelText: 'Left Volume Pumped (ml)',
+                            labelText: 'Weight (kg)',
                           ),
                           inputFormatters: <TextInputFormatter>[
                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           ],
                           validator: (val) => val!.isEmpty
-                              ? 'Enter left volume pumped in ml'
+                              ? 'Enter weight in kg'
                               : null,
-                          controller: _leftBreastController,
+                          controller: _weightControl,
                         ),
                       ),
                       Padding(
@@ -221,15 +243,36 @@ class MilkCard extends StatelessWidget {
                               ),
                             ),
                             fillColor: Colors.red,
-                            labelText: 'Right Volume Pumped (ml)',
+                            labelText: 'Height/Length (cm)',
+                            hintText: 'e.g. 50',
                           ),
                           inputFormatters: <TextInputFormatter>[
                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           ],
                           validator: (val) => val!.isEmpty
-                              ? 'Enter right volume pumped in ml'
+                              ? 'Enter height/length in cm'
                               : null,
-                          controller: _rightBreastController,
+                          controller: _heightControl,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            labelText: 'Head Circumference (cm)',
+                            hintText: 'e.g. 30',
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                          ],
+                          validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
+                          controller: _headControl,
                         ),
                       ),
                       Padding(
@@ -254,10 +297,11 @@ class MilkCard extends StatelessWidget {
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     _updateData(
-                                        milkRecord.id.toString(),
-                                        _titleController.text,
-                                        _leftBreastController.text,
-                                        _rightBreastController.text);
+                                        growthRecord.id.toString(),
+                                        _weekControl.text,
+                                        _weightControl.text,
+                                        _heightControl.text,
+                                        _headControl.text);
                                     Navigator.pop(context);
                                   }
                                 },
@@ -274,13 +318,13 @@ class MilkCard extends StatelessWidget {
         });
   }
 
-  /// Dialog to confirm the deletion of Milk Volume Pumped Data. [Parent]
+  /// Dialog to confirm the deletion of Growth Measurements Data. [Parent]
   void _deleteData(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text('Delete Milk Record'),
+              title: Text('Delete Growth Measurements'),
               content: Text('Are you sure you want to delete?'),
               actions: <Widget>[
                 ElevatedButton(
@@ -297,18 +341,16 @@ class MilkCard extends StatelessWidget {
                     ),
                     child: Text('Ok'),
                     onPressed: () {
-                      FirebaseFirestore.instance.collection('milk').doc(email).collection('records')
-                          .doc(milkRecord.id.toString())
-                          .delete()
-                          .then((_) {
-                      });
+                      FirebaseFirestore.instance.collection('growth').doc(nric).collection('records')
+                          .doc(growthRecord.id.toString())
+                          .delete();
                       Navigator.pop(context);
                     }),
               ]);
         });
   }
 
-  /// Dialog to confirm the deletion of Milk Volume Pumped Data. [Admin]
+  /// Dialog to confirm the deletion of Growth Measurements Data. [Admin]
   ///
   /// Dialog with a Form to accept Admin Pin for confirmation of deletion.
   void _adminDelete(BuildContext context) async{
@@ -319,7 +361,7 @@ class MilkCard extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              title: Text('Delete Milk Record'),
+              title: Text('Delete Growth Measurements'),
               content: Text('Are you sure you want to delete?'),
               actions: <Widget>[
                 Form(
@@ -363,7 +405,7 @@ class MilkCard extends StatelessWidget {
                                 child: Text('Delete'),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    _verifyPIN(milkRecord.id.toString(),
+                                    _verifyPIN(growthRecord.id.toString(),
                                         _pinController.text, context);
                                   }
                                 }),
@@ -373,24 +415,19 @@ class MilkCard extends StatelessWidget {
         });
   }
 
-  /// Update Milk Volume Pumped Data.
+  /// Update Growth Measurements Data.
   ///
-  /// Params [key], [title], [leftBreast], [rightBreast], [totalVolume], and [timestamp] to update the database.
-  void _updateData(String id, String title, String leftBreast, String rightBreast) async {
-    var left = double.parse(leftBreast);
-    var right = double.parse(rightBreast);
-    var totalVolume = (left + right).toString();
-
-    FirebaseFirestore.instance.collection('milk').doc(email).collection('records').doc(id).update({
-      "title": title,
-      "leftBreast": leftBreast,
-      "rightBreast": rightBreast,
-      "totalVolume": totalVolume,
-      "timestamp": DateTime.now()
+  /// Params [key], [week], [weight], [height], and [head] to update the database.
+  void _updateData(String id, String week, String weight, String height, String head) async {
+    FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(id).update({
+      "week": week,
+      "weight": weight,
+      "height": height,
+      "head": head,
     });
   }
 
-  /// Delete Milk Volume Pumped Data. [Admin]
+  /// Delete Growth Measurements Data. [Admin]
   ///
   /// Accepts [key] : to delete the correct data,
   /// [pin] : to verify with the admin pin stored in SharedPreferences
@@ -407,7 +444,7 @@ class MilkCard extends StatelessWidget {
     /// If the hashed pin in SharedPreferences matches the hashed pin input, delete record
     /// If the hashed pin in SharedPreferences does not match the hashed pin input, prompt error message
     if (adminPin == hashedPin) {
-      FirebaseFirestore.instance.collection('milk').doc(email).collection('records')
+      FirebaseFirestore.instance.collection('growth').doc(nric).collection('records')
           .doc(key)
           .delete();
       Navigator.of(context).pop();

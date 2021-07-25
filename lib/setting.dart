@@ -22,119 +22,159 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     final shape =
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
-    return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(children: <Widget>[
-        FittedBox(
-          child: Image.asset(
-            'assets/loginsplash.png',
-            width: 400,
-            height: 380,
-          ),
-          fit: BoxFit.fill,
+    return Material(
+        child: Container(
+      color: mainTheme,
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(children: <Widget>[
+        Positioned(
+            top: 80,
+            left: 30,
+            child: Text("Settings",
+                style: TextStyle(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ))),
+        Positioned(
+          top: 40,
+          right: -10,
+          child: new Image.asset('assets/milkbottle.png', width: 140.0),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(80.0, 15.0, 80.0, 0.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,
-                      minimumSize: Size(50, 50),
-                      shape: shape,
-                    ),
-                    child: Text(
-                      "Update Personal Details",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed("/userProfile");
-                    },
-                  )))
-        ]),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.fromLTRB(80.0, 15.0, 80.0, 0.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.blueAccent,
-                    minimumSize: Size(50, 50),
-                    shape: shape,
-                  ),
-                  child: Text(
-                    "Change Password",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/changePassword');
-                  },
-                )),
-          )
-        ]),
-        SizedBox(height: 0.0),
-        !_isAdmin
-            ? const SizedBox.shrink()
-            : Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                Widget>[
-                Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.fromLTRB(80.0, 15.0, 80.0, 0.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blueAccent,
-                          minimumSize: Size(50, 50),
-                          shape: shape,
-                        ),
-                        child: Text(
-                          "Change Admin PIN",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/changeAdminPIN');
-                        },
-                      )),
-                )
-              ]),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.fromLTRB(80.0, 10.0, 80.0, 0.0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: secondaryTheme,
-                      minimumSize: Size(50, 50),
-                      shape: shape,
-                    ),
-                    child: Text(
-                      "Logout",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
-                      ),
-                    ),
-                    onPressed: () {
-                      logout();
-                    },
-                  )))
-        ])
+        Positioned(
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.7,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(25.0),
+                    topLeft: Radius.circular(25.0)),
+              ),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      80.0, 15.0, 80.0, 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: mainTheme,
+                                      minimumSize: Size(50, 50),
+                                      shape: shape,
+                                    ),
+                                    child: Text(
+                                      "Update Personal Details",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pushNamed("/userProfile");
+                                    },
+                                  )))
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    80.0, 15.0, 80.0, 0.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: mainTheme,
+                                    minimumSize: Size(50, 50),
+                                    shape: shape,
+                                  ),
+                                  child: Text(
+                                    "Change Password",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pushNamed('/changePassword');
+                                  },
+                                )),
+                          )
+                        ]),
+                    SizedBox(height: 0.0),
+                    !_isAdmin
+                        ? const SizedBox.shrink()
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                                Expanded(
+                                  child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          80.0, 15.0, 80.0, 0.0),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: mainTheme,
+                                          minimumSize: Size(50, 50),
+                                          shape: shape,
+                                        ),
+                                        child: Text(
+                                          "Change Admin PIN",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pushNamed('/changeAdminPIN');
+                                        },
+                                      )),
+                                )
+                              ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      80.0, 10.0, 80.0, 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: secondaryTheme,
+                                      minimumSize: Size(50, 50),
+                                      shape: shape,
+                                    ),
+                                    child: Text(
+                                      "Logout",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      logout();
+                                    },
+                                  )))
+                        ])
+                  ]),
+            ))
       ]),
     ));
   }
