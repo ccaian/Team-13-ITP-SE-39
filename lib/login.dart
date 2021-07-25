@@ -214,9 +214,11 @@ class _LoginPageState extends State<LoginPage> {
           print(element.id);
 
           /// check if the value 'adminPin' exist
-          if (element['adminPin'] != null) {
+          try {
             prefs.setString('adminPin', element['adminPin']);
-            print(element['adminPin']);
+          }
+          catch (e){
+            print(e);
           }
         });
 
