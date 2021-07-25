@@ -192,6 +192,7 @@ class _ForumState extends State<Forum> {
                         width: MediaQuery.of(context).size.width*0.8,
                         child: TextField(
                           maxLines: 12,
+
                           onChanged: (val) {
                             setState(() => description);
                           },

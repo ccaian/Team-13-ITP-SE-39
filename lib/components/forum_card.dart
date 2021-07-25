@@ -229,6 +229,8 @@ class ForumCard extends StatelessWidget {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
 
+    titleController.text = forumPost.title;
+    descriptionController.text = forumPost.description;
     showDialog(
         context: context,
         builder: (BuildContext context) {
