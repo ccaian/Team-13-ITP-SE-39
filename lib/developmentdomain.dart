@@ -31,6 +31,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
     return Material(
       child: Container(
         color: mainTheme,
@@ -57,14 +58,19 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
 
             Positioned(
                 top: 150,
-                left: 50,
-                child: TextButton(
+                left: 40,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: secondaryTheme,
+                    minimumSize: Size(50, 50),
+                    shape: shape,
+                  ),
                   child: new Text(
                     "Milestone Guidance",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
                       color: Colors.white,
                     ),
                   ),

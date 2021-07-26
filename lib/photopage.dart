@@ -46,6 +46,8 @@ class _PhotoPageState extends State<PhotoPage> {
     ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     if (nric!=null){
       FirebaseApi.listWeek(nric+'/');
+      print("NRIC");
+      print(nric);
       futureFiles = FirebaseApi.listWeek(nric+'/');
     }
 
@@ -200,7 +202,7 @@ class _PhotoPageState extends State<PhotoPage> {
 
                                                           Navigator.pop(context);
                                                           Navigator.push(context, new MaterialPageRoute(
-                                                            builder: (context) => UploadPhoto(refUrl: email+'/'+albumNameController.text.replaceAll(' ', '_'))
+                                                            builder: (context) => UploadPhoto(refUrl: nric+'/'+albumNameController.text.replaceAll(' ', '_'))
                                                         ));},
                                                         child: const Text('OK'),
                                                       ),
@@ -283,10 +285,10 @@ class _PhotoPageState extends State<PhotoPage> {
 
   getNRIC() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-
     setState(() {
       nric = prefs.getString('ChildNRIC');
+      print("NRIC");
+      print(nric);
 
     });
   }

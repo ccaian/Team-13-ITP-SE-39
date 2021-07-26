@@ -46,6 +46,7 @@ class _MilestoneGuidanceState extends State<MilestoneGuidance> {
   @override
   Widget build(BuildContext context) {
 
+    ErrorWidget.builder = (FlutterErrorDetails details) => Container();
     guidance = FirebaseFirestore.instance.collection('milestones');
     return Material(
       child: Container(
