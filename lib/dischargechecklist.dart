@@ -256,7 +256,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
                           style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
 
                       )
