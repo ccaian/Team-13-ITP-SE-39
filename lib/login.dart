@@ -21,137 +21,168 @@ class _LoginPageState extends State<LoginPage> {
   /// Email Regex Expression
   RegExp emailRegExp = new RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: new SingleChildScrollView(
-          //padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(children: <Widget>[
-              FittedBox(
-                child: new Image.asset(
-                  'assets/loginsplash.png',
-                  width: 400,
-                  height: 380,
-                ),
-                fit: BoxFit.fill,
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
+    return Material(
+        child: Container(
+            color: mainTheme,
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(children: <Widget>[
+              Positioned(
+                  top: 80,
+                  left: 30,
+                  child: Text("Welcome Back!",
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ))),
+              Positioned(
+                top: 40,
+                right: -10,
+                child: new Image.asset('assets/healthcare.png', width: 140.0),
               ),
-              SizedBox(height: 20.0),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
-                  child: (TextFormField(
-                    initialValue: _email,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey,
-                      border: new OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          const Radius.circular(25),
-                        ),
-                      ),
-                      labelText: 'Email Address',
+              Positioned(
+                  bottom: 0,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.77,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(25.0),
+                          topLeft: Radius.circular(25.0)),
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (val) {
-                      if (val!.isEmpty) {
-                        return 'Enter an email address';
-                      } else if (!emailRegExp.hasMatch(val)) {
-                        return 'Enter a valid email address';
-                      } else {
-                        return null;
-                      }
-                    },
-                    onChanged: (val) {
-                      setState(() => _email = val.trim());
-                    },
-                  ))),
-              SizedBox(height: 20.0),
-              Padding(
-                  padding: const EdgeInsets.fromLTRB(40.0, 0.0, 40.0, 0),
-                  child: (TextFormField(
-                    initialValue: _password,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey,
-                      border: new OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          const Radius.circular(25),
-                        ),
-                      ),
-                      labelText: 'Password',
-                    ),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Enter your password' : null,
-                    onChanged: (val) {
-                      setState(() => _password = val.trim());
-                    },
-                  ))),
-              SizedBox(height: 20.0),
-              new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                  Widget>[
-                Expanded(
-                    child: Padding(
-                        padding: const EdgeInsets.fromLTRB(80.0, 0, 80.0, 0.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: secondaryTheme,
-                            minimumSize: Size(50, 50),
-                            shape: shape,
-                          ),
-                          child: new Text(
-                            "Log In",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.white,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(height: 20.0),
+                            Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    40.0, 0.0, 40.0, 0),
+                                child: (TextFormField(
+                                  initialValue: _email,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.grey,
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(25),
+                                      ),
+                                    ),
+                                    labelText: 'Email Address',
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (val) {
+                                    if (val!.isEmpty) {
+                                      return 'Enter an email address';
+                                    } else if (!emailRegExp.hasMatch(val)) {
+                                      return 'Enter a valid email address';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  onChanged: (val) {
+                                    setState(() => _email = val.trim());
+                                  },
+                                ))),
+                            SizedBox(height: 20.0),
+                            Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    40.0, 0.0, 40.0, 0),
+                                child: (TextFormField(
+                                  initialValue: _password,
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.grey,
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(25),
+                                      ),
+                                    ),
+                                    labelText: 'Password',
+                                  ),
+                                  validator: (val) => val!.isEmpty
+                                      ? 'Enter your password'
+                                      : null,
+                                  onChanged: (val) {
+                                    setState(() => _password = val.trim());
+                                  },
+                                ))),
+                            SizedBox(height: 20.0),
+                            new Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              80.0, 0, 80.0, 0.0),
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              primary: secondaryTheme,
+                                              minimumSize: Size(50, 50),
+                                              shape: shape,
+                                            ),
+                                            child: new Text(
+                                              "Log In",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.normal,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                authenticate(_email, _password);
+                                              }
+                                            },
+                                          )))
+                                ]),
+                            TextButton(
+                              child: new Text(
+                                "Register an Account",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pushNamed("/register");
+                              },
                             ),
-                          ),
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              authenticate(_email, _password);
-                            }
-                          },
-                        )))
-              ]),
-              TextButton(
-                child: new Text(
-                  "Register an Account",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/register");
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(80.0, 0.0, 80.0, 0.0),
-                child: TextButton(
-                  child: new Text(
-                    "Forgot Password",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.grey[700],
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  80.0, 0.0, 80.0, 0.0),
+                              child: TextButton(
+                                child: new Text(
+                                  "Forgot Password",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed("/resetPassword");
+                                },
+                              ),
+                            )
+                          ]),
                     ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/resetPassword");
-                  },
-                ),
-              )
-            ]),
-          ),
-        ));
+                  ))
+            ])));
   }
 
   /// Authenticate Function for authenticating user.
@@ -216,8 +247,7 @@ class _LoginPageState extends State<LoginPage> {
           /// check if the value 'adminPin' exist
           try {
             prefs.setString('adminPin', element['adminPin']);
-          }
-          catch (e){
+          } catch (e) {
             print(e);
           }
         });
