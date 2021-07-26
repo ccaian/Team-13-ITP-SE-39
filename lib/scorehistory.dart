@@ -49,10 +49,25 @@ class _ScoreHistoryState extends State<ScoreHistory> {
           children: [
 
             Positioned(
+              top: 35,
+              left: 10,
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              ),
+
+
+
+            ),
+            Positioned(
               top: MediaQuery.of(context).size.height * 0.1,
               child: SizedBox(
 
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height * 0.5,
                 width: MediaQuery.of(context).size.width,
                 child: StreamBuilder(
                   stream: scores
@@ -79,6 +94,70 @@ class _ScoreHistoryState extends State<ScoreHistory> {
               ),
             ),
 
+            Positioned(
+                left: MediaQuery.of(context).size.width*0.1,
+                top: MediaQuery.of(context).size.height*0.65,
+                child: Container(
+                  padding: EdgeInsets.all( MediaQuery.of(context).size.width*0.05),
+                  height: MediaQuery.of(context).size.height*0.15,
+                  width: MediaQuery.of(context).size.width*0.8,
+                  child: new Text(
+
+                    "10 or greater is possible depression\n\n13 or greater are more likely to suffer from a depressive illness",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.white,
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+
+                    color: mainTheme500,
+
+                    borderRadius: const BorderRadius.all(
+                      const Radius.circular(25),
+                    ),
+                  ),
+                )
+            ),
+
+            Align(
+                alignment: Alignment.bottomLeft,
+
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width*0.06, 0, 0, MediaQuery.of(context).size.width*0.03),
+                  child: TextButton(
+                    child: new Text(
+                      "Disclaimer",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Disclaimer'),
+                          content: const Text('The suggested results are not a substitute for clinical judgement. None of the  parties involved in the preparation of this shall be liable for any special consequences , or exemplary.'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Cancel'),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'OK'),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                )
+            ),
             Align(
                 alignment: Alignment.bottomCenter,
 

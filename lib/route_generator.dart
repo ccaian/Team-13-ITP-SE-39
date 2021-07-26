@@ -16,7 +16,7 @@ import 'package:growth_app/setting.dart';
 import 'package:growth_app/userprofile.dart';
 import 'package:growth_app/wellbeingscore.dart';
 import 'package:growth_app/wellbeingsurvey.dart';
-import 'package:growth_app/workerforum.dart';
+import 'package:growth_app/forum.dart';
 import 'package:growth_app/workerselfamily.dart';
 import 'package:growth_app/addChild.dart';
 import 'package:growth_app/nav.dart';

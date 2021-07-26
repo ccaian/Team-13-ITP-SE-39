@@ -33,14 +33,48 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        color: Color(0xff4C52A8),
+        color: mainTheme,
         width: double.infinity,
         height: double.infinity,
         child: Stack(
           children: <Widget>[
+
+            Positioned(
+              top: 70,
+              left: 10,
+              child: IconButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              ),
+              ),
+
+
+
+            ),
+
+            Positioned(
+                top: 150,
+                left: 50,
+                child: TextButton(
+                  child: new Text(
+                    "Milestone Guidance",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/milestoneGuideline');
+                  },
+                )),
             Positioned(
                 top: 80,
-                left: 30,
+                left: 50,
                 child: Text("Development Domain",
                     style: TextStyle(
                       fontSize: 26.0,
