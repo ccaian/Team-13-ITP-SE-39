@@ -21,7 +21,7 @@ class _GrowthPageState extends State<GrowthPage> {
   bool isAdmin = false;
   var nric;
   var childName;
-  int week = 0;
+  String week = '';
   double weight = 0;
   double height = 0;
   double head = 0;
@@ -139,135 +139,137 @@ class _GrowthPageState extends State<GrowthPage> {
                             content: Stack(
                               clipBehavior: Clip.none,
                               children: <Widget>[
-                                Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Week No',
-                                            hintText: 'e.g. 10',
+                            SingleChildScrollView(
+                            child: Form(
+                            key: _formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: new OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(25),
                                           ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                            FilteringTextInputFormatter.digitsOnly,
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter week number' : null,
-                                          onChanged: (val) {
-                                            setState(() => week = val as int);
-                                          },
-                                          controller: _weekControl,
                                         ),
+                                        fillColor: Colors.red,
+                                        labelText: 'Week No',
+                                        hintText: 'e.g. 10',
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Weight (kg)',
-                                            hintText: 'e.g. 5',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter weight in kg' : null,
-                                          onChanged: (val) {
-                                            setState(() => weight = val as double);
-                                          },
-                                          controller: _weightControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Height/Length (cm)',
-                                            hintText: 'e.g. 50',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter height/length in cm' : null,
-                                          onChanged: (val) {
-                                            setState(() => height = val as double);
-                                          },
-                                          controller: _heightControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Head Circumference (cm)',
-                                            hintText: 'e.g. 30',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
-                                          onChanged: (val) {
-                                            setState(() => head = val as double);
-                                          },
-                                          controller: _headControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row (
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: <Widget>[
-                                              ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    primary: secondaryTheme,
-                                                  ),
-                                                  child: Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  }),
-                                              SizedBox(width: 20),
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  primary: mainTheme,
-                                                ),
-                                                child: Text("Submit"),
-                                                onPressed: () async {
-                                                  if (_formKey.currentState!.validate()) {
-                                                    _addData();
-                                                  }
-                                                },
-                                              ),
-                                            ]
-                                        ),
-                                      ),
-                                    ],
+                                      inputFormatters: <TextInputFormatter>[
+                                        // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                      validator: (val) => val!.isEmpty ? 'Enter week number' : null,
+                                      onChanged: (val) {
+                                        setState(() => week = val);
+                                      },
+                                      controller: _weekControl,
+                                    ),
                                   ),
-                                ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: new OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(25),
+                                          ),
+                                        ),
+                                        fillColor: Colors.red,
+                                        labelText: 'Weight (kg)',
+                                        hintText: 'e.g. 5',
+                                      ),
+                                      inputFormatters: <TextInputFormatter>[
+                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                      ],
+                                      validator: (val) => val!.isEmpty ? 'Enter weight in kg' : null,
+                                      onChanged: (val) {
+                                        setState(() => weight = val as double);
+                                      },
+                                      controller: _weightControl,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: new OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(25),
+                                          ),
+                                        ),
+                                        fillColor: Colors.red,
+                                        labelText: 'Height/Length (cm)',
+                                        hintText: 'e.g. 50',
+                                      ),
+                                      inputFormatters: <TextInputFormatter>[
+                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                      ],
+                                      validator: (val) => val!.isEmpty ? 'Enter height/length in cm' : null,
+                                      onChanged: (val) {
+                                        setState(() => height = val as double);
+                                      },
+                                      controller: _heightControl,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                        border: new OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(
+                                            const Radius.circular(25),
+                                          ),
+                                        ),
+                                        fillColor: Colors.red,
+                                        labelText: 'Head Circumference (cm)',
+                                        hintText: 'e.g. 30',
+                                      ),
+                                      inputFormatters: <TextInputFormatter>[
+                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                      ],
+                                      validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
+                                      onChanged: (val) {
+                                        setState(() => head = val as double);
+                                      },
+                                      controller: _headControl,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row (
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: secondaryTheme,
+                                              ),
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              }),
+                                          SizedBox(width: 20),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              primary: mainTheme,
+                                            ),
+                                            child: Text("Submit"),
+                                            onPressed: () async {
+                                              if (_formKey.currentState!.validate()) {
+                                                _addData();
+                                              }
+                                            },
+                                          ),
+                                        ]
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            )
                               ],
                             ),
                           );
