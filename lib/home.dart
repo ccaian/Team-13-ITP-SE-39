@@ -244,7 +244,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userName = newList[0]['firstName'].toString();
         babyName = nameOfChild!;
-        getAdmin(sharedPreferences.getString('email')!);
+        admin = sharedPreferences.getBool('admin')!;
         famName = sharedPreferences.getString('Fam');
         childName = sharedPreferences.getString('ChildName');
       });
@@ -353,16 +353,5 @@ class _HomePageState extends State<HomePage> {
       Navigator.of(context).pushNamed(
           "/wellbeingsurvey");
     }
-  }
-
-  getAdmin(String email) async {
-    var temp;
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('user').where('email', isEqualTo: email).get();
-
-    temp = querySnapshot.docs.map((doc) => doc.id).toList();
-
-    setState(() {
-      admin = temp;
-    });
   }
 }
