@@ -132,38 +132,52 @@ class DevelopmentDomainCard extends StatelessWidget {
                 Form(
                   key: _formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(
-                          border: new OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(
-                              const Radius.circular(25),
-                            ),
-                          ),
-                          fillColor: secondaryTheme,
-                          labelText: 'Title',
-                        ),
-                        validator: (val) =>
-                            val!.isEmpty ? 'Enter a Title' : null,
-                        controller: _titleController,
-                      ),
-                      SizedBox(height: 10),
-                      TextFormField(
-                          decoration: InputDecoration(
-                            border: new OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                const Radius.circular(25),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: TextFormField(
+                              decoration: InputDecoration(
+                                fillColor: secondaryTheme,
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
+                                  ),
+                                ),
+                                labelText: 'Title',
                               ),
-                            ),
-                            fillColor: secondaryTheme,
-                            labelText: 'Description',
-                          ),
-                          validator: (val) =>
-                              val!.isEmpty ? 'Enter a description' : null,
-                          controller: _descriptionController,
-                          maxLines: 5,
-                          minLines: 3),
+                              validator: (val) =>
+                                  val!.isEmpty ? 'Enter a Title' : null,
+                              controller: _titleController,
+                            ))
+                          ]),
+                      SizedBox(height: 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              child: TextFormField(
+                                  decoration: InputDecoration(
+                                    fillColor: secondaryTheme,
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(25),
+                                      ),
+                                    ),
+                                    labelText: 'Description',
+                                  ),
+                                  validator: (val) => val!.isEmpty
+                                      ? 'Enter a description'
+                                      : null,
+                                  controller: _descriptionController,
+                                  maxLines: 5,
+                                  minLines: 3),
+                            )
+                          ]),
+                      SizedBox(height: 10),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -195,85 +209,7 @@ class DevelopmentDomainCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
-                TextFormField(
-                    decoration: InputDecoration(
-                      border: new OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          const Radius.circular(25),
-                        ),
-                      ),
-                      fillColor: secondaryTheme,
-                      labelText: 'Description',
-                    ),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Enter a description' : null,
-                    controller: _descriptionController,
-                    maxLines: 5,
-                    minLines: 3),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      TextFormField(
-                        decoration: InputDecoration(
-                          border: new OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(
-                              const Radius.circular(25),
-                            ),
-                          ),
-                          fillColor: secondaryTheme,
-                          labelText: 'Title',
-                        ),
-                        validator: (val) => val!.isEmpty ? 'Enter a Title' : null,
-                        controller: _titleController,
-                      ),
-                      SizedBox(height: 10),
-                      TextFormField(
-                          decoration: InputDecoration(
-                            border: new OutlineInputBorder(
-                              borderRadius: const BorderRadius.all(
-                                const Radius.circular(25),
-                              ),
-                            ),
-                            fillColor: secondaryTheme,
-                            labelText: 'Description',
-                          ),
-                          validator: (val) =>
-                          val!.isEmpty ? 'Enter a description' : null,
-                          controller: _descriptionController,
-                          maxLines: 5,
-                          minLines: 3),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: secondaryTheme,
-                                ),
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                }),
-                            SizedBox(width: 20),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: mainTheme,
-                                ),
-                                child: Text('Submit'),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _updateData(
-                                        developmentDomainRecord.id.toString(),
-                                        _titleController.text,
-                                        _descriptionController.text);
-                                    Navigator.of(context, rootNavigator: true).pop();
-                                  }
-                                }),
-                          ]),
-                    ],
-                  ),
-              ],
-            ),
+            ]),
           );
         });
   }
@@ -333,8 +269,10 @@ class DevelopmentDomainCard extends StatelessWidget {
                                 child: Text('Delete'),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    verifyPIN(developmentDomainRecord.id.toString(),
-                                        _pinController.text, context);
+                                    verifyPIN(
+                                        developmentDomainRecord.id.toString(),
+                                        _pinController.text,
+                                        context);
                                   }
                                 }),
                           ])

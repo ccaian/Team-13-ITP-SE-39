@@ -21,7 +21,7 @@ class _GrowthPageState extends State<GrowthPage> {
   bool isAdmin = false;
   var nric;
   var childName;
-  int week = 0;
+  String week = '';
   double weight = 0;
   double height = 0;
   double head = 0;
@@ -45,7 +45,8 @@ class _GrowthPageState extends State<GrowthPage> {
 
   @override
   Widget build(BuildContext context) {
-    records = firestoreInstance.collection('growth').doc(nric).collection('records');
+    records =
+        firestoreInstance.collection('growth').doc(nric).collection('records');
 
     return new Scaffold(
         resizeToAvoidBottomInset: false,
@@ -73,14 +74,8 @@ class _GrowthPageState extends State<GrowthPage> {
                 top: 190,
                 bottom: 0,
                 child: Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.7,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.7,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -90,25 +85,33 @@ class _GrowthPageState extends State<GrowthPage> {
                   child: Stack(
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                              0.0, 0.0, 0.0, 0.0),
-                          child: StreamBuilder (
-                            stream: records.orderBy('week', descending: true).snapshots(),
-                            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator());
+                          padding:
+                              const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          child: StreamBuilder(
+                            stream: records
+                                .orderBy('week', descending: true)
+                                .snapshots(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting)
+                                return Center(
+                                    child: CircularProgressIndicator());
                               List growthList = snapshot.data!.docs;
-                              List<GrowthRecord> _records = growthList.map(
+                              List<GrowthRecord> _records = growthList
+                                  .map(
                                     (growth) => GrowthRecord(
-                                  id: growth.id,
-                                  week: growth['week'],
-                                  weight: growth['weight'],
-                                  height: growth['height'],
-                                  head: growth['head'],
-                                ),
-                              ).toList();
+                                      id: growth.id,
+                                      week: growth['week'],
+                                      weight: growth['weight'],
+                                      height: growth['height'],
+                                      head: growth['head'],
+                                    ),
+                                  )
+                                  .toList();
                               return ListView.builder(
                                 itemCount: snapshot.data!.size,
-                                itemBuilder: (context, index){
+                                itemBuilder: (context, index) {
                                   return GrowthCard(
                                     growthRecord: _records[index],
                                     isAdmin: isAdmin,
@@ -117,8 +120,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                 },
                               );
                             },
-                          )
-                      )
+                          ))
                     ],
                   ),
                 ),
@@ -139,135 +141,182 @@ class _GrowthPageState extends State<GrowthPage> {
                             content: Stack(
                               clipBehavior: Clip.none,
                               children: <Widget>[
-                                Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Week No',
-                                            hintText: 'e.g. 10',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                            FilteringTextInputFormatter.digitsOnly,
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter week number' : null,
-                                          onChanged: (val) {
-                                            setState(() => week = val as int);
-                                          },
-                                          controller: _weekControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Weight (kg)',
-                                            hintText: 'e.g. 5',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter weight in kg' : null,
-                                          onChanged: (val) {
-                                            setState(() => weight = val as double);
-                                          },
-                                          controller: _weightControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Height/Length (cm)',
-                                            hintText: 'e.g. 50',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter height/length in cm' : null,
-                                          onChanged: (val) {
-                                            setState(() => height = val as double);
-                                          },
-                                          controller: _heightControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            border: new OutlineInputBorder(
-                                              borderRadius: const BorderRadius.all(
-                                                const Radius.circular(25),
-                                              ),
-                                            ),
-                                            fillColor: Colors.red,
-                                            labelText: 'Head Circumference (cm)',
-                                            hintText: 'e.g. 30',
-                                          ),
-                                          inputFormatters: <TextInputFormatter>[
-                                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                          ],
-                                          validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
-                                          onChanged: (val) {
-                                            setState(() => head = val as double);
-                                          },
-                                          controller: _headControl,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row (
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: <Widget>[
-                                              ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    primary: secondaryTheme,
-                                                  ),
-                                                  child: Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  }),
-                                              SizedBox(width: 20),
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  primary: mainTheme,
+                                SingleChildScrollView(
+                                  child: Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(25),
                                                 ),
-                                                child: Text("Submit"),
-                                                onPressed: () async {
-                                                  if (_formKey.currentState!.validate()) {
-                                                    _addData();
-                                                  }
-                                                },
                                               ),
-                                            ]
+                                              fillColor: Colors.red,
+                                              labelText: 'Week No',
+                                              hintText: 'e.g. 10',
+                                            ),
+                                            inputFormatters: <
+                                                TextInputFormatter>[
+                                              // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            validator: (val) => val!.isEmpty
+                                                ? 'Enter week number'
+                                                : null,
+                                            onChanged: (val) {
+                                              setState(() => week = val);
+                                            },
+                                            controller: _weekControl,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(25),
+                                                ),
+                                              ),
+                                              fillColor: Colors.red,
+                                              labelText: 'Weight (g)',
+                                              hintText: 'e.g. 5',
+                                            ),
+                                            inputFormatters: <
+                                                TextInputFormatter>[
+                                              WhitelistingTextInputFormatter(
+                                                  RegExp("[0-9.]")),
+                                            ],
+                                            validator: (val) {
+                                              if (val!.isEmpty) {
+                                                return ('Enter weight in g');
+                                              } else if (double.parse(val) <= 100) {
+                                                return ('Value cannot be less than 100g.');
+                                              } else if (double.parse(val) >= 2000) {
+                                                return ('Value cannot be more than 2000g.');
+                                              }
+                                            },
+                                            onChanged: (val) {
+                                              setState(
+                                                  () => weight = val as double);
+                                            },
+                                            controller: _weightControl,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(25),
+                                                ),
+                                              ),
+                                              fillColor: Colors.red,
+                                              labelText: 'Height/Length (cm)',
+                                              hintText: 'e.g. 50',
+                                            ),
+                                            inputFormatters: <
+                                                TextInputFormatter>[
+                                              WhitelistingTextInputFormatter(
+                                                  RegExp("[0-9.]")),
+                                            ],
+                                            validator: (val) {
+                                              if (val!.isEmpty) {
+                                                return ('Enter height/length in cm');
+                                              } else if (double.parse(val) <= 1) {
+                                                return ('Value cannot be less than 1cm.');
+                                              } else if (double.parse(val) >= 1000) {
+                                                return ('Value cannot be more than 1000cm.');
+                                              }
+                                            },
+                                            onChanged: (val) {
+                                              setState(
+                                                  () => height = val as double);
+                                            },
+                                            controller: _heightControl,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              border: new OutlineInputBorder(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(25),
+                                                ),
+                                              ),
+                                              fillColor: Colors.red,
+                                              labelText:
+                                                  'Head Circumference (cm)',
+                                              hintText: 'e.g. 30',
+                                            ),
+                                            inputFormatters: <
+                                                TextInputFormatter>[
+                                              WhitelistingTextInputFormatter(
+                                                  RegExp("[0-9.]")),
+                                            ],
+                                            validator: (val) {
+                                              if (val!.isEmpty) {
+                                                return ('Enter head circumference in cm');
+                                              } else if (double.parse(val) <= 1) {
+                                                return ('Value cannot be less than 1cm.');
+                                              } else if (double.parse(val) >= 50) {
+                                                return ('Value cannot be more than 50cm.');
+                                              }
+                                            },
+                                            onChanged: (val) {
+                                              setState(
+                                                  () => head = val as double);
+                                            },
+                                            controller: _headControl,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: <Widget>[
+                                                ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      primary: secondaryTheme,
+                                                    ),
+                                                    child: Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    }),
+                                                SizedBox(width: 20),
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: mainTheme,
+                                                  ),
+                                                  child: Text("Submit"),
+                                                  onPressed: () async {
+                                                    if (_formKey.currentState!
+                                                        .validate()) {
+                                                      _addData();
+                                                    }
+                                                  },
+                                                ),
+                                              ]),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                )
                               ],
                             ),
                           );
@@ -293,7 +342,7 @@ class _GrowthPageState extends State<GrowthPage> {
   }
 
   /// Function for getting shared preferences data
-  Future<void> _getData() async{
+  Future<void> _getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       nric = prefs.getString('ChildNRIC');
@@ -306,16 +355,16 @@ class _GrowthPageState extends State<GrowthPage> {
   /// Function for creating Growth record in Firestore
   ///
   /// Function will use [week], [weight], [height], and [head] params to create a Growth record
-  void _addData() async{
-    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
+  void _addData() async {
+    growth =
+        firestoreInstance.collection('growth').doc(nric).collection('records');
 
-    growth.add(
-        {
-          "week" : _weekControl.text,
-          "weight" : _weightControl.text,
-          "height" : _heightControl.text,
-          "head" : _headControl.text
-        });
+    growth.add({
+      "week": _weekControl.text,
+      "weight": _weightControl.text,
+      "height": _heightControl.text,
+      "head": _headControl.text
+    });
     Navigator.pop(context);
     setState(() {
       _weekControl.clear();
@@ -327,18 +376,24 @@ class _GrowthPageState extends State<GrowthPage> {
 
   /// Function for downloading Growth records PDF file
   Future<void> _downloadData() async {
-    var getDocs = await FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').get();
+    var getDocs = await FirebaseFirestore.instance
+        .collection('growth')
+        .doc(nric)
+        .collection('records')
+        .get();
 
     List growthList = getDocs.docs;
-    List<GrowthRecord> _records = growthList.map(
+    List<GrowthRecord> _records = growthList
+        .map(
           (growth) => GrowthRecord(
-        id: growth.id,
-        week: growth['week'],
-        weight: growth['weight'],
-        height: growth['height'],
-        head: growth['head'],
-      ),
-    ).toList();
+            id: growth.id,
+            week: growth['week'],
+            weight: growth['weight'],
+            height: growth['height'],
+            head: growth['head'],
+          ),
+        )
+        .toList();
     growthFile = Growth(items: _records, name: childName);
     final pdfFile = await PdfGrowthApi.generate(growthFile);
     PdfApi.openFile(pdfFile);
@@ -352,7 +407,12 @@ class GrowthRecord {
   final String height;
   final String head;
 
-  GrowthRecord({this.id, required this.week, required this.weight,required this.height, required this.head});
+  GrowthRecord(
+      {this.id,
+      required this.week,
+      required this.weight,
+      required this.height,
+      required this.head});
 }
 
 class Growth {
