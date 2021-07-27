@@ -11,8 +11,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? userName = "";
-  String? temp = "";
-  String? temp2 = "";
+  String? userEmail = "";
+  String? nameOfChild = "";
   String babyName = "";
   String? famName = "";
   String? childName = "";
@@ -235,16 +235,16 @@ class _HomePageState extends State<HomePage> {
     List newList = [];
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-    temp = sharedPreferences.getString('email');
-    temp2 = sharedPreferences.getString('ChildName');
-    QuerySnapshot querySnapshot = await _selectFamily.where('email', isEqualTo: temp).get();
+    userEmail = sharedPreferences.getString('email');
+    nameOfChild = sharedPreferences.getString('ChildName');
+    QuerySnapshot querySnapshot = await _selectFamily.where('email', isEqualTo: userEmail).get();
 
     // Get data from docs and convert map to List
     newList = querySnapshot.docs.map((doc) => doc.data()).toList();
       setState(() {
         userName = newList[0]['firstName'].toString();
-        babyName = temp2!;
-        admin = sharedPreferences.getBool('admin')!;
+        babyName = nameOfChild!;
+        getAdmin(sharedPreferences.getString('email')!);
         famName = sharedPreferences.getString('Fam');
         childName = sharedPreferences.getString('ChildName');
       });
@@ -353,5 +353,16 @@ class _HomePageState extends State<HomePage> {
       Navigator.of(context).pushNamed(
           "/wellbeingsurvey");
     }
+  }
+
+  getAdmin(String email) async {
+    var temp;
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('user').where('email', isEqualTo: email).get();
+
+    temp = querySnapshot.docs.map((doc) => doc.id).toList();
+
+    setState(() {
+      admin = temp;
+    });
   }
 }

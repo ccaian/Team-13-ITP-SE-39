@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
@@ -178,7 +177,6 @@ class _ParentSelChildState extends State<ParentSelChild> {
   }
 
   void deleteChild(int index, String nric) async {
-    print(nric);
     _selectChild.doc(keys[index]).delete();
     for(var i =0; i < growthKey.length; i++){
       FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(growthKey[i]).delete();

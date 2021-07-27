@@ -421,7 +421,7 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
   Future loadPref() async {
     final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
-      admin = sharedPreferences.getBool('admin')!;
+      getAdmin(sharedPreferences.getString('email')!);
       if (sharedPreferences.getBool('admin') == true){
         //gets parent email details from shared preferences
         userEmail = sharedPreferences.getString('parentemail');
@@ -469,7 +469,16 @@ class _DischargeCheckListPageState extends State<DischargeCheckListPage> {
       }
 
   }
+  getAdmin(String email) async {
+    var temp;
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('user').where('email', isEqualTo: email).get();
 
+    temp = querySnapshot.docs.map((doc) => doc.id).toList();
+
+    setState(() {
+      admin = temp;
+    });
+  }
 
 
 }
