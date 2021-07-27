@@ -50,10 +50,7 @@ class GrowthCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                      "Weight: " +
-                          growthRecord.weight +
-                          " kg",
+                  child: Text("Weight: " + growthRecord.weight + " kg",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey[700],
@@ -66,10 +63,7 @@ class GrowthCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                      "Height/Length: " +
-                          growthRecord.height +
-                          " cm",
+                  child: Text("Height/Length: " + growthRecord.height + " cm",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey[700],
@@ -82,12 +76,12 @@ class GrowthCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                      "Head Circumference: " + growthRecord.head + " cm",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.grey[700],
-                      )),
+                  child:
+                      Text("Head Circumference: " + growthRecord.head + " cm",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.grey[700],
+                          )),
                 ),
               ),
               Positioned(
@@ -129,8 +123,7 @@ class GrowthCard extends StatelessWidget {
                     onTap: () {
                       if (isAdmin == false) {
                         _deleteData(context);
-                      }
-                      else if (isAdmin == true) {
+                      } else if (isAdmin == true) {
                         _adminDelete(context);
                       }
                     },
@@ -153,15 +146,13 @@ class GrowthCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ]
-            ),
+            ]),
             decoration: BoxDecoration(
               color: Color(0xfff2f2f2),
               borderRadius: const BorderRadius.all(
                 const Radius.circular(25),
               ),
-            )
-        )
+            ))
       ]),
     );
   }
@@ -191,130 +182,150 @@ class GrowthCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
+                          child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
                                   ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Week No',
-                                  hintText: 'e.g. 10',
                                 ),
-                                inputFormatters: <TextInputFormatter>[
-                                  // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                validator: (val) =>
-                                val!.isEmpty ? 'Enter week number' : null,
-                                controller: _weekControl,
+                                fillColor: Colors.red,
+                                labelText: 'Week No',
+                                hintText: 'e.g. 10',
                               ),
+                              inputFormatters: <TextInputFormatter>[
+                                // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              validator: (val) =>
+                                  val!.isEmpty ? 'Enter week number' : null,
+                              controller: _weekControl,
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
                                   ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Weight (kg)',
                                 ),
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                ],
-                                validator: (val) => val!.isEmpty
-                                    ? 'Enter weight in kg'
-                                    : null,
-                                controller: _weightControl,
+                                fillColor: Colors.red,
+                                labelText: 'Weight (kg)',
                               ),
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter(
+                                    RegExp("[0-9.]")),
+                              ],
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return ('Enter weight in gram (g)');
+                                } else if (double.parse(val) <= 100) {
+                                  return ('Value cannot be less than 100g.');
+                                } else if (double.parse(val) >= 2000) {
+                                  return ('Value cannot be more than 2000g.');
+                                }
+                              },
+                              controller: _weightControl,
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
                                   ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Height/Length (cm)',
-                                  hintText: 'e.g. 50',
                                 ),
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                ],
-                                validator: (val) => val!.isEmpty
-                                    ? 'Enter height/length in cm'
-                                    : null,
-                                controller: _heightControl,
+                                fillColor: Colors.red,
+                                labelText: 'Height/Length (cm)',
+                                hintText: 'e.g. 50',
                               ),
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter(
+                                    RegExp("[0-9.]")),
+                              ],
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return ('Enter height/length in cm');
+                                } else if (double.parse(val) <= 1) {
+                                  return ('Value cannot be less than 1cm.');
+                                } else if (double.parse(val) >= 1000) {
+                                  return ('Value cannot be more than 1000cm.');
+                                }
+                              },
+                              controller: _heightControl,
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(25),
-                                    ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                border: new OutlineInputBorder(
+                                  borderRadius: const BorderRadius.all(
+                                    const Radius.circular(25),
                                   ),
-                                  fillColor: Colors.red,
-                                  labelText: 'Head Circumference (cm)',
-                                  hintText: 'e.g. 30',
                                 ),
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                ],
-                                validator: (val) => val!.isEmpty ? 'Enter head circumference in cm' : null,
-                                controller: _headControl,
+                                fillColor: Colors.red,
+                                labelText: 'Head Circumference (cm)',
+                                hintText: 'e.g. 30',
                               ),
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter(
+                                    RegExp("[0-9.]")),
+                              ],
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return ('Enter head circumference in cm');
+                                } else if (double.parse(val) <= 1) {
+                                  return ('Value cannot be less than 1cm.');
+                                } else if (double.parse(val) >= 50) {
+                                  return ('Value cannot be more than 50cm.');
+                                }
+                              },
+                              controller: _headControl,
                             ),
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row (
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            primary: secondaryTheme,
-                                          ),
-                                          child: Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          }),
-                                      SizedBox(width: 20),
-                                      ElevatedButton(
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          primary: mainTheme,
+                                          primary: secondaryTheme,
                                         ),
-                                        child: Text("Update"),
-                                        onPressed: () async {
-                                          if (_formKey.currentState!.validate()) {
-                                            _updateData(
-                                                growthRecord.id.toString(),
-                                                _weekControl.text,
-                                                _weightControl.text,
-                                                _heightControl.text,
-                                                _headControl.text);
-                                            Navigator.pop(context);
-                                          }
-                                        },
+                                        child: Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        }),
+                                    SizedBox(width: 20),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: mainTheme,
                                       ),
-                                    ]
-                                )
-                            ),
-                          ],
-                        )
-                      ),
+                                      child: Text("Update"),
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          _updateData(
+                                              growthRecord.id.toString(),
+                                              _weekControl.text,
+                                              _weightControl.text,
+                                              _heightControl.text,
+                                              _headControl.text);
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                    ),
+                                  ])),
+                        ],
+                      )),
                     ],
                   ),
                 ),
@@ -347,7 +358,10 @@ class GrowthCard extends StatelessWidget {
                     ),
                     child: Text('Ok'),
                     onPressed: () {
-                      FirebaseFirestore.instance.collection('growth').doc(nric).collection('records')
+                      FirebaseFirestore.instance
+                          .collection('growth')
+                          .doc(nric)
+                          .collection('records')
                           .doc(growthRecord.id.toString())
                           .delete();
                       Navigator.pop(context);
@@ -359,7 +373,7 @@ class GrowthCard extends StatelessWidget {
   /// Dialog to confirm the deletion of Growth Measurements Data. [Admin]
   ///
   /// Dialog with a Form to accept Admin Pin for confirmation of deletion.
-  void _adminDelete(BuildContext context) async{
+  void _adminDelete(BuildContext context) async {
     final _formKey = GlobalKey<FormState>();
     final _pinController = TextEditingController();
 
@@ -372,51 +386,53 @@ class GrowthCard extends StatelessWidget {
               actions: <Widget>[
                 Form(
                     key: _formKey,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: <
-                        Widget>[
-                      Padding(
-                          padding:
-                          const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
-                          child: TextFormField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: const BorderRadius.all(
-                                  const Radius.circular(25),
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  10.0, 0.0, 10.0, 20.0),
+                              child: TextFormField(
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                      const Radius.circular(25),
+                                    ),
+                                  ),
+                                  fillColor: secondaryTheme,
+                                  labelText: 'Admin PIN',
                                 ),
-                              ),
-                              fillColor: secondaryTheme,
-                              labelText: 'Admin PIN',
-                            ),
-                            validator: (val) =>
-                            val!.isEmpty ? 'Enter your Admin PIN' : null,
-                            controller: _pinController,
-                          )),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: secondaryTheme,
-                                ),
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                }),
-                            SizedBox(width: 20),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: mainTheme,
-                                ),
-                                child: Text('Delete'),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _verifyPIN(growthRecord.id.toString(),
-                                        _pinController.text, context);
-                                  }
-                                }),
-                          ])
-                    ]))
+                                validator: (val) => val!.isEmpty
+                                    ? 'Enter your Admin PIN'
+                                    : null,
+                                controller: _pinController,
+                              )),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: secondaryTheme,
+                                    ),
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    }),
+                                SizedBox(width: 20),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: mainTheme,
+                                    ),
+                                    child: Text('Delete'),
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        _verifyPIN(growthRecord.id.toString(),
+                                            _pinController.text, context);
+                                      }
+                                    }),
+                              ])
+                        ]))
               ]);
         });
   }
@@ -424,8 +440,14 @@ class GrowthCard extends StatelessWidget {
   /// Update Growth Measurements Data.
   ///
   /// Params [key], [week], [weight], [height], and [head] to update the database.
-  void _updateData(String id, String week, String weight, String height, String head) async {
-    FirebaseFirestore.instance.collection('growth').doc(nric).collection('records').doc(id).update({
+  void _updateData(
+      String id, String week, String weight, String height, String head) async {
+    FirebaseFirestore.instance
+        .collection('growth')
+        .doc(nric)
+        .collection('records')
+        .doc(id)
+        .update({
       "week": week,
       "weight": weight,
       "height": height,
@@ -450,7 +472,10 @@ class GrowthCard extends StatelessWidget {
     /// If the hashed pin in SharedPreferences matches the hashed pin input, delete record
     /// If the hashed pin in SharedPreferences does not match the hashed pin input, prompt error message
     if (adminPin == hashedPin) {
-      FirebaseFirestore.instance.collection('growth').doc(nric).collection('records')
+      FirebaseFirestore.instance
+          .collection('growth')
+          .doc(nric)
+          .collection('records')
           .doc(key)
           .delete();
       Navigator.of(context).pop();

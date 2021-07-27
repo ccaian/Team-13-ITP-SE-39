@@ -50,8 +50,7 @@ class MilkCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text(
-                    milkRecord.timestamp.toString(),
+                  child: Text(milkRecord.timestamp.toString(),
                       style: TextStyle(
                         fontSize: 15.0,
                         color: Colors.grey[700],
@@ -111,8 +110,7 @@ class MilkCard extends StatelessWidget {
                     onTap: () {
                       if (isAdmin == false) {
                         _deleteData(context);
-                      }
-                      else if (isAdmin == true) {
+                      } else if (isAdmin == true) {
                         _adminDelete(context);
                       }
                     },
@@ -135,15 +133,13 @@ class MilkCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ]
-            ),
+            ]),
             decoration: BoxDecoration(
               color: Color(0xfff2f2f2),
               borderRadius: const BorderRadius.all(
                 const Radius.circular(25),
               ),
-            )
-        )
+            ))
       ]),
     );
   }
@@ -205,9 +201,17 @@ class MilkCard extends StatelessWidget {
                           inputFormatters: <TextInputFormatter>[
                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           ],
-                          validator: (val) => val!.isEmpty
-                              ? 'Enter left volume pumped in ml'
-                              : null,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return ('Enter left volume pumped in ml');
+                            }
+                            else if (double.parse(val) <= 0.1) {
+                              return ('Value cannot be less than 0.1ml.');
+                            }
+                            else if (double.parse(val) >= 5000) {
+                              return ('Value cannot be more than 5l.');
+                            }
+                          },
                           controller: _leftBreastController,
                         ),
                       ),
@@ -226,45 +230,51 @@ class MilkCard extends StatelessWidget {
                           inputFormatters: <TextInputFormatter>[
                             WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                           ],
-                          validator: (val) => val!.isEmpty
-                              ? 'Enter right volume pumped in ml'
-                              : null,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return ('Enter right volume pumped in ml');
+                            }
+                            else if (double.parse(val) <= 0.1) {
+                              return ('Value cannot be less than 0.1ml.');
+                            }
+                            else if (double.parse(val) >= 5000) {
+                              return ('Value cannot be more than 5l.');
+                            }
+                          },
                           controller: _rightBreastController,
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row (
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              ElevatedButton(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: secondaryTheme,
+                                    ),
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    }),
+                                SizedBox(width: 20),
+                                ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: secondaryTheme,
+                                    primary: mainTheme,
                                   ),
-                                  child: Text('Cancel'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  }),
-                              SizedBox(width: 20),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: mainTheme,
+                                  child: Text("Update"),
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      _updateData(
+                                          milkRecord.id.toString(),
+                                          _titleController.text,
+                                          _leftBreastController.text,
+                                          _rightBreastController.text);
+                                      Navigator.pop(context);
+                                    }
+                                  },
                                 ),
-                                child: Text("Update"),
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    _updateData(
-                                        milkRecord.id.toString(),
-                                        _titleController.text,
-                                        _leftBreastController.text,
-                                        _rightBreastController.text);
-                                    Navigator.pop(context);
-                                  }
-                                },
-                              ),
-                            ]
-                        )
-                      ),
+                              ])),
                     ],
                   ),
                 ),
@@ -297,11 +307,13 @@ class MilkCard extends StatelessWidget {
                     ),
                     child: Text('Ok'),
                     onPressed: () {
-                      FirebaseFirestore.instance.collection('milk').doc(email).collection('records')
+                      FirebaseFirestore.instance
+                          .collection('milk')
+                          .doc(email)
+                          .collection('records')
                           .doc(milkRecord.id.toString())
                           .delete()
-                          .then((_) {
-                      });
+                          .then((_) {});
                       Navigator.pop(context);
                     }),
               ]);
@@ -311,7 +323,7 @@ class MilkCard extends StatelessWidget {
   /// Dialog to confirm the deletion of Milk Volume Pumped Data. [Admin]
   ///
   /// Dialog with a Form to accept Admin Pin for confirmation of deletion.
-  void _adminDelete(BuildContext context) async{
+  void _adminDelete(BuildContext context) async {
     final _formKey = GlobalKey<FormState>();
     final _pinController = TextEditingController();
 
@@ -322,53 +334,57 @@ class MilkCard extends StatelessWidget {
               title: Text('Delete Milk Record'),
               content: Text('Are you sure you want to delete?'),
               actions: <Widget>[
-                Form(
-                    key: _formKey,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: <
-                        Widget>[
-                      Padding(
-                          padding:
-                          const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
-                          child: TextFormField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: const BorderRadius.all(
-                                  const Radius.circular(25),
-                                ),
-                              ),
-                              fillColor: secondaryTheme,
-                              labelText: 'Admin PIN',
-                            ),
-                            validator: (val) =>
-                            val!.isEmpty ? 'Enter your Admin PIN' : null,
-                            controller: _pinController,
-                          )),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: secondaryTheme,
-                                ),
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                }),
-                            SizedBox(width: 20),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: mainTheme,
-                                ),
-                                child: Text('Delete'),
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    _verifyPIN(milkRecord.id.toString(),
-                                        _pinController.text, context);
-                                  }
-                                }),
-                          ])
-                    ]))
+                SingleChildScrollView(
+                    child: Form(
+                        key: _formKey,
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      10.0, 0.0, 10.0, 20.0),
+                                  child: TextFormField(
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                          const Radius.circular(25),
+                                        ),
+                                      ),
+                                      fillColor: secondaryTheme,
+                                      labelText: 'Admin PIN',
+                                    ),
+                                    validator: (val) => val!.isEmpty
+                                        ? 'Enter your Admin PIN'
+                                        : null,
+                                    controller: _pinController,
+                                  )),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: secondaryTheme,
+                                        ),
+                                        child: Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }),
+                                    SizedBox(width: 20),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: mainTheme,
+                                        ),
+                                        child: Text('Delete'),
+                                        onPressed: () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            _verifyPIN(milkRecord.id.toString(),
+                                                _pinController.text, context);
+                                          }
+                                        }),
+                                  ])
+                            ])))
               ]);
         });
   }
@@ -376,12 +392,18 @@ class MilkCard extends StatelessWidget {
   /// Update Milk Volume Pumped Data.
   ///
   /// Params [key], [title], [leftBreast], [rightBreast], [totalVolume], and [timestamp] to update the database.
-  void _updateData(String id, String title, String leftBreast, String rightBreast) async {
+  void _updateData(
+      String id, String title, String leftBreast, String rightBreast) async {
     var left = double.parse(leftBreast);
     var right = double.parse(rightBreast);
     var totalVolume = (left + right).toString();
 
-    FirebaseFirestore.instance.collection('milk').doc(email).collection('records').doc(id).update({
+    FirebaseFirestore.instance
+        .collection('milk')
+        .doc(email)
+        .collection('records')
+        .doc(id)
+        .update({
       "title": title,
       "leftBreast": leftBreast,
       "rightBreast": rightBreast,
@@ -407,7 +429,10 @@ class MilkCard extends StatelessWidget {
     /// If the hashed pin in SharedPreferences matches the hashed pin input, delete record
     /// If the hashed pin in SharedPreferences does not match the hashed pin input, prompt error message
     if (adminPin == hashedPin) {
-      FirebaseFirestore.instance.collection('milk').doc(email).collection('records')
+      FirebaseFirestore.instance
+          .collection('milk')
+          .doc(email)
+          .collection('records')
           .doc(key)
           .delete();
       Navigator.of(context).pop();

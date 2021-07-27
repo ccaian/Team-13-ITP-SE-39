@@ -124,105 +124,127 @@ class _MilkPageState extends State<MilkPage> {
                         content: Stack(
                           overflow: Overflow.visible,
                           children: <Widget>[
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(25),
-                                          ),
+                            SingleChildScrollView(
+                              child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: new OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                          const Radius.circular(25),
                                         ),
-                                        fillColor: Colors.red,
-                                        labelText: 'Title',
                                       ),
-                                      validator: (val) => val!.isEmpty ? 'Enter any title' : null,
-                                      onChanged: (val) {
-                                        setState(() => title = val);
-                                      },
-                                      controller: _titleController,
+                                      fillColor: Colors.red,
+                                      labelText: 'Title',
                                     ),
+                                    validator: (val) => val!.isEmpty ? 'Enter any title' : null,
+                                    onChanged: (val) {
+                                      setState(() => title = val);
+                                    },
+                                    controller: _titleController,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(25),
-                                          ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: new OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                          const Radius.circular(25),
                                         ),
-                                        fillColor: Colors.red,
-                                        labelText: 'Left Volume Pumped (ml)',
                                       ),
-                                      inputFormatters: <TextInputFormatter>[
-                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                      ],
-                                      validator: (val) => val!.isEmpty ? 'Enter left volume pumped in ml' : null,
-                                      onChanged: (val) {
-                                        setState(() => leftBreast = val);
-                                      },
-                                      controller: _leftBreastController..text = '0',
+                                      fillColor: Colors.red,
+                                      labelText: 'Left Volume Pumped (ml)',
                                     ),
+                                    inputFormatters: <TextInputFormatter>[
+                                      WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                    ],
+                                    validator: (val) {
+                                      if (val!.isEmpty) {
+                                        return ('Enter left volume pumped in ml');
+                                      }
+                                      else if (double.parse(val) <= 0.1) {
+                                        return ('Value cannot be less than 0.1ml.');
+                                      }
+                                      else if (double.parse(val) >= 5000) {
+                                        return ('Value cannot be more than 5l.');
+                                      }
+                                    },
+                                    onChanged: (val) {
+                                      setState(() => leftBreast = val);
+                                    },
+                                    controller: _leftBreastController,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        border: new OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(
-                                            const Radius.circular(25),
-                                          ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      border: new OutlineInputBorder(
+                                        borderRadius: const BorderRadius.all(
+                                          const Radius.circular(25),
                                         ),
-                                        fillColor: Colors.red,
-                                        labelText: 'Right Volume Pumped (ml)',
                                       ),
-                                      inputFormatters: <TextInputFormatter>[
-                                        WhitelistingTextInputFormatter(RegExp("[0-9.]")),
-                                      ],
-                                      validator: (val) => val!.isEmpty ? 'Enter right volume pumped in ml' : null,
-                                      onChanged: (val) {
-                                        setState(() => rightBreast = val);
-                                      },
-                                      controller: _rightBreastController..text = '0',
+                                      fillColor: Colors.red,
+                                      labelText: 'Right Volume Pumped (ml)',
                                     ),
+                                    inputFormatters: <TextInputFormatter>[
+                                      WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                    ],
+                                    validator: (val) {
+                                      if (val!.isEmpty) {
+                                        return ('Enter right volume pumped in ml');
+                                      }
+                                      else if (double.parse(val) <= 0.1) {
+                                      return ('Value cannot be less than 0.1ml.');
+                                      }
+                                      else if (double.parse(val) >= 5000) {
+                                      return ('Value cannot be more than 5l.');
+                                      }
+                                    },
+                                    onChanged: (val) {
+                                      setState(() => rightBreast = val);
+                                    },
+                                    controller: _rightBreastController,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row (
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                primary: secondaryTheme,
-                                              ),
-                                              child: Text('Cancel'),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              }),
-                                          SizedBox(width: 20),
-                                          ElevatedButton(
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row (
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              primary: mainTheme,
+                                              primary: secondaryTheme,
                                             ),
-                                            child: Text("Submit"),
-                                            onPressed: () async {
-                                              if (_formKey.currentState!.validate()) {
-                                                _addData();
-                                              }
-                                            },
+                                            child: Text('Cancel'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }),
+                                        SizedBox(width: 20),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            primary: mainTheme,
                                           ),
-                                        ]
-                                    ),
+                                          child: Text("Submit"),
+                                          onPressed: () async {
+                                            if (_formKey.currentState!.validate()) {
+                                              _addData();
+                                            }
+                                          },
+                                        ),
+                                      ]
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                          ),
+                        )
                           ],
                         ),
                       );
