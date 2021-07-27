@@ -21,7 +21,6 @@ class _MilkPageState extends State<MilkPage> {
 
   bool isAdmin = false;
   var email;
-  var familyName;
   String title = '';
   String leftBreast = '';
   String rightBreast = '';
@@ -253,7 +252,7 @@ class _MilkPageState extends State<MilkPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isAdmin = prefs.getBool('admin')!;
-      familyName = prefs.getString('Fam');
+
       if (isAdmin == false) {
         email = prefs.getString('email');
       }
@@ -273,15 +272,6 @@ class _MilkPageState extends State<MilkPage> {
     var left = double.parse(_leftBreastController.text);
     var right = double.parse(_rightBreastController.text);
     totalVolume = (left + right).toString();
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    isAdmin = prefs.getBool('admin')!;
-    if (isAdmin == false) {
-      email = prefs.getString('email');
-    }
-    else {
-      email = prefs.getString('parentemail');
-    }
 
     milk.add(
         {
@@ -314,7 +304,7 @@ class _MilkPageState extends State<MilkPage> {
         timestamp: milk['timestamp'].toDate(),
       ),
     ).toList();
-    milkFile = Milk(items: _records, family: familyName);
+    milkFile = Milk(items: _records);
     final pdfFile = await PdfMilkApi.generate(milkFile);
     PdfApi.openFile(pdfFile);
   }
@@ -333,7 +323,6 @@ class MilkRecord {
 
 class Milk {
   final List<MilkRecord> items;
-  final String family;
 
-  Milk({required this.items, required this.family});
+  Milk({required this.items});
 }
