@@ -58,7 +58,7 @@ class _DevelopmentDomainPageState extends State<DevelopmentDomainPage> {
 
             Positioned(
                 top: 150,
-                left: 40,
+                left: 30,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     primary: secondaryTheme,

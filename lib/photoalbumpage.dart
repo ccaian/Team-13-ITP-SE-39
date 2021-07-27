@@ -52,6 +52,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
   @override
   Widget build(BuildContext context) {
 
+    print(widget.refUrl);
     String week = widget.refUrl.substring(widget.refUrl.indexOf('/')+1,widget.refUrl.length);
     photos = FirebaseFirestore.instance.collection('photos').doc(nric).collection(week);
     return Scaffold(
@@ -128,6 +129,7 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                                 List photolist = snapshot.data!.docs;
                                 List<Photo> _photos = photolist.map(
                                       (photo) => Photo(
+                                        refUrl: photo.get('refUrl'),
                                       date: photo.get('date'),
                                       description: photo.get('description'),
                                       filename: photo.get('filename'),
@@ -210,12 +212,26 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
                       child: Icon(Icons.add),
                       backgroundColor: mainTheme,
                       onPressed: () {
+                        Navigator.pop(context);
                         Navigator.push(context, new MaterialPageRoute(
                             builder: (context) => UploadPhoto(refUrl: widget.refUrl)
                         ));
                       },
                     ),
                   ),
+                  /*
+                  Positioned(
+                    bottom: 20,
+                    right: 90,
+                    child: FloatingActionButton(
+                      // isExtended: true,
+                      child: Icon(Icons.delete),
+                      backgroundColor: mainTheme,
+                      onPressed: () {
+                        //deleteDialog(context,photos);
+                      }
+                    ),
+                  ),*/
         ]
               ),
             )
@@ -224,7 +240,30 @@ class _PhotoAlbumState extends State<PhotoAlbum> {
       ),
     );
   }
+  void deleteDialog(BuildContext context,CollectionReference photos) {
+    final _formKey = GlobalKey<FormState>();
 
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Delete Album?'),
+            actions: [
+              TextButton(
+                child: Text("Yes"),
+                onPressed:  () {
+                  Navigator.pop(context);
+                },
+              ),
+
+              TextButton(
+                child: Text("Cancel"),
+                onPressed:  () {Navigator.pop(context);},
+              ),
+            ],
+          );
+        });
+  }
   Widget buildFile(BuildContext context, Photo photo) => Stack(
     children: [
       InkWell(

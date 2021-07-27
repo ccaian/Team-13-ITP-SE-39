@@ -57,9 +57,10 @@ class _WellbeingScoreState extends State<WellbeingScore> {
               top: MediaQuery.of(context).size.height*0.12,
               child: Text(
                   "Score",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline2
+                  style: TextStyle(
+                    fontSize: 55,
+                    color: Colors.white,
+                  )
               ),
             ),
 
@@ -68,9 +69,10 @@ class _WellbeingScoreState extends State<WellbeingScore> {
               top: MediaQuery.of(context).size.height*0.2,
               child: Text(
                   "${_surveyController.totalScore}/30",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline3
+                  style: TextStyle(
+                    fontSize: 40,
+                    color: Colors.white,
+                  )
               ),
             ),
 

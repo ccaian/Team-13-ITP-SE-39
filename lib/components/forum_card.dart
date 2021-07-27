@@ -197,28 +197,63 @@ class ForumCard extends StatelessWidget {
     }
 
   void deleteDialog(BuildContext context,CollectionReference posts) {
+
     final _formKey = GlobalKey<FormState>();
 
+    final _pinController = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Delete Forum Post?'),
             actions: [
-              TextButton(
-                child: Text("Yes"),
-                onPressed:  () {
-                  posts.doc(forumPost.id).delete().then((_) {
-                  });
-                  Navigator.pop(context);
-                },
-              ),
-
-              TextButton(
-                child: Text("Cancel"),
-                onPressed:  () {Navigator.pop(context);},
-              ),
-            ],
+              Form(
+                  key: _formKey,
+                  child: Column(mainAxisSize: MainAxisSize.min, children: <
+                      Widget>[
+                    Padding(
+                        padding:
+                        const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 20.0),
+                        child: TextFormField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(25),
+                              ),
+                            ),
+                            fillColor: secondaryTheme,
+                            labelText: 'Admin PIN',
+                          ),
+                          validator: (val) =>
+                          val!.isEmpty ? 'Enter your Admin PIN' : null,
+                          controller: _pinController,
+                        )),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: secondaryTheme,
+                              ),
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              }),
+                          SizedBox(width: 20),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: mainTheme,
+                              ),
+                              child: Text('Delete'),
+                              onPressed: () {
+                                posts.doc(forumPost.id).delete().then((_) {
+                                });
+                                Navigator.pop(context);
+                              },),
+                        ])
+                  ]))
+            ]
           );
         });
   }

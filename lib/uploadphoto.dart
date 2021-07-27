@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:growth_app/photoalbumpage.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -186,13 +187,14 @@ class _UploadPhotoState extends State<UploadPhoto> {
     getNRIC();
   }
 
-  addPhotoToFirestore(String name, String description,String filename){
+  addPhotoToFirestore(String name, String description,String filename,String refurl){
 
     DateTime now = new DateTime.now();
     photos.add({
       'name': name,
       'description': description,
       'date' : now.toString(),
+      'refUrl' : refurl,
       'filename': filename
     });
 
@@ -252,16 +254,18 @@ class _UploadPhotoState extends State<UploadPhoto> {
         //Upload to Firebase
         String name = 'default';
         String description = 'default';
-
+        String refname = widget.refUrl+'/'+filename;
         var snapshot = await _storage.ref()
-            .child(widget.refUrl+'/'+filename)
+            .child(refname)
             .putFile(file);
         var downloadUrl = await snapshot.ref.getDownloadURL();
         print("DOWNLOAD URL");
         print(downloadUrl);
         description = descriptionController.text;
         name = nameController.text;
-        addPhotoToFirestore(name,description,downloadUrl);
+        addPhotoToFirestore(name,description,downloadUrl,refname);
+
+        print("test");
         Navigator.pop(context);
       } else {
         print('No Path Received');

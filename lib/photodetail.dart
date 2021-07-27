@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -167,6 +168,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
                                    .get().then((value) => {
                                     value.docs.forEach((element) {
                                         print(element.id);
+                                        FirebaseStorage.instance.ref().child(widget.photo.refUrl).delete().then((value) => print("Image Deleted"));
                                         widget.photos.doc(element.id).delete().then((value){
                                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                           content: Text("Photo Deleted!"),
@@ -243,6 +245,7 @@ class _PhotoDetailState extends State<PhotoDetail> {
       ),
     );
   }
+
 
   void updateDialog(BuildContext context,String id) {
 
