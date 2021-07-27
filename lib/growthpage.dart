@@ -187,7 +187,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                                 ),
                                               ),
                                               fillColor: Colors.red,
-                                              labelText: 'Weight (kg)',
+                                              labelText: 'Weight (g)',
                                               hintText: 'e.g. 5',
                                             ),
                                             inputFormatters: <

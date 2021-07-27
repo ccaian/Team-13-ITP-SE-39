@@ -216,7 +216,7 @@ class GrowthCard extends StatelessWidget {
                                   ),
                                 ),
                                 fillColor: Colors.red,
-                                labelText: 'Weight (kg)',
+                                labelText: 'Weight (g)',
                               ),
                               inputFormatters: <TextInputFormatter>[
                                 WhitelistingTextInputFormatter(
