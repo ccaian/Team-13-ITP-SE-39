@@ -175,6 +175,8 @@ class _ProfileSetUpPageState extends State<ProfileSetUpPage> {
       'admin': false
     });
 
+    prefs.setBool('admin', false);
+
     Navigator.of(context).pushNamed('/selectChild');
   }
 }

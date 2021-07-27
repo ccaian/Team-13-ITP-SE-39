@@ -239,12 +239,10 @@ class _LoginPageState extends State<LoginPage> {
       /// User profile exist in DB => to home page
       if (user.isNotEmpty) {
         user.forEach((element) {
-          prefs.setBool('admin', element['admin']);
           prefs.setString('firebaseKey', element.id);
-          print(element['admin']);
-          print(element.id);
+          prefs.setBool('admin', element['admin']);
 
-          /// check if the value 'adminPin' exist
+          /// check if the value 'admin', 'adminPin' exist
           try {
             prefs.setString('adminPin', element['adminPin']);
           } catch (e) {
