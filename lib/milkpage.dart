@@ -122,7 +122,7 @@ class _MilkPageState extends State<MilkPage> {
                       return AlertDialog(
                         title: const Text('Add Milk Volume Pumped'),
                         content: Stack(
-                          overflow: Overflow.visible,
+                          clipBehavior: Clip.none,
                           children: <Widget>[
                             SingleChildScrollView(
                               child: Form(
@@ -162,7 +162,7 @@ class _MilkPageState extends State<MilkPage> {
                                       labelText: 'Left Volume Pumped (ml)',
                                     ),
                                     inputFormatters: <TextInputFormatter>[
-                                      WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                                     ],
                                     validator: (val) {
                                       if (val!.isEmpty) {
@@ -194,7 +194,7 @@ class _MilkPageState extends State<MilkPage> {
                                       labelText: 'Right Volume Pumped (ml)',
                                     ),
                                     inputFormatters: <TextInputFormatter>[
-                                      WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                                      FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                                     ],
                                     validator: (val) {
                                       if (val!.isEmpty) {
@@ -313,7 +313,7 @@ class _MilkPageState extends State<MilkPage> {
 
   /// Function for downloading Milk records PDF file
   Future<void> _downloadData() async {
-    var getDocs = await FirebaseFirestore.instance.collection('milk').doc(email).collection('records').get();
+    var getDocs = await FirebaseFirestore.instance.collection('milk').doc(email).collection('records').orderBy('timestamp').get();
 
     List milkList = getDocs.docs;
     List<MilkRecord> _records = milkList.map(

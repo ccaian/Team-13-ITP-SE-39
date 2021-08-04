@@ -50,7 +50,7 @@ class GrowthCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.width * 0.8,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  child: Text("Weight: " + growthRecord.weight + " kg",
+                  child: Text("Weight: " + growthRecord.weight + " g",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey[700],
@@ -174,15 +174,15 @@ class GrowthCard extends StatelessWidget {
           return AlertDialog(
             title: const Text('Edit Growth Measurements'),
             content: Stack(
-              overflow: Overflow.visible,
+              clipBehavior: Clip.none,
               children: <Widget>[
-                Form(
+              SingleChildScrollView(
+                child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      SingleChildScrollView(
-                          child: Column(
+                          Column(
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.all(8.0),
@@ -195,15 +195,23 @@ class GrowthCard extends StatelessWidget {
                                 ),
                                 fillColor: Colors.red,
                                 labelText: 'Week No',
-                                hintText: 'e.g. 10',
+                                hintText: 'e.g. 1',
                               ),
                               inputFormatters: <TextInputFormatter>[
-                                // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                              validator: (val) =>
-                                  val!.isEmpty ? 'Enter week number' : null,
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return ('Enter week number');
+                                } else if (int.parse(val) < 1) {
+                                  return ('Value cannot be less than 1.');
+                                } else if (int.parse(val) >= 50) {
+                                  return ('Value cannot be more than 50.');
+                                }
+                              },
                               controller: _weekControl,
+                              enabled: false,
+                              style: TextStyle(color: Colors.grey),
                             ),
                           ),
                           Padding(
@@ -217,10 +225,10 @@ class GrowthCard extends StatelessWidget {
                                 ),
                                 fillColor: Colors.red,
                                 labelText: 'Weight (g)',
+                                hintText: 'e.g. 200',
                               ),
                               inputFormatters: <TextInputFormatter>[
-                                WhitelistingTextInputFormatter(
-                                    RegExp("[0-9.]")),
+                                FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                               ],
                               validator: (val) {
                                 if (val!.isEmpty) {
@@ -245,11 +253,10 @@ class GrowthCard extends StatelessWidget {
                                 ),
                                 fillColor: Colors.red,
                                 labelText: 'Height/Length (cm)',
-                                hintText: 'e.g. 50',
+                                hintText: 'e.g. 2',
                               ),
                               inputFormatters: <TextInputFormatter>[
-                                WhitelistingTextInputFormatter(
-                                    RegExp("[0-9.]")),
+                                FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                               ],
                               validator: (val) {
                                 if (val!.isEmpty) {
@@ -274,11 +281,10 @@ class GrowthCard extends StatelessWidget {
                                 ),
                                 fillColor: Colors.red,
                                 labelText: 'Head Circumference (cm)',
-                                hintText: 'e.g. 30',
+                                hintText: 'e.g. 2',
                               ),
                               inputFormatters: <TextInputFormatter>[
-                                WhitelistingTextInputFormatter(
-                                    RegExp("[0-9.]")),
+                                FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                               ],
                               validator: (val) {
                                 if (val!.isEmpty) {
@@ -325,11 +331,11 @@ class GrowthCard extends StatelessWidget {
                                     ),
                                   ])),
                         ],
-                      )),
+                      )
                     ],
                   ),
                 ),
-              ],
+              )],
             ),
           );
         });
@@ -440,8 +446,7 @@ class GrowthCard extends StatelessWidget {
   /// Update Growth Measurements Data.
   ///
   /// Params [key], [week], [weight], [height], and [head] to update the database.
-  void _updateData(
-      String id, String week, String weight, String height, String head) async {
+  void _updateData(String id, String week, String weight, String height, String head) async {
     FirebaseFirestore.instance
         .collection('growth')
         .doc(nric)

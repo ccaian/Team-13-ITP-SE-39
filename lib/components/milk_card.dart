@@ -162,7 +162,7 @@ class MilkCard extends StatelessWidget {
           return AlertDialog(
             title: const Text('Edit Milk Volume Pumped'),
             content: Stack(
-              overflow: Overflow.visible,
+              clipBehavior: Clip.none,
               children: <Widget>[
                 Form(
                   key: _formKey,
@@ -199,7 +199,7 @@ class MilkCard extends StatelessWidget {
                             labelText: 'Left Volume Pumped (ml)',
                           ),
                           inputFormatters: <TextInputFormatter>[
-                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                            FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                           ],
                           validator: (val) {
                             if (val!.isEmpty) {
@@ -228,7 +228,7 @@ class MilkCard extends StatelessWidget {
                             labelText: 'Right Volume Pumped (ml)',
                           ),
                           inputFormatters: <TextInputFormatter>[
-                            WhitelistingTextInputFormatter(RegExp("[0-9.]")),
+                            FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                           ],
                           validator: (val) {
                             if (val!.isEmpty) {

@@ -18,7 +18,6 @@ class PdfGrowthApi {
         buildGrowth(growthFile),
       ],
     ));
-
     return PdfApi.saveDocument(name: 'growth.pdf', pdf: pdf);
   }
   /// Builds the header section of the document
@@ -36,7 +35,7 @@ class PdfGrowthApi {
   static Widget buildGrowth(Growth growthFile) {
     final headers = [
       'Week No',
-      'Weight (kg)',
+      'Weight (g)',
       'Height/Length (cm)',
       'Head Circumference (cm)',
     ];
@@ -44,7 +43,7 @@ class PdfGrowthApi {
     final data = growthFile.items.map((item) {
       return [
         "Week " + item.week,
-        item.weight + " kg",
+        item.weight + " g",
         item.height + " cm",
         item.head + " cm",
       ];

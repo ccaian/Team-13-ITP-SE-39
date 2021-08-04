@@ -22,9 +22,9 @@ class _GrowthPageState extends State<GrowthPage> {
   var nric;
   var childName;
   String week = '';
-  double weight = 0;
-  double height = 0;
-  double head = 0;
+  String weight = '';
+  String height = '';
+  String head = '';
 
   TextEditingController _weekControl = TextEditingController();
   TextEditingController _weightControl = TextEditingController();
@@ -32,10 +32,15 @@ class _GrowthPageState extends State<GrowthPage> {
   TextEditingController _headControl = TextEditingController();
 
   final firestoreInstance = FirebaseFirestore.instance;
-  late CollectionReference growth, records;
+  late CollectionReference growth, records, check;
 
   late Growth growthFile;
   List<GrowthRecord> growthRecords = [];
+
+  var weekNo = 1;
+  var weekVal = '0';
+
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
 
   @override
   void initState() {
@@ -45,8 +50,7 @@ class _GrowthPageState extends State<GrowthPage> {
 
   @override
   Widget build(BuildContext context) {
-    records =
-        firestoreInstance.collection('growth').doc(nric).collection('records');
+    records = firestoreInstance.collection('growth').doc(nric).collection('records');
 
     return new Scaffold(
         resizeToAvoidBottomInset: false,
@@ -159,21 +163,28 @@ class _GrowthPageState extends State<GrowthPage> {
                                               ),
                                               fillColor: Colors.red,
                                               labelText: 'Week No',
-                                              hintText: 'e.g. 10',
+                                              hintText: 'e.g. 1',
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                              // WhitelistingTextInputFormatter(RegExp("[0-9.]")),
                                               FilteringTextInputFormatter
                                                   .digitsOnly,
                                             ],
-                                            validator: (val) => val!.isEmpty
-                                                ? 'Enter week number'
-                                                : null,
+                                            validator: (val) {
+                                              if (val!.isEmpty) {
+                                                return ('Enter week number');
+                                              } else if (int.parse(val) < 1) {
+                                                return ('Value cannot be less than 1.');
+                                              } else if (int.parse(val) >= 50) {
+                                                return ('Value cannot be more than 50.');
+                                              }
+                                            },
                                             onChanged: (val) {
                                               setState(() => week = val);
                                             },
-                                            controller: _weekControl,
+                                            controller: _weekControl..text = weekNo.toString(),
+                                            enabled: false,
+                                            style: TextStyle(color: Colors.grey),
                                           ),
                                         ),
                                         Padding(
@@ -188,12 +199,11 @@ class _GrowthPageState extends State<GrowthPage> {
                                               ),
                                               fillColor: Colors.red,
                                               labelText: 'Weight (g)',
-                                              hintText: 'e.g. 5',
+                                              hintText: 'e.g. 200',
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                              WhitelistingTextInputFormatter(
-                                                  RegExp("[0-9.]")),
+                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
@@ -206,7 +216,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                             },
                                             onChanged: (val) {
                                               setState(
-                                                  () => weight = val as double);
+                                                  () => weight = val);
                                             },
                                             controller: _weightControl,
                                           ),
@@ -223,12 +233,11 @@ class _GrowthPageState extends State<GrowthPage> {
                                               ),
                                               fillColor: Colors.red,
                                               labelText: 'Height/Length (cm)',
-                                              hintText: 'e.g. 50',
+                                              hintText: 'e.g. 2',
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                              WhitelistingTextInputFormatter(
-                                                  RegExp("[0-9.]")),
+                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
@@ -241,7 +250,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                             },
                                             onChanged: (val) {
                                               setState(
-                                                  () => height = val as double);
+                                                  () => height = val);
                                             },
                                             controller: _heightControl,
                                           ),
@@ -259,12 +268,11 @@ class _GrowthPageState extends State<GrowthPage> {
                                               fillColor: Colors.red,
                                               labelText:
                                                   'Head Circumference (cm)',
-                                              hintText: 'e.g. 30',
+                                              hintText: 'e.g. 2',
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                              WhitelistingTextInputFormatter(
-                                                  RegExp("[0-9.]")),
+                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
@@ -277,7 +285,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                             },
                                             onChanged: (val) {
                                               setState(
-                                                  () => head = val as double);
+                                                  () => head = val);
                                             },
                                             controller: _headControl,
                                           ),
@@ -336,9 +344,39 @@ class _GrowthPageState extends State<GrowthPage> {
                   },
                 ),
               ),
+              Positioned(
+                bottom: 20,
+                right: 160,
+                child: FloatingActionButton(
+                  heroTag: "chart",
+                  child: Icon(Icons.bar_chart),
+                  backgroundColor: secondaryTheme,
+                  onPressed: () async {
+                    _generateChart();
+                  },
+                ),
+              ),
             ],
           ),
         ));
+  }
+
+  /// Function for getting week number
+  Future<void> _getWeek() async {
+    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
+
+    final QuerySnapshot result = await growth
+        .orderBy('week', descending: true)
+        .limit(1)
+        .get();
+
+    final List<DocumentSnapshot> documents = result.docs;
+    if (documents.isNotEmpty) {
+      documents.forEach((element) {
+        weekVal = element['week'];
+        weekNo = int.parse(weekVal) + 1;
+      });
+    }
   }
 
   /// Function for getting shared preferences data
@@ -348,6 +386,7 @@ class _GrowthPageState extends State<GrowthPage> {
       nric = prefs.getString('ChildNRIC');
       isAdmin = prefs.getBool('admin')!;
       childName = prefs.getString('ChildName');
+      _getWeek();
     });
     await Future.delayed(Duration(seconds: 2));
   }
@@ -356,22 +395,53 @@ class _GrowthPageState extends State<GrowthPage> {
   ///
   /// Function will use [week], [weight], [height], and [head] params to create a Growth record
   void _addData() async {
-    growth =
-        firestoreInstance.collection('growth').doc(nric).collection('records');
+    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
 
-    growth.add({
-      "week": _weekControl.text,
-      "weight": _weightControl.text,
-      "height": _heightControl.text,
-      "head": _headControl.text
-    });
-    Navigator.pop(context);
-    setState(() {
-      _weekControl.clear();
-      _weightControl.clear();
-      _heightControl.clear();
-      _headControl.clear();
-    });
+    final QuerySnapshot result = await growth
+        .where('week', isEqualTo: _weekControl.text)
+        .limit(1)
+        .get();
+
+    final List<DocumentSnapshot> documents = result.docs;
+
+    if (documents.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Record already exists"),
+            content: new Text("Only one entry per week allowed!"),
+            actions: <Widget>[
+              ElevatedButton(
+                  style: ElevatedButton
+                      .styleFrom(
+                    primary: mainTheme,
+                  ),
+                  child: Text('Close'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          );
+        },
+      );
+    }
+    else {
+      growth.add({
+        "week": _weekControl.text,
+        "weight": _weightControl.text,
+        "height": _heightControl.text,
+        "head": _headControl.text
+      });
+      Navigator.pop(context);
+      setState(() {
+        //set week control val + 1
+        _weekControl.clear();
+        _weightControl.clear();
+        _heightControl.clear();
+        _headControl.clear();
+      });
+    }
   }
 
   /// Function for downloading Growth records PDF file
@@ -380,6 +450,7 @@ class _GrowthPageState extends State<GrowthPage> {
         .collection('growth')
         .doc(nric)
         .collection('records')
+        .orderBy('week')
         .get();
 
     List growthList = getDocs.docs;
@@ -394,9 +465,35 @@ class _GrowthPageState extends State<GrowthPage> {
           ),
         )
         .toList();
+
     growthFile = Growth(items: _records, name: childName);
     final pdfFile = await PdfGrowthApi.generate(growthFile);
     PdfApi.openFile(pdfFile);
+  }
+
+  /// Function for downloading Growth records PDF file
+  Future<void> _generateChart() async {
+    var getDocs = await FirebaseFirestore.instance
+        .collection('growth')
+        .doc(nric)
+        .collection('records')
+        .orderBy('week')
+        .get();
+
+    List growthList = getDocs.docs;
+    List _weekArray = [], _weightArray = [], _heightArray = [], _headArray = [];
+
+    growthList.forEach((element) {
+     _weekArray.add(element['week']);
+     _weightArray.add(element['weight']);
+     _heightArray.add(element['height']);
+     _headArray.add(element['head']);
+    });
+
+    print(_weekArray);
+    print(_weightArray);
+    print(_heightArray);
+    print(_headArray);
   }
 }
 
