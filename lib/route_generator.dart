@@ -3,6 +3,7 @@ import 'package:growth_app/adminpin.dart';
 import 'package:growth_app/changepassword.dart';
 import 'package:growth_app/developmentdomain.dart';
 import 'package:growth_app/dischargechecklist.dart';
+import 'package:growth_app/fentonchart.dart';
 import 'package:growth_app/login.dart';
 import 'package:growth_app/main.dart';
 import 'package:growth_app/milestoneguidance.dart';
