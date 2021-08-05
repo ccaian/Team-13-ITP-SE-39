@@ -138,6 +138,21 @@ class _ChangePINPageState extends State<ChangePINPage> {
                                       : null,
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    52.0, 0.0, 40.0, 5.0),
+                                child: Text(
+                                  "Password Requirement:"
+                                      "\n* At least 8 characters, "
+                                      "\n* At least 1 Lower case, "
+                                      "\n* At least 1 Upper case, "
+                                      "\n* At least 1 Alphanumeric number "
+                                      "\n* At least 1 Special case letter",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12.0),
+                                ),
+                              ),
                               new Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[

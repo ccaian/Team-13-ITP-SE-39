@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:growth_app/model/fenton_chart_data.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api/pdf_api.dart';
 import 'api/pdf_growth_api.dart';
 import 'components/growth_card.dart';
+import 'fentonchart.dart';
 
 class GrowthPage extends StatefulWidget {
   @override
@@ -19,8 +21,8 @@ class _GrowthPageState extends State<GrowthPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool isAdmin = false;
-  var nric;
-  var childName;
+  var nric, childName;
+  String gender = '';
   String week = '';
   String weight = '';
   String height = '';
@@ -50,7 +52,8 @@ class _GrowthPageState extends State<GrowthPage> {
 
   @override
   Widget build(BuildContext context) {
-    records = firestoreInstance.collection('growth').doc(nric).collection('records');
+    records =
+        firestoreInstance.collection('growth').doc(nric).collection('records');
 
     return new Scaffold(
         resizeToAvoidBottomInset: false,
@@ -182,9 +185,11 @@ class _GrowthPageState extends State<GrowthPage> {
                                             onChanged: (val) {
                                               setState(() => week = val);
                                             },
-                                            controller: _weekControl..text = weekNo.toString(),
+                                            controller: _weekControl
+                                              ..text = weekNo.toString(),
                                             enabled: false,
-                                            style: TextStyle(color: Colors.grey),
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                           ),
                                         ),
                                         Padding(
@@ -203,20 +208,22 @@ class _GrowthPageState extends State<GrowthPage> {
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
                                                 return ('Enter weight in g');
-                                              } else if (double.parse(val) <= 100) {
+                                              } else if (double.parse(val) <=
+                                                  100) {
                                                 return ('Value cannot be less than 100g.');
-                                              } else if (double.parse(val) >= 2000) {
+                                              } else if (double.parse(val) >=
+                                                  2000) {
                                                 return ('Value cannot be more than 2000g.');
                                               }
                                             },
                                             onChanged: (val) {
-                                              setState(
-                                                  () => weight = val);
+                                              setState(() => weight = val);
                                             },
                                             controller: _weightControl,
                                           ),
@@ -237,20 +244,22 @@ class _GrowthPageState extends State<GrowthPage> {
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
                                                 return ('Enter height/length in cm');
-                                              } else if (double.parse(val) <= 1) {
+                                              } else if (double.parse(val) <=
+                                                  1) {
                                                 return ('Value cannot be less than 1cm.');
-                                              } else if (double.parse(val) >= 1000) {
+                                              } else if (double.parse(val) >=
+                                                  1000) {
                                                 return ('Value cannot be more than 1000cm.');
                                               }
                                             },
                                             onChanged: (val) {
-                                              setState(
-                                                  () => height = val);
+                                              setState(() => height = val);
                                             },
                                             controller: _heightControl,
                                           ),
@@ -272,20 +281,22 @@ class _GrowthPageState extends State<GrowthPage> {
                                             ),
                                             inputFormatters: <
                                                 TextInputFormatter>[
-                                                  FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
+                                              FilteringTextInputFormatter.allow(
+                                                  RegExp("[0-9.]")),
                                             ],
                                             validator: (val) {
                                               if (val!.isEmpty) {
                                                 return ('Enter head circumference in cm');
-                                              } else if (double.parse(val) <= 1) {
+                                              } else if (double.parse(val) <=
+                                                  1) {
                                                 return ('Value cannot be less than 1cm.');
-                                              } else if (double.parse(val) >= 50) {
+                                              } else if (double.parse(val) >=
+                                                  50) {
                                                 return ('Value cannot be more than 50cm.');
                                               }
                                             },
                                             onChanged: (val) {
-                                              setState(
-                                                  () => head = val);
+                                              setState(() => head = val);
                                             },
                                             controller: _headControl,
                                           ),
@@ -363,12 +374,11 @@ class _GrowthPageState extends State<GrowthPage> {
 
   /// Function for getting week number
   Future<void> _getWeek() async {
-    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
+    growth =
+        firestoreInstance.collection('growth').doc(nric).collection('records');
 
-    final QuerySnapshot result = await growth
-        .orderBy('week', descending: true)
-        .limit(1)
-        .get();
+    final QuerySnapshot result =
+        await growth.orderBy('week', descending: true).limit(1).get();
 
     final List<DocumentSnapshot> documents = result.docs;
 
@@ -387,6 +397,7 @@ class _GrowthPageState extends State<GrowthPage> {
       nric = prefs.getString('ChildNRIC');
       isAdmin = prefs.getBool('admin')!;
       childName = prefs.getString('ChildName');
+      // gender = prefs.getString('gender');
       _getWeek();
     });
     await Future.delayed(Duration(seconds: 2));
@@ -396,12 +407,11 @@ class _GrowthPageState extends State<GrowthPage> {
   ///
   /// Function will use [week], [weight], [height], and [head] params to create a Growth record
   void _addData() async {
-    growth = firestoreInstance.collection('growth').doc(nric).collection('records');
+    growth =
+        firestoreInstance.collection('growth').doc(nric).collection('records');
 
-    final QuerySnapshot result = await growth
-        .where('week', isEqualTo: _weekControl.text)
-        .limit(1)
-        .get();
+    final QuerySnapshot result =
+        await growth.where('week', isEqualTo: _weekControl.text).limit(1).get();
 
     final List<DocumentSnapshot> documents = result.docs;
 
@@ -414,8 +424,7 @@ class _GrowthPageState extends State<GrowthPage> {
             content: new Text("Only one entry per week allowed!"),
             actions: <Widget>[
               ElevatedButton(
-                  style: ElevatedButton
-                      .styleFrom(
+                  style: ElevatedButton.styleFrom(
                     primary: mainTheme,
                   ),
                   child: Text('Close'),
@@ -426,8 +435,7 @@ class _GrowthPageState extends State<GrowthPage> {
           );
         },
       );
-    }
-    else {
+    } else {
       growth.add({
         "week": _weekControl.text,
         "weight": _weightControl.text,
@@ -482,16 +490,33 @@ class _GrowthPageState extends State<GrowthPage> {
         .get();
 
     List growthList = getDocs.docs;
-    List _weekArray = [], _weightArray = [], _heightArray = [], _headArray = [];
+    List<WeightChart> _weightArray = [];
+    List<HeightChart> _heightArray = [];
+    List<HeadChart> _headArray = [];
 
     growthList.forEach((element) {
-     _weekArray.add(element['week']);
-     _weightArray.add(element['weight']);
-     _heightArray.add(element['height']);
-     _headArray.add(element['head']);
-    });
+      print(int.parse(element['week']).runtimeType);
+      if (int.parse(element['week']) >= 0) {
+        int weekNo = int.parse(element['week']);
 
-    print(_weekArray);
+        _weightArray.add(WeightChart(
+            weekNumber: weekNo, weightData: double.parse(element['weight'])));
+        _headArray.add(
+            HeadChart(weekNumber: weekNo, headData: double.parse(element['head'])));
+        _heightArray.add(HeightChart(
+            weekNumber: weekNo, heightData: double.parse(element['height'])));
+      }
+    });
+    print(_headArray);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FentonChart(
+                weightArray: _weightArray,
+                heightArray: _heightArray,
+                headArray: _headArray,
+                gender: 'male', // TO BE CHANGED, LINUS TO STORE GENDER TO SHAREDPREFERENCE.
+            )));
     print(_weightArray);
     print(_heightArray);
     print(_headArray);
