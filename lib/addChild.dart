@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 
 class AddChild extends StatefulWidget {
@@ -18,12 +19,16 @@ class _AddChildPageState extends State<AddChild> {
   String temp = '';
   String parentEmail = '';
   String gender = 'male';
+  var gestationPickedDate;
 
   final _addchildKey = GlobalKey<FormState>();
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat('dd-MM-yyyy');
 
   var _childRef = FirebaseDatabase.instance.reference().child('child');
   TextEditingController _nameControl = TextEditingController();
   TextEditingController _nricControl = TextEditingController();
+  TextEditingController _gdateControl = TextEditingController();
   SingingCharacter? _character = SingingCharacter.Male;
 
   final _addChild = FirebaseFirestore.instance.collection('child');
@@ -113,6 +118,38 @@ class _AddChildPageState extends State<AddChild> {
                           },
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20.0,0.0,20.0,0.0),
+                        child: TextField(
+                          controller: _gdateControl, //editing controller of this TextField
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.calendar_today), //icon of text field
+                              labelText: "Enter Gestation Date" //label text of field
+                          ),
+                          readOnly: true,  //set it true, so that user will not able to edit text
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context, initialDate: DateTime.now(),
+                                firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime(2101)
+                            );
+
+                            if(pickedDate != null ){
+                              print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
+                              String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                              print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                              //you can implement different kind of Date Format here according to your requirement
+
+                              setState(() {
+                                _gdateControl.text = formattedDate; //set output date to TextField value.
+                                gestationPickedDate = pickedDate;
+                              });
+                            }else{
+                              print("Date is not selected");
+                            }
+                          },
+                        )
+                      ),
                       Padding(padding: new EdgeInsets.only(left: 10)),
                       new Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,20 +233,12 @@ class _AddChildPageState extends State<AddChild> {
       ),
     );
   }
-/*
-  void addChildData(name, nric) {
-    _childRef.push().set({
-      'name': _nameControl.text,
-      'nric': _nricControl.text,
-      'parent': parentEmail,
-      'gender' : gender
-    });
-  }*/
 
   void _addChildData() {
     _addChild.add({
       'name': _nameControl.text,
       'nric': _nricControl.text,
+      'gestationDate': gestationPickedDate,
       'parent': parentEmail,
       'gender': gender
     });
@@ -222,7 +251,6 @@ class _AddChildPageState extends State<AddChild> {
       parentEmail = temp;
     });
     _addChildData();
-    //addChildData(name, nric);
   }
 
 }
