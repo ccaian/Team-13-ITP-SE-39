@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'api/pdf_api.dart';
 import 'api/pdf_growth_api.dart';
 import 'components/growth_card.dart';
 import 'unused/fentonchart.dart';
+import 'package:intl/intl.dart';
 
 class GrowthPage extends StatefulWidget {
   @override
@@ -23,24 +25,23 @@ class _GrowthPageState extends State<GrowthPage> {
   bool isAdmin = false;
   var nric, childName;
   String gender = '';
-  String week = '';
+  String date = '';
   String weight = '';
   String height = '';
   String head = '';
 
-  TextEditingController _weekControl = TextEditingController();
+  TextEditingController _dateControl = TextEditingController();
   TextEditingController _weightControl = TextEditingController();
   TextEditingController _heightControl = TextEditingController();
   TextEditingController _headControl = TextEditingController();
 
+  final format = DateFormat("dd-MM-yyyy");
+
   final firestoreInstance = FirebaseFirestore.instance;
-  late CollectionReference growth, records, check;
+  late CollectionReference growth, records;
 
   late Growth growthFile;
   List<GrowthRecord> growthRecords = [];
-
-  var weekNo = 1;
-  var weekVal = '0';
 
   final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(25));
 
@@ -96,7 +97,7 @@ class _GrowthPageState extends State<GrowthPage> {
                               const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           child: StreamBuilder(
                             stream: records
-                                .orderBy('week', descending: true)
+                                .orderBy('date', descending: true)
                                 .snapshots(),
                             builder: (BuildContext context,
                                 AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -109,7 +110,7 @@ class _GrowthPageState extends State<GrowthPage> {
                                   .map(
                                     (growth) => GrowthRecord(
                                       id: growth.id,
-                                      week: growth['week'],
+                                      date: growth['date'],
                                       weight: growth['weight'],
                                       height: growth['height'],
                                       head: growth['head'],
@@ -156,40 +157,30 @@ class _GrowthPageState extends State<GrowthPage> {
                                       children: <Widget>[
                                         Padding(
                                           padding: EdgeInsets.all(8.0),
-                                          child: TextFormField(
+                                          child: DateTimeField(
                                             decoration: InputDecoration(
+                                              fillColor: Colors.grey,
                                               border: new OutlineInputBorder(
-                                                borderRadius:
-                                                    const BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                   const Radius.circular(25),
                                                 ),
                                               ),
-                                              fillColor: Colors.red,
-                                              labelText: 'Week No',
-                                              hintText: 'e.g. 1',
+                                              labelText: 'Date',
                                             ),
-                                            inputFormatters: <
-                                                TextInputFormatter>[
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
+                                            format: format,
+                                            onShowPicker: (context, currentValue) {
+                                            return showDatePicker(
+                                              context: context,
+                                              firstDate: DateTime(1900),
+                                              initialDate: currentValue ?? DateTime.now(),
+                                              lastDate: DateTime(2100));
+                                            },
                                             validator: (val) {
-                                              if (val!.isEmpty) {
-                                                return ('Enter week number');
-                                              } else if (int.parse(val) < 1) {
-                                                return ('Value cannot be less than 1.');
-                                              } else if (int.parse(val) >= 50) {
-                                                return ('Value cannot be more than 50.');
+                                              if (val == null) {
+                                                return ('Select date');
                                               }
                                             },
-                                            onChanged: (val) {
-                                              setState(() => week = val);
-                                            },
-                                            controller: _weekControl
-                                              ..text = weekNo.toString(),
-                                            enabled: false,
-                                            style:
-                                                TextStyle(color: Colors.grey),
+                                            controller: _dateControl,
                                           ),
                                         ),
                                         Padding(
@@ -372,24 +363,6 @@ class _GrowthPageState extends State<GrowthPage> {
         ));
   }
 
-  /// Function for getting week number
-  Future<void> _getWeek() async {
-    growth =
-        firestoreInstance.collection('growth').doc(nric).collection('records');
-
-    final QuerySnapshot result =
-        await growth.orderBy('week', descending: true).limit(1).get();
-
-    final List<DocumentSnapshot> documents = result.docs;
-
-    if (documents.isNotEmpty) {
-      documents.forEach((element) {
-        weekVal = element['week'];
-        weekNo = int.parse(weekVal) + 1;
-      });
-    }
-  }
-
   /// Function for getting shared preferences data
   Future<void> _getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -398,59 +371,31 @@ class _GrowthPageState extends State<GrowthPage> {
       isAdmin = prefs.getBool('admin')!;
       childName = prefs.getString('ChildName');
       // gender = prefs.getString('gender');
-      _getWeek();
     });
     await Future.delayed(Duration(seconds: 2));
   }
 
   /// Function for creating Growth record in Firestore
   ///
-  /// Function will use [week], [weight], [height], and [head] params to create a Growth record
+  /// Function will use [date], [weight], [height], and [head] params to create a Growth record
   void _addData() async {
     growth =
         firestoreInstance.collection('growth').doc(nric).collection('records');
 
-    final QuerySnapshot result =
-        await growth.where('week', isEqualTo: _weekControl.text).limit(1).get();
-
-    final List<DocumentSnapshot> documents = result.docs;
-
-    if (documents.isNotEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: new Text("Record already exists"),
-            content: new Text("Only one entry per week allowed!"),
-            actions: <Widget>[
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: mainTheme,
-                  ),
-                  child: Text('Close'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-            ],
-          );
-        },
-      );
-    } else {
-      growth.add({
-        "week": _weekControl.text,
-        "weight": _weightControl.text,
-        "height": _heightControl.text,
-        "head": _headControl.text
-      });
-      Navigator.pop(context);
-      setState(() {
-        _weekControl.clear();
-        _weightControl.clear();
-        _heightControl.clear();
-        _headControl.clear();
-        _getWeek();
-      });
-    }
+    growth.add({
+      "date": _dateControl.text,
+      //"week": _weekControl.text,
+      "weight": _weightControl.text,
+      "height": _heightControl.text,
+      "head": _headControl.text
+    });
+    Navigator.pop(context);
+    setState(() {
+      _dateControl.clear();
+      _weightControl.clear();
+      _heightControl.clear();
+      _headControl.clear();
+    });
   }
 
   /// Function for downloading Growth records PDF file
@@ -459,7 +404,7 @@ class _GrowthPageState extends State<GrowthPage> {
         .collection('growth')
         .doc(nric)
         .collection('records')
-        .orderBy('week')
+        .orderBy('date')
         .get();
 
     List growthList = getDocs.docs;
@@ -467,7 +412,7 @@ class _GrowthPageState extends State<GrowthPage> {
         .map(
           (growth) => GrowthRecord(
             id: growth.id,
-            week: growth['week'],
+            date: growth['date'],
             weight: growth['weight'],
             height: growth['height'],
             head: growth['head'],
@@ -486,7 +431,7 @@ class _GrowthPageState extends State<GrowthPage> {
         .collection('growth')
         .doc(nric)
         .collection('records')
-        .orderBy('week')
+        .orderBy('date')
         .get();
 
     List growthList = getDocs.docs;
@@ -525,14 +470,14 @@ class _GrowthPageState extends State<GrowthPage> {
 
 class GrowthRecord {
   final String? id;
-  final String week;
+  final String date;
   final String weight;
   final String height;
   final String head;
 
   GrowthRecord(
       {this.id,
-      required this.week,
+      required this.date,
       required this.weight,
       required this.height,
       required this.head});

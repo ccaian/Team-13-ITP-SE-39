@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:growth_app/theme/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../growthpage.dart';
+import 'package:intl/intl.dart';
 
 /// GrowthCard exist to populate the data retrieved from Firestore
 /// for visualisation on the UI with Update and Delete functions for each data
@@ -37,7 +39,7 @@ class GrowthCard extends StatelessWidget {
               Positioned(
                 top: MediaQuery.of(context).size.width * 0.05,
                 left: MediaQuery.of(context).size.width * 0.05,
-                child: Text("Week " + growthRecord.week,
+                child: Text(growthRecord.date,
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.bold,
@@ -159,14 +161,16 @@ class GrowthCard extends StatelessWidget {
 
   /// Update Dialog for Growth Measurements Data.
   ///
-  /// Has [key], [week], [height], [weight], and [head] fields to parse param to update function.
+  /// Has [key], [date], [height], [weight], and [head] fields to parse param to update function.
   void updateDialog(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
-    final _weekControl = TextEditingController(text: growthRecord.week);
+    final _dateControl = TextEditingController(text: growthRecord.date);
     final _weightControl = TextEditingController(text: growthRecord.weight);
     final _heightControl = TextEditingController(text: growthRecord.height);
     final _headControl = TextEditingController(text: growthRecord.head);
+
+    final format = DateFormat("dd-MM-yyyy");
 
     showDialog(
         context: context,
@@ -186,32 +190,30 @@ class GrowthCard extends StatelessWidget {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: TextFormField(
+                            child: DateTimeField(
                               decoration: InputDecoration(
+                                fillColor: Colors.grey,
                                 border: new OutlineInputBorder(
                                   borderRadius: const BorderRadius.all(
                                     const Radius.circular(25),
                                   ),
                                 ),
-                                fillColor: Colors.red,
-                                labelText: 'Week No',
-                                hintText: 'e.g. 1',
+                                labelText: 'Date',
                               ),
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
+                              format: format,
+                              onShowPicker: (context, currentValue) {
+                                return showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime(1900),
+                                    initialDate: currentValue ?? DateTime.now(),
+                                    lastDate: DateTime(2100));
+                              },
                               validator: (val) {
-                                if (val!.isEmpty) {
-                                  return ('Enter week number');
-                                } else if (int.parse(val) < 1) {
-                                  return ('Value cannot be less than 1.');
-                                } else if (int.parse(val) >= 50) {
-                                  return ('Value cannot be more than 50.');
+                                if (val == null) {
+                                  return ('Select date');
                                 }
                               },
-                              controller: _weekControl,
-                              enabled: false,
-                              style: TextStyle(color: Colors.grey),
+                              controller: _dateControl,
                             ),
                           ),
                           Padding(
@@ -321,7 +323,7 @@ class GrowthCard extends StatelessWidget {
                                         if (_formKey.currentState!.validate()) {
                                           _updateData(
                                               growthRecord.id.toString(),
-                                              _weekControl.text,
+                                              _dateControl.text,
                                               _weightControl.text,
                                               _heightControl.text,
                                               _headControl.text);
@@ -445,15 +447,15 @@ class GrowthCard extends StatelessWidget {
 
   /// Update Growth Measurements Data.
   ///
-  /// Params [key], [week], [weight], [height], and [head] to update the database.
-  void _updateData(String id, String week, String weight, String height, String head) async {
+  /// Params [key], [date], [weight], [height], and [head] to update the database.
+  void _updateData(String id, String date, String weight, String height, String head) async {
     FirebaseFirestore.instance
         .collection('growth')
         .doc(nric)
         .collection('records')
         .doc(id)
         .update({
-      "week": week,
+      "date": date,
       "weight": weight,
       "height": height,
       "head": head,
