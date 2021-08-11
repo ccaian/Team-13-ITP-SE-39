@@ -34,7 +34,7 @@ class PdfGrowthApi {
   /// Builds the body section of the document with the retrieved data from [growthFile]
   static Widget buildGrowth(Growth growthFile) {
     final headers = [
-      'Week No',
+      'Date',
       'Weight (g)',
       'Height/Length (cm)',
       'Head Circumference (cm)',
@@ -42,7 +42,7 @@ class PdfGrowthApi {
     /// Map the data from [growthFile] to loop through list into the Table format
     final data = growthFile.items.map((item) {
       return [
-        "Week " + item.week,
+        item.date,
         item.weight + " g",
         item.height + " cm",
         item.head + " cm",
