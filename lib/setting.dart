@@ -89,6 +89,34 @@ class _SettingPageState extends State<SettingPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Expanded(
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      80.0, 15.0, 80.0, 0.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: mainTheme,
+                                      minimumSize: Size(50, 50),
+                                      shape: shape,
+                                    ),
+                                    child: Text(
+                                      "View Child Details",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pushNamed("/childProfile");
+                                    },
+                                  )))
+                        ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
                             child: Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                     80.0, 15.0, 80.0, 0.0),
