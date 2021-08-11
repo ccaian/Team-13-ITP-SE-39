@@ -381,6 +381,7 @@ class _GrowthPageState extends State<GrowthPage> {
         await growth.orderBy('week', descending: true).limit(1).get();
 
     final List<DocumentSnapshot> documents = result.docs;
+
     if (documents.isNotEmpty) {
       documents.forEach((element) {
         weekVal = element['week'];
@@ -443,11 +444,11 @@ class _GrowthPageState extends State<GrowthPage> {
       });
       Navigator.pop(context);
       setState(() {
-        //set week control val + 1
         _weekControl.clear();
         _weightControl.clear();
         _heightControl.clear();
         _headControl.clear();
+        _getWeek();
       });
     }
   }
