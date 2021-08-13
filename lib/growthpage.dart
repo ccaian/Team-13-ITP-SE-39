@@ -346,18 +346,18 @@ class _GrowthPageState extends State<GrowthPage> {
                   },
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                right: 160,
-                child: FloatingActionButton(
-                  heroTag: "chart",
-                  child: Icon(Icons.bar_chart),
-                  backgroundColor: secondaryTheme,
-                  onPressed: () async {
-                    _generateChart();
-                  },
-                ),
-              ),
+              // Positioned(
+              //   bottom: 20,
+              //   right: 160,
+              //   child: FloatingActionButton(
+              //     heroTag: "chart",
+              //     child: Icon(Icons.bar_chart),
+              //     backgroundColor: secondaryTheme,
+              //     onPressed: () async {
+              //       _generateChart();
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ));
@@ -426,46 +426,46 @@ class _GrowthPageState extends State<GrowthPage> {
   }
 
   /// Function for downloading Growth records PDF file
-  Future<void> _generateChart() async {
-    var getDocs = await FirebaseFirestore.instance
-        .collection('growth')
-        .doc(nric)
-        .collection('records')
-        .orderBy('date')
-        .get();
-
-    List growthList = getDocs.docs;
-    List<WeightChart> _weightArray = [];
-    List<HeightChart> _heightArray = [];
-    List<HeadChart> _headArray = [];
-
-    growthList.forEach((element) {
-      print(int.parse(element['week']).runtimeType);
-      if (int.parse(element['week']) >= 0) {
-        int weekNo = int.parse(element['week']);
-
-        _weightArray.add(WeightChart(
-            weekNumber: weekNo, weightData: double.parse(element['weight'])));
-        _headArray.add(
-            HeadChart(weekNumber: weekNo, headData: double.parse(element['head'])));
-        _heightArray.add(HeightChart(
-            weekNumber: weekNo, heightData: double.parse(element['height'])));
-      }
-    });
-    print(_headArray);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => FentonChart(
-                weightArray: _weightArray,
-                heightArray: _heightArray,
-                headArray: _headArray,
-                gender: 'male', // TO BE CHANGED, LINUS TO STORE GENDER TO SHAREDPREFERENCE.
-            )));
-    print(_weightArray);
-    print(_heightArray);
-    print(_headArray);
-  }
+  // Future<void> _generateChart() async {
+  //   var getDocs = await FirebaseFirestore.instance
+  //       .collection('growth')
+  //       .doc(nric)
+  //       .collection('records')
+  //       .orderBy('date')
+  //       .get();
+  //
+  //   List growthList = getDocs.docs;
+  //   List<WeightChart> _weightArray = [];
+  //   List<HeightChart> _heightArray = [];
+  //   List<HeadChart> _headArray = [];
+  //
+  //   growthList.forEach((element) {
+  //     print(int.parse(element['week']).runtimeType);
+  //     if (int.parse(element['week']) >= 0) {
+  //       int weekNo = int.parse(element['week']);
+  //
+  //       _weightArray.add(WeightChart(
+  //           weekNumber: weekNo, weightData: double.parse(element['weight'])));
+  //       _headArray.add(
+  //           HeadChart(weekNumber: weekNo, headData: double.parse(element['head'])));
+  //       _heightArray.add(HeightChart(
+  //           weekNumber: weekNo, heightData: double.parse(element['height'])));
+  //     }
+  //   });
+  //   print(_headArray);
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => FentonChart(
+  //               weightArray: _weightArray,
+  //               heightArray: _heightArray,
+  //               headArray: _headArray,
+  //               gender: 'male', // TO BE CHANGED, LINUS TO STORE GENDER TO SHAREDPREFERENCE.
+  //           )));
+  //   print(_weightArray);
+  //   print(_heightArray);
+  //   print(_headArray);
+  // }
 }
 
 class GrowthRecord {
